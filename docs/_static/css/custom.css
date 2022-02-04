@@ -1,0 +1,262 @@
+:root {
+    /* Venafi purple */
+    --venafi-primary: rgba(61, 62, 98, 1.0);
+    --venafi-primary-light: rgba(161, 162, 198, 1.0);
+    --venafi-primary-dark: rgba(33, 34, 70, 1.0);
+    --venafi-primary-background: rgba(11, 12, 48, 0.8);
+    --venafi-primary-l1-items: rgba(41, 42, 78, 1.0);
+    --venafi-primary-l2-current: rgba(56, 57, 93, 1.0);
+    --venafi-primary-l2-items: rgba(36, 37, 73, 1.0);
+    --venafi-primary-l3-current: rgba(51, 52, 88, 1.0);
+    --venafi-primary-l3-items: rgba(31, 32, 68, 1.0);
+    --venafi-primary-l4-current: rgba(46, 47, 83, 1.0);
+    --venafi-primary-l4-items: rgba(26, 27, 63, 1.0);
+
+    /* Venafi orange */
+    --venafi-secondary: rgba(225, 99, 21, 1.0);
+    --venafi-secondary-py-section: rgba(225, 129, 70, 1.0);
+}
+
+html {
+    scrollbar-face-color: #646464;
+    scrollbar-base-color: #646464;
+    scrollbar-3dlight-color: #646464;
+    scrollbar-highlight-color: #646464;
+    scrollbar-track-color: #000;
+    scrollbar-arrow-color: #000;
+    scrollbar-shadow-color: #646464;
+    scrollbar-dark-shadow-color: #646464;
+}
+
+/* region Document Body */
+.wy-nav-content {
+    max-width: 100%;
+    min-height: 100vh;
+}
+
+/* endregion Document Body */
+
+/* region Logo */
+.wy-side-nav-search .wy-dropdown > a img.logo, .wy-side-nav-search > a img.logo {
+    width: 200px;
+}
+
+/* endregion Logo */
+
+/* region Side Bar */
+.wy-side-nav-search, .wy-nav-top, .wy-nav-side {
+    background: var(--venafi-primary);
+}
+
+/* endregion Side Bar */
+
+/* Footer */
+footer {
+    font-size: 0;
+}
+
+footer .rst-footer-buttons {
+    font-size: initial;
+}
+/*********** Dark theme ***********/
+
+/* region Search Bar And Search Results */
+html[data-theme='dark'] .wy-side-nav-search input[type='text'] {
+    background-color: #272f36;
+}
+
+html[data-theme='dark'] .rst-content .highlighted {
+    background: var(--venafi-secondary);
+    box-shadow: 0 0 12px 0 lightgrey;
+    display: inline;
+    font-weight: 1000;
+    color: var(--venafi-primary-dark);
+}
+
+/* endregion Search Bar And Search Results */
+
+/* region Document Body */
+html[data-theme='dark'] .wy-nav-content {
+    background-color: var(--venafi-primary-background) !important;
+}
+
+html[data-theme='dark'] .wy-nav-content-wrap {
+    background-color: var(--venafi-primary-background) !important;
+}
+
+/* endregion Document Body */
+
+/* region Side Bar */
+html[data-theme='dark'] .wy-side-nav-search, .wy-nav-top {
+    background: var(--venafi-primary) !important;
+}
+
+html[data-theme='dark'] .wy-nav-side {
+    background: var(--venafi-primary) !important;
+}
+
+/* Expand icon */
+html[data-theme='dark'] .wy-menu-vertical li:not(.current) > a button.toctree-expand {
+    color: grey !important;
+}
+
+html[data-theme='dark'] .wy-menu-vertical li.current > a button.toctree-expand {
+    color: var(--venafi-secondary) !important;
+}
+
+/* Highlighted selection */
+html[data-theme='dark'] .wy-menu li.current > a, html[data-theme='dark'] .wy-menu li.on a {
+    background-color: var(--venafi-primary) !important;
+}
+
+html[data-theme='dark'] .wy-menu .current > .reference.internal {
+    color: var(--venafi-secondary);
+}
+
+/* region L1 Items In Toctree */
+html[data-theme='dark'] .wy-menu li.toctree-l1 > a.reference.internal {
+    background: var(--venafi-primary) !important;
+}
+
+html[data-theme='dark'] .wy-menu li.toctree-l1.current > ul > li:not(.current) > .reference.internal:not(.current) {
+    background: var(--venafi-primary-l1-items) !important;
+}
+
+/* endregion L1 Items In Toctree */
+
+/* region L2 Items In Toctree */
+html[data-theme='dark'] .wy-menu li.toctree-l2 > a.reference.internal {
+    background: var(--venafi-primary-l2-current) !important;
+}
+
+html[data-theme='dark'] .wy-menu li.toctree-l2.current > ul > li:not(.current) > .reference.internal:not(.current) {
+    background: var(--venafi-primary-l2-items) !important;
+}
+
+/* endregion L2 Items In Toctree */
+
+/* region L3 Items In Toctree */
+html[data-theme='dark'] .wy-menu li.toctree-l3 > a.reference.internal {
+    background: var(--venafi-primary-l3-current) !important;
+}
+
+html[data-theme='dark'] .wy-menu li.toctree-l3.current > ul > li:not(.current) > .reference.internal:not(.current) {
+    background: var(--venafi-primary-l3-items) !important;
+}
+
+/* endregion L4 Items In Toctree */
+
+/* region L4 Items In Toctree */
+html[data-theme='dark'] li.toctree-l4 > a.reference.internal {
+    background: var(--venafi-primary-l4-current) !important;
+}
+
+html[data-theme='dark'] li.toctree-l4.current > ul > li:not(.current) > .reference.internal:not(.current) {
+    background: var(--venafi-primary-l4-items) !important;
+}
+
+/* endregion L4 Items In Toctree */
+/* endregion Side Bar */
+
+/* region Scroll Bars */
+html[data-theme='dark'] ::-webkit-scrollbar {
+    width: 8px;
+    height: 3px;
+}
+
+html[data-theme='dark'] ::-webkit-scrollbar-button {
+    background-color: #666;
+}
+
+html[data-theme='dark'] ::-webkit-scrollbar-track {
+    background-color: #646464;
+}
+
+html[data-theme='dark'] ::-webkit-scrollbar-track-piece {
+    background-color: #000;
+}
+
+html[data-theme='dark'] ::-webkit-scrollbar-thumb {
+    height: 50px;
+    background-color: #666;
+    border-radius: 3px;
+}
+
+html[data-theme='dark'] ::-webkit-scrollbar-corner {
+    background-color: #646464;
+}
+
+html[data-theme='dark'] ::-webkit-resizer {
+    background-color: #666;
+}
+
+/* endregion Scroll Bars */
+
+/* region Code Examples */
+html[data-theme='dark'] .rst-content div[class^='highlight'] {
+    border-color: grey !important;
+}
+
+html[data-theme='dark'] .highlight {
+    background-color: var(--venafi-primary-dark) !important;
+}
+
+/* Function name */
+html[data-theme='dark'] .highlight .nf {
+    color: #8694fd !important;
+}
+
+/* endregion Code Examples */
+
+/* region Code Documentation */
+
+/* Highlighted items */
+html[data-theme='dark'] .rst-content dl:not(.docutils) dt {
+    background: var(--venafi-primary-dark) !important;
+}
+
+/* Python class */
+html[data-theme='dark'] .rst-content dl.py.class .sig-object.py {
+    color: var(--venafi-primary-light) !important;
+}
+
+html[data-theme='dark'] .rst-content dl.py.class .sig-object.py span.sig-name.descname {
+    color: var(--venafi-secondary) !important;
+}
+
+/* Python properties, methods, etc. */
+html[data-theme='dark'] .rst-content dl.py:not(.class) .sig-object.py {
+    color: var(--venafi-secondary) !important;
+}
+
+html[data-theme='dark'] .rst-content dl.py:not(.class) .sig-object.py span.sig-name.descname {
+    color: var(--venafi-primary-light) !important;
+}
+
+/* Section headers */
+html[data-theme='dark'] .rst-content dl.py .field-list > dt {
+    color: var(--venafi-secondary) !important;
+}
+
+/* Literal blocks */
+html[data-theme='dark'] code.docutils.literal.notranslate {
+    background: var(--venafi-primary-light) !important;
+    color: #0b0b0b !important;
+}
+
+/* endregion Code Documentation */
+
+/* region Navigation Buttons */
+html[data-theme='dark'] div[role="navigation"] > .btn-neutral {
+    background-color: rgba(61, 62, 98, 1.0) !important;
+    color: var(--dark-text-color) !important;
+}
+
+/* endregion Navigation Buttons */
+
+/* region Tables */
+html[data-theme='dark'] .wy-table-responsive tbody .row-even td {
+    background: var(--venafi-primary-dark) !important;
+}
+
+/* endregion Tables */

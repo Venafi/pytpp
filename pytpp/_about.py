@@ -1,0 +1,5 @@
+__author__ = 'Venafi SPI Team'
+__author_email__ = 'spi@venafi.com'
+__project_name__ = 'pytpp'
+__project_url__ = 'https://github.com/Venafi/pytpp'
+__version__ = '1.0.0'

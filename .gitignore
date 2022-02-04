@@ -1,0 +1,12 @@
+.idea/
+venv/
+*.pyc
+testfile.py
+/test/
+/docs/_build/
+*.egg-info
+/dist
+*/logs
+*logfile*.*
+*/temp
+/package_pypi.sh
