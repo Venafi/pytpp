@@ -37,6 +37,7 @@ class _PlatformComponentBase(FeatureBase):
             )
             response.assert_valid_response()
 
+
 @feature('Auto Layout Manager')
 class AutoLayoutManager(_PlatformComponentBase):
     def __init__(self, api):
@@ -120,6 +121,7 @@ class ValidationManager(_PlatformComponentBase):
     def __init__(self, api):
         super().__init__(api=api, module='Validation Manager')
 # endregion Platform Components
+
 
 # region Platform Root
 @feature('Platforms')
