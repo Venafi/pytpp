@@ -42,7 +42,8 @@ class _CredentialBase(FeatureBase):
         Args:
             credential: :ref:`config_object` or :ref:`dn` of the credential object.
         """
-        result = self._api.websdk.Credentials.Delete.post(credential_path=credential.dn).result
+        credential_dn = self._get_dn(credential)
+        result = self._api.websdk.Credentials.Delete.post(credential_path=credential_dn).result
         if result.code != 1:
             raise InvalidResultCode(code=result.code, code_description=result.credential_result)
 
