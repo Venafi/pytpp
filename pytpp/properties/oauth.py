@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 @dataclass
 class Permissions:
     name: str
@@ -22,7 +23,7 @@ class Permissions:
 
     def effective(self):
         # "read" is implied when specifying the access permission, so it must be omitted.
-        return [k for k, v in self.to_dict().items() if v is not None and k != 'read']
+        return [k for k, v in self.to_dict().items() if v and k != 'read']
 
 
 @dataclass
@@ -46,7 +47,10 @@ class Scope:
     @property
     def scopes(self):
         return [
-            {'name': p.name, 'permissions': p.to_dict()}
+            {
+                'name'       : p.name,
+                'permissions': p.to_dict()
+            }
             for p in self.list()
         ]
 
