@@ -62,10 +62,15 @@ class Scope:
         ]
 
     def to_string(self):
-        scopes = [
-            f'{p.name}:{",".join(p.effective())}'
-            for p in self.list() if p.effective()
-        ]
+        scopes = []
+        for p in self.list():
+            effective = p.effective()
+            if len(effective) == 0:
+                if p.read is True:
+                    scopes.append(p.name)
+                continue
+            else:
+                scopes.append(f'{p.name}:{",".join(effective)}')
         return ';'.join(scopes)
 
     def agent(self, delete: bool = False, read: bool = False):
@@ -119,3 +124,14 @@ class Scope:
     def statistics(self, read: bool = False):
         self._statistics.read = read
         return self
+
+
+def main():
+    scope = Scope().\
+        certificate(approve=True).\
+        statistics(read=True)
+    print(scope.to_string())
+
+
+if __name__ == '__main__':
+    main()

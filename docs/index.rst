@@ -27,6 +27,8 @@ Requirements
         "scope"      : "certificate:approve,delete,discover,manage,read,revoke;ssh:approve,delete,discover,manage,read;codesign:delete,manage,read;configuration:delete,manage,read;restricted:delete,manage,read;security:delete,manage,read;statistics:read;agent:delete,read"
     }
 
+.. note::
+    Most PyTPP features require the *configuration:manage* scope to be included in the OAuth Application definition.
 
 Installation
 ------------
