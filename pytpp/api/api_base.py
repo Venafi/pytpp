@@ -80,7 +80,8 @@ class API:
     def _session(self) -> 'Session':
         return self._api_obj._session
 
-    def _is_api_key_invalid(self, response: Response):
+    @staticmethod
+    def _is_api_key_invalid(response: Response):
         """
         Uses a regular expression to search the response text for an indication that the API key
         is expired.
@@ -89,10 +90,24 @@ class API:
             response: The raw response object.
 
         Returns:
-            Returns True if the API key expired. Otherwise False.
-
+            Returns ``True`` if the API key expired. Otherwise ``False``.
         """
-        return response.status_code == 401 and bool(re.match('.*API key.*is not valid.*', response.text))
+        return response.status_code == 401 and bool(re.match('.*api key.*is not valid.*', response.text, flags=re.IGNORECASE))
+
+    @staticmethod
+    def _rerun_transaction_required(response: Response):
+        """
+        Uses a regular expression to search the response text for an indication that the transaction was deadlocked
+        and needs to be reran.
+
+        Args:
+            response: The raw response object.
+
+        Returns:
+            Returns ``True`` if the API key expired. Otherwise ``False``.
+        """
+        return response.status_code == 500 and bool(re.match('.*rerun the transaction.*', response.text,
+                                                             flags=re.IGNORECASE))
 
     def _delete(self, params: dict = None):
         """
@@ -106,16 +121,20 @@ class API:
         retried = 0
         exc = None
         while retried < self.retries:
+            retried += 1
             try:
                 response = self._session.delete(url=self._url, params=params)
                 self._log_response(response=response)
                 if self._is_api_key_invalid(response=response):
                     self._re_authenticate()
-                    return self._session.delete(url=self._url, params=params)
+                    # Trigger the retry.
+                    continue
+                elif self._rerun_transaction_required(response=response):
+                    # Trigger the retry.
+                    continue
                 return response
             except (ConnectionResetError, ConnectionError) as e:
                 exc = e
-            retried += 1
         raise exc
 
     def _get(self, params: dict = None):
@@ -133,16 +152,20 @@ class API:
         retried = 0
         exc = None
         while retried < self.retries:
+            retried += 1
             try:
                 response = self._session.get(url=self._url, params=params)
                 self._log_response(response=response)
                 if self._is_api_key_invalid(response=response):
                     self._re_authenticate()
-                    return self._session.get(url=self._url, params=params)
+                    # Trigger the retry.
+                    continue
+                elif self._rerun_transaction_required(response=response):
+                    # Trigger the retry.
+                    continue
                 return response
             except (ConnectionResetError, ConnectionError) as e:
                 exc = e
-            retried += 1
         raise exc
 
     def _post(self, data: Union[list, dict]):
@@ -160,16 +183,20 @@ class API:
         retried = 0
         exc = None
         while retried < self.retries:
+            retried += 1
             try:
                 response = self._session.post(url=self._url, data=data)
                 self._log_response(response=response)
                 if self._is_api_key_invalid(response=response):
                     self._re_authenticate()
-                    return self._session.post(url=self._url, data=data)
+                    # Trigger the retry.
+                    continue
+                elif self._rerun_transaction_required(response=response):
+                    # Trigger the retry.
+                    continue
                 return response
             except (ConnectionResetError, ConnectionError) as e:
                 exc = e
-            retried += 1
         raise exc
 
     def _put(self, data: Union[list, dict]):
@@ -187,16 +214,20 @@ class API:
         retried = 0
         exc = None
         while retried < self.retries:
+            retried += 1
             try:
                 response = self._session.put(url=self._url, data=data)
                 self._log_response(response=response)
                 if self._is_api_key_invalid(response=response):
                     self._re_authenticate()
-                    self._session.put(url=self._url, data=data)
+                    # Trigger the retry.
+                    continue
+                elif self._rerun_transaction_required(response=response):
+                    # Trigger the retry.
+                    continue
                 return response
             except (ConnectionResetError, ConnectionError) as e:
                 exc = e
-            retried += 1
         raise exc
 
     def _re_authenticate(self):
