@@ -3,4 +3,4 @@ from pytpp.attributes.report_base import ReportBaseAttributes
 
 
 class ReportClientsAttributes(ReportBaseAttributes, metaclass=IterableMeta):
-	__config_class__ = "Report:Clients"
+    __config_class__ = "{key}"

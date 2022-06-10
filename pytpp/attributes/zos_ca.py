@@ -4,8 +4,8 @@ from pytpp.attributes.proxy import ProxyAttributes
 
 
 class zOSCAAttributes(HTTPCABaseAttributes, ProxyAttributes, metaclass=IterableMeta):
-	__config_class__ = "zOS CA"
-	client_port = Attribute('Client Port')
-	client_secure = Attribute('Client Secure')
-	domain = Attribute('Domain')
-	secure = Attribute('Secure')
+    __config_class__ = "{key}"
+    client_port = Attribute('Client Port')
+    client_secure = Attribute('Client Secure')
+    domain = Attribute('Domain')
+    secure = Attribute('Secure')

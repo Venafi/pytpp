@@ -143,12 +143,12 @@ class _Codesign:
     class _AddProjectApprover(API):
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='Codesign/AddProjectApprover')
-            
+
         def post(self, trustee: str):
             body = {
                 'Trustee': trustee
             }
-            
+
             class _Response(APIResponse):
                 def __init__(self, response):
                     super().__init__(response=response)
@@ -167,24 +167,24 @@ class _Codesign:
                 @api_response_property()
                 def success(self) -> bool:
                     return self._from_json(key='Success')
-                    
+
             return _Response(response=self._post(data=body))
-        
 
     class _AddPreApproval(API):
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='Codesign/AddPreApproval')
 
         def post(self, dn: str, comment: str, user: str, hours: int = None, ip_address: str = None,
-                 signing_executable: str = None, single_use: bool = None):
+                 signing_executable: str = None, single_use: bool = None, not_before: str = None, ):
             body = {
-                'Dn': dn,
-                'Comment': comment,
-                'Hours': hours,
-                'IPAddress': ip_address,
+                'Dn'               : dn,
+                'Comment'          : comment,
+                'Hours'            : hours,
+                'IPAddress'        : ip_address,
                 'SigningExecutable': signing_executable,
-                'SingleUse': single_use,
-                'User': user
+                'SingleUse'        : single_use,
+                'User'             : user,
+                'NotBefore'        : not_before
             }
 
             class _Response(APIResponse):
@@ -214,7 +214,7 @@ class _Codesign:
 
         def post(self, application: dict = None, application_collection: dict = None):
             body = {
-                'Application': application,
+                'Application'          : application,
                 'ApplicationCollection': application_collection
             }
 
@@ -321,11 +321,11 @@ class _Codesign:
         def post(self, dn: str, environment_name: str, project: Dict[str, Union[str, int]],
                  template: List[Dict[str, str]], template_dn: str = None):
             body = {
-                'Dn': dn,
+                'Dn'             : dn,
                 'EnvironmentName': environment_name,
-                'Project': project,
-                'Template': template,
-                'TemplateDn': template_dn
+                'Project'        : project,
+                'Template'       : template,
+                'TemplateDn'     : template_dn
             }
 
             class _Response(APIResponse):
@@ -435,9 +435,9 @@ class _Codesign:
 
         def post(self, dn: str, template_type: str, per_user: bool):
             body = {
-                'Dn': dn,
+                'Dn'          : dn,
                 'TemplateType': template_type,
-                'PerUser': per_user
+                'PerUser'     : per_user
             }
 
             class _Response(APIResponse):
@@ -472,9 +472,9 @@ class _Codesign:
 
         def post(self, dn: str = None, guid: str = None, id: int = None):
             body = {
-                'Dn': dn,
+                'Dn'  : dn,
                 'Guid': guid,
-                'Id': id
+                'Id'  : id
             }
 
             class _Response(APIResponse):
@@ -536,9 +536,9 @@ class _Codesign:
 
         def post(self, dn: str = None, guid: str = None, id: int = None):
             body = {
-                'Dn': dn,
+                'Dn'  : dn,
                 'Guid': guid,
-                'Id': id
+                'Id'  : id
             }
 
             class _Response(APIResponse):
@@ -600,10 +600,10 @@ class _Codesign:
 
         def post(self, dn: str = None, force: bool = None, guid: str = None, id: int = None):
             body = {
-                'Dn': dn,
+                'Dn'   : dn,
                 'Force': force,
-                'Guid': guid,
-                'Id': id
+                'Guid' : guid,
+                'Id'   : id
             }
 
             class _Response(APIResponse):
@@ -631,6 +631,7 @@ class _Codesign:
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='Codesign/EnumerateApplications')
 
+        # noinspection ALL
         def post(self, filter: str = None):
             body = {
                 'Filter': filter
@@ -668,6 +669,7 @@ class _Codesign:
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='Codesign/EnumerateApplicationCollections')
 
+        # noinspection ALL
         def post(self, filter: str = None):
             body = {
                 'Filter': filter
@@ -706,6 +708,7 @@ class _Codesign:
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='Codesign/EnumerateProjects')
 
+        # noinspection ALL
         def post(self, filter: str = None, rights: int = None):
             body = {
                 'Filter': filter,
@@ -746,12 +749,12 @@ class _Codesign:
                  application_dn: str = None, application_guid: str = None,
                  collection_dn: str = None, collection_guid: str = None):
             body = {
-                'Application': application,
+                'Application'          : application,
                 'ApplicationCollection': application_collection,
-                'ApplicationDn': application_dn,
-                'ApplicationGuid': application_guid,
-                'CollectionDn': collection_dn,
-                'CollectionGuid': collection_guid
+                'ApplicationDn'        : application_dn,
+                'ApplicationGuid'      : application_guid,
+                'CollectionDn'         : collection_dn,
+                'CollectionGuid'       : collection_guid
             }
 
             class _Response(APIResponse):
@@ -778,13 +781,13 @@ class _Codesign:
                 def success(self) -> bool:
                     return self._from_json(key='Success')
 
-
             return _Response(response=self._post(data=body))
 
     class _EnumerateTemplates(API):
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='Codesign/EnumerateTemplates')
 
+        # noinspection ALL
         def post(self, filter: str = None):
             body = {
                 'Filter': filter
@@ -849,9 +852,9 @@ class _Codesign:
 
         def post(self, dn: str = None, guid: str = None, id: int = None):
             body = {
-                'Dn': dn,
+                'Dn'  : dn,
                 'Guid': guid,
-                'Id': id
+                'Id'  : id
             }
 
             class _Response(APIResponse):
@@ -1007,9 +1010,9 @@ class _Codesign:
 
         def post(self, dn: str = None, guid: str = None, id: int = None):
             body = {
-                'Dn': dn,
+                'Dn'  : dn,
                 'Guid': guid,
-                'Id': id
+                'Id'  : id
             }
 
             class _Response(APIResponse):
@@ -1182,9 +1185,9 @@ class _Codesign:
 
         def post(self, dn: str = None, guid: str = None, id: int = None):
             body = {
-                'Dn': dn,
+                'Dn'  : dn,
                 'Guid': guid,
-                'Id': id
+                'Id'  : id
             }
 
             class _Response(APIResponse):
@@ -1217,9 +1220,9 @@ class _Codesign:
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='Codesign/GetTrusteeRights')
 
-        def post(self, dn: str):
+        def post(self, trustee: str):
             body = {
-                'Dn': dn
+                'Trustee': trustee
             }
 
             class _Response(APIResponse):
@@ -1374,7 +1377,7 @@ class _Codesign:
 
         def post(self, dn: str, new_dn: str):
             body = {
-                'Dn': dn,
+                'Dn'   : dn,
                 'NewDn': new_dn
             }
 
@@ -1436,9 +1439,9 @@ class _Codesign:
 
         def post(self, new_dn: str, dn: str = None, guid: str = None, id: int = None):
             body = {
-                'Dn': dn,
-                'Guid': guid,
-                'Id': id,
+                'Dn'   : dn,
+                'Guid' : guid,
+                'Id'   : id,
                 'NewDn': new_dn
             }
 
@@ -1469,9 +1472,9 @@ class _Codesign:
 
         def post(self, dn: str = None, guid: str = None, id: int = None):
             body = {
-                'Dn': dn,
+                'Dn'  : dn,
                 'Guid': guid,
-                'Id': id
+                'Id'  : id
             }
 
             class _Response(APIResponse):
@@ -1656,9 +1659,9 @@ class _Codesign:
 
         def post(self, project_status: int, dn: str = None, guid: str = None, id: int = None):
             body = {
-                'Dn': dn,
-                'Guid': guid,
-                'Id': id,
+                'Dn'           : dn,
+                'Guid'         : guid,
+                'Id'           : id,
                 'ProjectStatus': project_status,
             }
 
@@ -1689,7 +1692,7 @@ class _Codesign:
 
         def post(self, dn: str, certificate_template: dict, object_naming_pattern: str = None):
             body = {
-                'Dn': dn,
+                'Dn'                 : dn,
                 'CertificateTemplate': certificate_template,
                 'ObjectNamingPattern': object_naming_pattern
             }

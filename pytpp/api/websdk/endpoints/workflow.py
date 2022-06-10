@@ -23,10 +23,10 @@ class _Workflow:
 
             def post(self, object_dn: str, approvers: list, reason: str, workflow_dn: str, user_data: str = None):
                 body = {
-                    'ObjectDN': object_dn,
-                    'Approvers': approvers,
-                    'Reason': reason,
-                    'UserData': user_data,
+                    'ObjectDN'  : object_dn,
+                    'Approvers' : approvers,
+                    'Reason'    : reason,
+                    'UserData'  : user_data,
                     'WorkflowDN': workflow_dn
                 }
 
@@ -166,13 +166,27 @@ class _Workflow:
             def __init__(self, api_obj):
                 super().__init__(api_obj=api_obj, url='/Workflow/Ticket/UpdateStatus')
 
-            def post(self, guid: str, status: str, explanation: str = None, scheduled_start: str = None, scheduled_stop: str = None):
+            def post(self,
+                     guid: str,
+                     status: str,
+                     explanation: str = None,
+                     scheduled_start: str = None,
+                     scheduled_stop: str = None,
+                     approvers: List[str] = None,
+                     object_dn: str = None,
+                     reason: str = None,
+                     user_data=None
+                     ):
                 body = {
-                    'GUID': guid,
-                    'Status': status,
-                    'Explanation': explanation,
+                    'GUID'          : guid,
+                    'Status'        : status,
+                    'Explanation'   : explanation,
                     'ScheduledStart': scheduled_start,
-                    'ScheduledStop': scheduled_stop
+                    'ScheduledStop' : scheduled_stop,
+                    'Approvers'     : approvers,
+                    'ObjectDN'      : object_dn,
+                    'Reason'        : reason,
+                    'UserData'      : user_data
                 }
 
                 class _Response(APIResponse):

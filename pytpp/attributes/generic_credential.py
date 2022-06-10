@@ -3,4 +3,4 @@ from pytpp.attributes.credential_base import CredentialBaseAttributes
 
 
 class GenericCredentialAttributes(CredentialBaseAttributes, metaclass=IterableMeta):
-	__config_class__ = "Generic Credential"
+    __config_class__ = "{key}"

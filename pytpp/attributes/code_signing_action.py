@@ -3,4 +3,4 @@ from pytpp.attributes.flow_action_base import FlowActionBaseAttributes
 
 
 class CodeSigningActionAttributes(FlowActionBaseAttributes, metaclass=IterableMeta):
-	__config_class__ = "Code Signing Action"
+    __config_class__ = "{key}"

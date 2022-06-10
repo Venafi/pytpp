@@ -148,7 +148,7 @@ class CSPEnvironment:
     csp_template: 'CSPTemplate'
     disabled: bool
     dn: str
-    encryption_key_algorithm:'EnvironmentTemplateDetails'
+    encryption_key_algorithm: 'EnvironmentTemplateDetails'
     encryption_key_dn: str
     expiration: int
     guid: str
@@ -261,7 +261,7 @@ class KeyPairTemplate:
     expiration: 'InfoValue'
     guid: str
     id: int
-    key_algorithm:'InfoValue'
+    key_algorithm: 'InfoValue'
     key_container_dn: str
     key_storage_location: 'InfoValue'
     max_uses: int

@@ -3,4 +3,4 @@ from pytpp.attributes.flow_action_config_read_approvers import FlowActionConfigR
 
 
 class FlowActionTeamOwnerApprovalAttributes(FlowActionConfigReadApproversAttributes, metaclass=IterableMeta):
-	__config_class__ = "Flow Action Team Owner Approval"
+    __config_class__ = "{key}"

@@ -52,7 +52,7 @@ class _ProcessingEngines(API):
 
                 class _Response(APIResponse):
                     def __init__(self, response):
-                        super().__init__(response=response) \
+                        super().__init__(response=response)
 
                     @property
                     @api_response_property(return_on_204=str)

@@ -18,6 +18,7 @@ from pytpp.attributes.client_agent_ssh_discovery_work import ClientAgentSSHDisco
 from pytpp.attributes.client_agent_ssh_key_usage_work import ClientAgentSSHKeyUsageWorkAttributes
 from pytpp.attributes.client_agent_ssh_provisioning_work import ClientAgentSSHProvisioningWorkAttributes
 from pytpp.attributes.client_user_certificate_work import ClientUserCertificateWorkAttributes
+
 if TYPE_CHECKING:
     from pytpp.tools.vtypes import Config, Identity
 
@@ -101,8 +102,10 @@ class _ClientWorkBase(FeatureBase):
         response = self._api.websdk.Config.Enumerate.post(object_dn=self._work_base_dn)
 
         if response.result.code != 1:
-            raise InvalidResultCode(code=response.result.code,
-                                                 code_description=response.result.credential_result)
+            raise InvalidResultCode(
+                code=response.result.code,
+                code_description=response.result.credential_result
+            )
         return response.objects
 
 
@@ -135,7 +138,7 @@ class AgentConnectivity(_ClientWorkBase):
             ClientAgentConfigurationWorkAttributes.interval  : randomize_minutes
         }
 
-        if len([x for x in [daily, hourly, days_of_week, days_of_month] if x not in[None, False]]) != 1:
+        if len([x for x in [daily, hourly, days_of_week, days_of_month] if x not in [None, False]]) != 1:
             raise InvalidFormat(
                 "Error in Schedule: must specify one (and only one) of: daily,hourly,days_of_week,days_of_month")
 
@@ -492,7 +495,6 @@ class CertificateDiscovery(_ClientWorkBase):
             get_if_already_exists=get_if_already_exists
         )
 
-
     def unschedule(self, work: 'Union[Config.Object, str]'):
         """
         Removes any scheduling for the client work, but does not delete the client work.
@@ -562,14 +564,14 @@ class CertificateEnrollmentViaESTProtocol(_ClientWorkBase):
                 self._get_prefixed_universal(c) for c in contacts] if contacts else None,
             NetworkDeviceCertificateWorkAttributes.client_certificate_eku_checks_enabled      : validation_type,
             NetworkDeviceCertificateWorkAttributes.revocation_mode                            : revocation_status_check,
-            NetworkDeviceCertificateWorkAttributes.fallback_to_http_auth                      : int(authenticate_only_by_password == False),
+            NetworkDeviceCertificateWorkAttributes.fallback_to_http_auth                      : int(authenticate_only_by_password is False),
             NetworkDeviceCertificateWorkAttributes.revoke_existing_certificate_on_reenrollment: int(revoke_previous_version),
             NetworkDeviceCertificateWorkAttributes.pop_mode                                   : identity_verification
         }
 
         if certificate_origin: work_attributes[NetworkDeviceCertificateWorkAttributes.origin] = certificate_origin
         if certificate_description: work_attributes[NetworkDeviceCertificateWorkAttributes.description] = certificate_description
-        if authentication_credentials: 
+        if authentication_credentials:
             work_attributes[NetworkDeviceCertificateWorkAttributes.authentication_credentials] = self._get_dn(authentication_credentials)
 
         if trusted_certs_and_cas:
@@ -605,7 +607,7 @@ class CertificateInstallation(_ClientWorkBase):
         """
         .. note::
 			Only one of daily, hourly, on_receipt, days_of_week, days_of_month or every_x_minutes can be set.
-			
+
         Schedules the Certificate Installation work to run.
 
         Args:
@@ -772,7 +774,7 @@ class DeviceCertificateCreation(_ClientWorkBase):
         """
         certificate_container_dn = self._get_dn(certificate_container)
         ca_template_dn = self._get_dn(ca_template)
-        
+
         work_attributes = {
             ClientUserCertificateWorkAttributes.created_by               : ClientWorkAttributeValues.DeviceCertificateCreation.CreatedBy.websdk,
             ClientUserCertificateWorkAttributes.certificate_container    : certificate_container_dn,
@@ -850,7 +852,7 @@ class DynamicProvisioning(_ClientWorkBase):
         """
         certificate_container_dn = self._get_dn(certificate_container)
         ca_template_dn = self._get_dn(ca_template)
-        
+
         work_attributes = {
             ServerCertificateWorkAttributes.created_by             : ClientWorkAttributeValues.DynamicProvisioning.CreatedBy.websdk,
             ServerCertificateWorkAttributes.certificate_container  : certificate_container_dn,
@@ -1136,7 +1138,7 @@ class SSHKeyUsage(_ClientWorkBase):
                 raise InvalidFormat(
                     "Error in Schedule: must supply a 'start_time' to use the daily interval")
 
-            attributes[ClientAgentSSHKeyUsageWorkAttributes.start_time] =\
+            attributes[ClientAgentSSHKeyUsageWorkAttributes.start_time] = \
                 datetime.time(start_time % 24).strftime("%I:00 %p")
             attributes[ClientAgentSSHKeyUsageWorkAttributes.schedule_type] = \
                 ClientWorkAttributeValues.SSHKeyUsage.ScheduleType.daily

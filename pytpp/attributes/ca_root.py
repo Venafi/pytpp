@@ -3,4 +3,4 @@ from pytpp.attributes.branch_base import BranchBaseAttributes
 
 
 class CARootAttributes(BranchBaseAttributes, metaclass=IterableMeta):
-	__config_class__ = "CA Root"
+    __config_class__ = "{key}"

@@ -3,5 +3,5 @@ from pytpp.attributes.top import TopAttributes
 
 
 class ClientWorkBaseAttributes(TopAttributes, metaclass=IterableMeta):
-	__config_class__ = "Client Work Base"
-	work_guid = Attribute('Work Guid')
+    __config_class__ = "{key}"
+    work_guid = Attribute('Work Guid')

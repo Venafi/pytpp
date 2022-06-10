@@ -3,5 +3,5 @@ from pytpp.attributes.credential_base import CredentialBaseAttributes
 
 
 class CertificateCredentialAttributes(CredentialBaseAttributes, metaclass=IterableMeta):
-	__config_class__ = "Certificate Credential"
-	certificate = Attribute('Certificate')
+    __config_class__ = "{key}"
+    certificate = Attribute('Certificate')

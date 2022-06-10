@@ -795,6 +795,8 @@ class ApplicationGroupAttributes(_ApplicationGroupAttributesBase, metaclass=_Pro
         hsm_tmp_issued_kpblob = "HSM:TMP Issued KPBlob"
         hsm_token_label = "HSM:Token Label"
         hsm_token_password = "HSM:Token Password"
+
+
 # endregion
 
 # region Certificate
@@ -1120,6 +1122,8 @@ class CertificateClassNames(metaclass=_PropertyMeta):
     x509_root_certificate = "X509 Root Certificate"
     x509_server_certificate = "X509 Server Certificate"
     x509_user_certificate = "X509 User Certificate"
+
+
 # endregion
 
 # region Certificate Authority
@@ -1351,6 +1355,7 @@ class CertificateAuthorityAttributeValues(metaclass=_PropertyMeta):
             sha_384 = 'SHA384'
             sha_512 = 'SHA512'
 
+
 class CertificateAuthorityClassNames(metaclass=_PropertyMeta):
     adaptable_ca = "Adaptable CA"
     comodo_ccm = "Comodo CCM"
@@ -1369,6 +1374,8 @@ class CertificateAuthorityClassNames(metaclass=_PropertyMeta):
     verizon_ca = "Verizon CA"
     xolphin_ca = "Xolphin CA"
     zos_ca = "zOS CA"
+
+
 # endregion
 
 # region Certificate Trust Store
@@ -1382,6 +1389,8 @@ class CertificateTrustStoreClassNames(metaclass=_PropertyMeta):
     palo_alto_network_fw_trust_store = "Palo Alto Network FW Trust Store"
     pem_trust_store = "PEM Trust Store"
     pkcs_12_trust_store = "PKCS#12 Trust Store"
+
+
 # endregion
 
 # region Client Group
@@ -1424,6 +1433,8 @@ class ClientGroupsAttributeValues(metaclass=_PropertyMeta):
 
 class ClientGroupsClassNames(metaclass=_PropertyMeta):
     group = "Client Group"
+
+
 # endregion
 
 # region Client Work
@@ -2962,7 +2973,9 @@ class ClientWorkAttributeValues(metaclass=_PropertyMeta):
             websdk = "Web SDK"
 
         class DefaultValues(metaclass=_PropertyMeta):
-            all_values = {'baslh': 'bash'}
+            all_values = {
+                'baslh': 'bash'
+            }
             naming_pattern = '$Identity[$Client.Identity$, "userPrincipalName"]$'
             common_name = '$Identity[$Client.Identity$,"cn"]$'
             organization = '$Identity[$Client.Identity$,"company"]$'
@@ -2989,11 +3002,15 @@ class ClientWorkClassNames(metaclass=_PropertyMeta):
     ssh_key_usage = 'Client Agent SSH Key Usage Work'
     ssh_remediation = 'Client Agent SSH Provisioning Work'
     user_certificate_creation = 'Client User Certificate Work'
+
+
 # endregion
 
 # region Cloud Instance Monitoring
 class CloudInstanceMonitoringClassNames(metaclass=_PropertyMeta):
     aws_ec2_instance_monitor = 'AWS EC2 Instance Monitor'
+
+
 # endregion
 
 # region Credential
@@ -3067,6 +3084,8 @@ class CredentialClassNames(metaclass=_PropertyMeta):
     password_credential = "Password Credential"
     private_key_credential = "Private Key Credential"
     username_password_credential = "Username Password Credential"
+
+
 # endregion
 
 # region Custom Field
@@ -3124,6 +3143,8 @@ class CustomFieldAttributeValues(metaclass=_PropertyMeta):
         list = 2
         date_time = 4
         identity = 5
+
+
 # endregion
 
 # region Device
@@ -3271,6 +3292,8 @@ class JumpServerAttributeValues(metaclass=_PropertyMeta):
 class DevicesClassNames(metaclass=_PropertyMeta):
     device = 'Device'
     jump_server = 'Jump Server'
+
+
 # endregion
 
 # region Discovery
@@ -3358,6 +3381,8 @@ class DiscoveryAttributeValues(metaclass=_PropertyMeta):
 
 class DiscoveryClassNames(metaclass=_PropertyMeta):
     network_discovery = 'Discovery'
+
+
 # endregion
 
 # region Folder
@@ -3390,6 +3415,8 @@ class FolderAttributes(metaclass=_PropertyMeta):
     scep_signing_ra_certificate = "Scep Signing RA Certificate"
     workflow = "Workflow"
     workflow_block = "Workflow Block"
+
+
 # endregion
 
 # region Identity
@@ -3403,6 +3430,8 @@ class IdentityAttributeValues(metaclass=_PropertyMeta):
         user = 1
         security_group = 2
         distribution_group = 8
+
+
 # endregion
 
 # region Placement Rules
@@ -3448,6 +3477,8 @@ class PlacementRulesAttributeValues(metaclass=_PropertyMeta):
     class RuleType(metaclass=_PropertyMeta):
         certificate = 'X509 Certificate'
         ssh = 'SSH'
+
+
 # endregion Placement Rules
 
 # region Platforms
@@ -3761,6 +3792,8 @@ class PlatformsAttributes(_PlatformsAttributes, metaclass=_PropertyMeta):
         webadmin_fqdn = "WebAdmin FQDN"
         websdk_fqdn = "WebSDK FQDN"
         zone_base = "Zone Base"
+
+
 # endregion Platforms
 
 # region Workflow

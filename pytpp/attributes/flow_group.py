@@ -3,5 +3,5 @@ from pytpp.attributes.top import TopAttributes
 
 
 class FlowGroupAttributes(TopAttributes, metaclass=IterableMeta):
-	__config_class__ = "Flow Group"
-	product_code_description = Attribute('Product Code Description', min_version='19.4')
+    __config_class__ = "{key}"
+    product_code_description = Attribute('Product Code Description', min_version='19.4')

@@ -6,5 +6,5 @@ from pytpp.attributes.monitoring_base import MonitoringBaseAttributes
 
 
 class SSHKeyAttributes(AgentBaseAttributes, DriverBaseAttributes, LegacyKeyBaseAttributes, MonitoringBaseAttributes, metaclass=IterableMeta):
-	__config_class__ = "SSH Key"
-	public_key_vault_id = Attribute('Public Key Vault Id')
+    __config_class__ = "{key}"
+    public_key_vault_id = Attribute('Public Key Vault Id')

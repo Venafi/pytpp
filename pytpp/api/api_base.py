@@ -3,7 +3,7 @@ import re
 import json
 from pytpp.api.session import Session
 from requests import Response, HTTPError
-from pytpp.tools.logger import logger, LogTags
+from pytpp.tools.logger import api_logger, json_pickler
 
 
 def api_response_property(return_on_204: type = None):
@@ -39,6 +39,7 @@ def api_response_property(return_on_204: type = None):
     Returns: Key of response content returned by TPP.
 
     """
+
     def pre_validation(func):
         def wrap(self: APIResponse, *args, **kwargs):
             if not self._validated:
@@ -49,7 +50,9 @@ def api_response_property(return_on_204: type = None):
                 else:
                     return return_on_204
             return func(self, *args, **kwargs)
+
         return wrap
+
     return pre_validation
 
 
@@ -234,67 +237,60 @@ class API:
         """
         The current API token expired and the session needs to be re-authenticated.
         """
-        logger.log(
-            msg=f'{self._api_obj.__class__.__name__} API authentication token expired. Re-authenticating...',
-            log_tag=LogTags.api
+        api_logger.debug(
+            f'{self._api_obj.__class__.__name__} API authentication token expired. Re-authenticating...',
+            stacklevel=2
         )
         self._api_obj.re_authenticate()
 
-    def _log_api_deprecated_warning(self, alternate_api: str = None, num_prev_callers=2):
+    def _log_api_deprecated_warning(self, alternate_api: str = None):
         msg = f'API DEPRECATION WARNING: {self._url} is no longer supported by Venafi.'
         if alternate_api:
             msg += f'\nUse {alternate_api} instead.'
-        logger.warning(
-            msg=msg,
-            num_prev_callers=num_prev_callers
-        )
+        api_logger.warning(msg, stacklevel=2)
 
-    def _log_rest_call(self, method: str, data: dict = None, num_prev_callers: int = 3):
+    def _log_rest_call(self, method: str, data: dict = None):
         """
         Logs the URL and any additional data. This enforces consistency in logging across all API calls.
         """
         if data:
-            payload = logger._jsonpickle.dumps(data)
-            logger.log(
-                msg=f'{method}\nURL: {self._url}\nBODY: {payload}',
-                log_tag=LogTags.api,
-                num_prev_callers=num_prev_callers
+            payload = json_pickler.dumps(data)
+            api_logger.debug(
+                f'{method}\nURL: {self._url}\nBODY: {payload}',
+                stacklevel=2
             )
         else:
-            logger.log(
+            api_logger.debug(
                 msg=f'{method}\nURL: {self._url}',
-                log_tag=LogTags.api,
-                num_prev_callers=3
+                stacklevel=2
             )
 
-    def _log_response(self, response: Response, num_prev_callers: int = 3):
+    def _log_response(self, response: Response):
         """
         Logs the URL, response code, and the content returned by TPP.
         This enforces consistency in logging across all API calls.
         """
         try:
-            pretty_json = logger._jsonpickle.dumps(response.json())
+            pretty_json = json_pickler.dumps(response.json())
         except json.JSONDecodeError:
             pretty_json = response.text or response.reason or 'No Content'
         except:
             pretty_json = 'No Content'
 
-        logger.log(
+        api_logger.debug(
             msg=f'URL: "{self._url}"\nRESPONSE CODE: {response.status_code}\nCONTENT: {pretty_json}',
-            log_tag=LogTags.api,
-            num_prev_callers=num_prev_callers
+            stacklevel=2
         )
+
 
 class APIResponse:
     def __init__(self, response: Response):
-        """
-        """
         self._api_response = response
         self._decoded_api_response = None
         self._validated = False
 
     @property
-    def api_response(self):
+    def api_response(self) -> Response:
         return self._api_response
 
     @api_response.setter
@@ -374,10 +370,11 @@ class APIResponse:
             self.api_response.raise_for_status()
         except HTTPError as err:
             error_msg = self.api_response.text or self.api_response.reason or 'No error message found.'
-            body = logger._jsonpickle.dumps(
+            body = json_pickler.dumps(
                 json.loads(err.request.body)
             ) if err.request.body else ''
-            raise InvalidResponseError('\n'.join(err.args) + f"\nERROR: {error_msg}\nCONTENT: {body}")
+            error_msg = '\n'.join(err.args) + f"\nERROR: {error_msg}\nCONTENT: {body}"
+            raise InvalidResponseError(error_msg)
 
 
 class InvalidResponseError(Exception):

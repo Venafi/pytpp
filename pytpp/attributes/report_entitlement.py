@@ -3,6 +3,6 @@ from pytpp.attributes.report_base import ReportBaseAttributes
 
 
 class ReportEntitlementAttributes(ReportBaseAttributes, metaclass=IterableMeta):
-	__config_class__ = "Report:Entitlement"
-	options = Attribute('Options')
-	policydn = Attribute('PolicyDN', min_version='16.1')
+    __config_class__ = "{key}"
+    options = Attribute('Options')
+    policydn = Attribute('PolicyDN', min_version='16.1')

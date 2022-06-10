@@ -3,4 +3,4 @@ from pytpp.attributes.top import TopAttributes
 
 
 class ClientGroupRootAttributes(TopAttributes, metaclass=IterableMeta):
-	__config_class__ = "Client Group Root"
+    __config_class__ = "{key}"

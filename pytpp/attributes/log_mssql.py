@@ -3,4 +3,4 @@ from pytpp.attributes.log_sql_channel import LogSQLChannelAttributes
 
 
 class LogMSSQLAttributes(LogSQLChannelAttributes, metaclass=IterableMeta):
-	__config_class__ = "Log MSSQL"
+    __config_class__ = "{key}"

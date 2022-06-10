@@ -3,4 +3,4 @@ from pytpp.attributes.top import TopAttributes
 
 
 class SSHAutomaticRotationTriggerAttributes(TopAttributes, metaclass=IterableMeta):
-	__config_class__ = "SSH Automatic Rotation Trigger"
+    __config_class__ = "{key}"

@@ -55,7 +55,7 @@ class _SecretStore:
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='/SecretStore/Associate')
 
-        def post(self, name: str, vault_id: int, date_value: int = None, int_value: int = None, string_value: str = None):
+        def post(self, name: str, vault_id: int, date_value: str = None, int_value: int = None, string_value: str = None):
             body = {
                 'Name': name,
                 'VaultID': vault_id,
@@ -170,7 +170,7 @@ class _SecretStore:
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='/SecretStore/LookupByAssociation')
 
-        def post(self, name: str, int_value: int = None ,string_value: str = None, date_value: int = None):
+        def post(self, name: str, int_value: int = None, string_value: str = None, date_value: int = None):
             body = {
                 'Name': name,
                 'IntValue': int_value,

@@ -3,4 +3,4 @@ from pytpp.attributes.service_module import ServiceModuleAttributes
 
 
 class CAImportManagerAttributes(ServiceModuleAttributes, metaclass=IterableMeta):
-	__config_class__ = "CA Import Manager"
+    __config_class__ = "{key}"

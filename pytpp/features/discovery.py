@@ -252,7 +252,7 @@ class NetworkDiscovery(FeatureBase):
         response.assert_valid_response()
 
         with self._Timeout(timeout=timeout) as to:
-            while not to.is_expired():
+            while not to.is_expired(poll=0.5):
                 if self.is_in_progress(job=job):
                     return
 

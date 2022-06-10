@@ -3,4 +3,4 @@ from pytpp.attributes.top import TopAttributes
 
 
 class RemoteAccessScopeAttributes(TopAttributes, metaclass=IterableMeta):
-	__config_class__ = "Remote Access Scope"
+    __config_class__ = "{key}"

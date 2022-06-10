@@ -143,7 +143,7 @@ class SelfSignedCA(_CertificateAuthorityBase):
                 ],
             })
         if valid_years or valid_days:
-            validity_period= (365 * (valid_years or 0)) + (valid_days or 0)
+            validity_period = (365 * (valid_years or 0)) + (valid_days or 0)
             ca_attrs.update({
                 SelfSignedCAAttributes.validity_period: validity_period
             })

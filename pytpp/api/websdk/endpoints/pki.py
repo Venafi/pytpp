@@ -36,17 +36,17 @@ class _PKI:
                      create_certificate_authority: bool = True, create_pki_role: bool = False, crl_address: str = None,
                      installation: dict = None, key_algorithm: str = None, key_bit_size: str = None, ocsp_address: str = None):
                 body = {
-                    'Certificate': certificate,
+                    'Certificate'               : certificate,
                     'CreateCertificateAuthority': create_certificate_authority,
-                    'CreatePKIRole': create_pki_role,
-                    'CRLAddress': crl_address,
-                    'FolderDn': folder_dn,
-                    'Installation': installation,
-                    'KeyAlgorithm': key_algorithm,
-                    'KeyBitSize': key_bit_size,
-                    'OCSPAddress': ocsp_address,
-                    'PkiPath': pki_path,
-                    'Roles': roles
+                    'CreatePKIRole'             : create_pki_role,
+                    'CRLAddress'                : crl_address,
+                    'FolderDn'                  : folder_dn,
+                    'Installation'              : installation,
+                    'KeyAlgorithm'              : key_algorithm,
+                    'KeyBitSize'                : key_bit_size,
+                    'OCSPAddress'               : ocsp_address,
+                    'PkiPath'                   : pki_path,
+                    'Roles'                     : roles
                 }
 
                 class _Response(APIResponse):
@@ -161,17 +161,17 @@ class _PKI:
                         create_certificate_authority: bool = True, create_pki_role: bool = False, crl_address: str = None,
                         installation: dict = None, key_algorithm: str = None, key_bit_size: str = None, ocsp_address: str = None):
                     body = {
-                        'Certificate': certificate,
+                        'Certificate'               : certificate,
                         'CreateCertificateAuthority': create_certificate_authority,
-                        'CreatePKIRole': create_pki_role,
-                        'CRLAddress': crl_address,
-                        'FolderDn': folder_dn,
-                        'Installation': installation,
-                        'KeyAlgorithm': key_algorithm,
-                        'KeyBitSize': key_bit_size,
-                        'OCSPAddress': ocsp_address,
-                        'PkiPath': pki_path,
-                        'Roles': roles
+                        'CreatePKIRole'             : create_pki_role,
+                        'CRLAddress'                : crl_address,
+                        'FolderDn'                  : folder_dn,
+                        'Installation'              : installation,
+                        'KeyAlgorithm'              : key_algorithm,
+                        'KeyBitSize'                : key_bit_size,
+                        'OCSPAddress'               : ocsp_address,
+                        'PkiPath'                   : pki_path,
+                        'Roles'                     : roles
                     }
 
                     class _Response(APIResponse):
@@ -201,7 +201,7 @@ class _PKI:
                     return _Response(response=self._put(data=body))
 
                 class _Renew(API):
-                    def __init__(self, guid:str, api_obj):
+                    def __init__(self, guid: str, api_obj):
                         super().__init__(api_obj=api_obj, url=f'HashiCorp/{guid}/Renew')
 
                     def post(self):
@@ -236,17 +236,17 @@ class _PKI:
                      organization: str = None, organizational_units: List[str] = None, state: str = None,
                      whitelisted_domains: List[str] = None):
                 body = {
-                    'City': city,
-                    'Country': country,
-                    'EnhancedKeyUsage': enhanced_key_usage,
-                    'FolderDn': folder_dn,
-                    'KeyAlgorithm': key_algorithm,
-                    'KeyBitSize': key_bit_size,
-                    'Organization': organization,
+                    'City'               : city,
+                    'Country'            : country,
+                    'EnhancedKeyUsage'   : enhanced_key_usage,
+                    'FolderDn'           : folder_dn,
+                    'KeyAlgorithm'       : key_algorithm,
+                    'KeyBitSize'         : key_bit_size,
+                    'Organization'       : organization,
                     'OrganizationalUnits': organizational_units,
-                    'RoleName': role_name,
-                    'State': state,
-                    'WhitelistedDomains': whitelisted_domains
+                    'RoleName'           : role_name,
+                    'State'              : state,
+                    'WhitelistedDomains' : whitelisted_domains
                 }
 
                 class _Response(APIResponse):
@@ -356,15 +356,15 @@ class _PKI:
                         organization: str = None, organizational_units: List[str] = None, state: str = None,
                         whitelisted_domains: List[str] = None):
                     body = {
-                        'City': city,
-                        'Country': country,
-                        'EnhancedKeyUsage': enhanced_key_usage,
-                        'KeyAlgorithm': key_algorithm,
-                        'KeyBitSize': key_bit_size,
-                        'Organization': organization,
+                        'City'               : city,
+                        'Country'            : country,
+                        'EnhancedKeyUsage'   : enhanced_key_usage,
+                        'KeyAlgorithm'       : key_algorithm,
+                        'KeyBitSize'         : key_bit_size,
+                        'Organization'       : organization,
                         'OrganizationalUnits': organizational_units,
-                        'State': state,
-                        'WhitelistedDomains': whitelisted_domains
+                        'State'              : state,
+                        'WhitelistedDomains' : whitelisted_domains
                     }
 
                     class _Response(APIResponse):

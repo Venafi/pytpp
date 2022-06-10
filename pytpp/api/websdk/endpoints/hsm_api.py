@@ -18,21 +18,21 @@ class _HSMAPI:
                  password: str = None, username: str = None, verify_data: bool = None,
                  wrapping_key_id: int = None):
             body = {
-                'ClientInfo': client_info,
-                'ClientMechanism': client_mechanism,
-                'Data': data,
-                'Justification': justification,
-                'KeyContext': key_context,
+                'ClientInfo'      : client_info,
+                'ClientMechanism' : client_mechanism,
+                'Data'            : data,
+                'Justification'   : justification,
+                'KeyContext'      : key_context,
                 'KeyContextToWrap': key_context_to_wrap,
-                'KeyId': key_id,
-                'KeyIdToWrap': key_id_to_wrap,
-                'Mechanism': mechanism,
-                'Parameter': parameter,
-                'Password': password,
-                'ProcessInfo': process_info,
-                'Username': username,
-                'VerifyData': verify_data,
-                'WrappingKeyId': wrapping_key_id
+                'KeyId'           : key_id,
+                'KeyIdToWrap'     : key_id_to_wrap,
+                'Mechanism'       : mechanism,
+                'Parameter'       : parameter,
+                'Password'        : password,
+                'ProcessInfo'     : process_info,
+                'Username'        : username,
+                'VerifyData'      : verify_data,
+                'WrappingKeyId'   : wrapping_key_id
             }
 
             class _Response(APIResponse):
@@ -64,11 +64,11 @@ class _HSMAPI:
         def post(self, client_info: dict, process_info: dict, key_id: str,
                  header: str, payload: str):
             body = {
-                'ClientInfo': client_info,
+                'ClientInfo' : client_info,
                 'ProcessInfo': process_info,
-                'KeyId': key_id,
-                'Header': header,
-                'Payload': payload
+                'KeyId'      : key_id,
+                'Header'     : header,
+                'Payload'    : payload
             }
 
             class _Response(APIResponse):
@@ -94,7 +94,7 @@ class _HSMAPI:
 
         def post(self, key_id: str, key_context: str = None):
             body = {
-                'KeyId':key_id,
+                'KeyId'     : key_id,
                 'KeyContext': key_context
             }
 

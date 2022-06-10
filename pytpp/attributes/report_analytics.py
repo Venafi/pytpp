@@ -3,5 +3,5 @@ from pytpp.attributes.report_base import ReportBaseAttributes
 
 
 class ReportAnalyticsAttributes(ReportBaseAttributes, metaclass=IterableMeta):
-	__config_class__ = "Report:Analytics"
-	options = Attribute('Options', min_version='17.1')
+    __config_class__ = "{key}"
+    options = Attribute('Options', min_version='17.1')

@@ -4,6 +4,7 @@ from pytpp.properties.config import (
     PlacementRulesAttributeValues, ClientWorkAttributeValues, JumpServerAttributeValues
 )
 
+
 class AttributeValues:
     Application = ApplicationAttributeValues
     Certificate = CertificateAttributeValues

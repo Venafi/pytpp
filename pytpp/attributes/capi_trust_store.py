@@ -3,6 +3,6 @@ from pytpp.attributes.certificate_trust_store_base import CertificateTrustStoreB
 
 
 class CAPITrustStoreAttributes(CertificateTrustStoreBaseAttributes, metaclass=IterableMeta):
-	__config_class__ = "CAPI Trust Store"
-	log_windows_events = Attribute('Log Windows Events')
-	trust_store_name = Attribute('Trust Store Name', min_version='20.1')
+    __config_class__ = "{key}"
+    log_windows_events = Attribute('Log Windows Events')
+    trust_store_name = Attribute('Trust Store Name', min_version='20.1')

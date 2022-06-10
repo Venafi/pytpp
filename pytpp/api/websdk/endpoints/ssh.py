@@ -8,7 +8,6 @@ class _SSH:
         self.AddAuthorizedKey = self._AddAuthorizedKey(api_obj=api_obj)
         self.AddHostPrivateKey = self._AddHostPrivateKey(api_obj=api_obj)
         self.AddKnownHostKey = self._AddKnownHostKey(api_obj=api_obj)
-        self.AddSelfServiceKey = self._AddSelfServiceKey(api_obj=api_obj)
         self.AddSelfServiceAuthorizedKey = self._AddSelfServiceAuthorizedKey(api_obj=api_obj)
         self.AddSelfServicePrivateKey = self._AddSelfServicePrivateKey(api_obj=api_obj)
         self.AddUserPrivateKey = self._AddUserPrivateKey(api_obj=api_obj)
@@ -21,7 +20,7 @@ class _SSH:
         self.Devices = self._Devices(api_obj=api_obj)
         self.EditKeyOptions = self._EditKeyOptions(api_obj=api_obj)
         self.EditSelfServiceAuthorizedKey = self._EditSelfServiceAuthorizedKey(api_obj=api_obj)
-        self.ExportSelfServiceKey = self._ExportSelfServiceKey(api_obj=api_obj)
+        self.ExportSelfServiceAuthorizedKey = self._ExportSelfServiceAuthorizedKey(api_obj=api_obj)
         self.ExportSelfServicePrivateKey = self._ExportSelfServicePrivateKey(api_obj=api_obj)
         self.ImportAuthorizedKey = self._ImportAuthorizedKey(api_obj=api_obj)
         self.ImportKeyUsageData = self._ImportKeyUsageData(api_obj=api_obj)
@@ -44,6 +43,7 @@ class _SSH:
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='/SSH/AddAuthorizedKey')
 
+        # noinspection ALL
         def post(self, device_guid: str, filepath: str, keyset_id: str, username: str, allowed_source_restriction: list = None,
                  denied_source_restriction: list = None, forced_command: str = None, format: str = None, options: list = None):
             body = {
@@ -78,12 +78,14 @@ class _SSH:
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='/SSH/AddHostPrivateKey')
 
-        def post(self, device_guid: str, filepath: str, username: str, format: str = None):
+        # noinspection ALL
+        def post(self, device_guid: str, filepath: str, username: str, format: str = None, policy_dn: str = None):
             body = {
                 'DeviceGuid': device_guid,
                 'Filepath': filepath,
                 'Format': format,
-                'Username': username
+                'Username': username,
+                'PolicyDN': policy_dn
             }
 
             class _Response(APIResponse):
@@ -111,6 +113,7 @@ class _SSH:
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='/SSH/AddKnownHostKey')
 
+        # noinspection ALL
         def post(self, device_guid: str, filepath: str, keyset_id: str, username: str, format: str = None):
             body = {
                 'DeviceGuid': device_guid,
@@ -128,46 +131,6 @@ class _SSH:
                 @api_response_property()
                 def key_id(self) -> str:
                     return self._from_json('KeyId')
-
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json('Response'))
-
-            return _Response(response=self._post(data=body))
-
-    class _AddSelfServiceKey(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/AddSelfServiceKey')
-
-        def post(self, folder_id: str, location: str, notes: str, owner: str, contact_email: str = None, keyset_id: str = None):
-            body = {
-                'ContactEmail': contact_email,
-                'FolderId': folder_id,
-                'KeysetId': keyset_id,
-                'Location': location,
-                'Notes': notes,
-                'Owner': owner
-            }
-
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
-
-                @property
-                @api_response_property()
-                def key_id(self) -> str:
-                    return self._from_json('KeyId')
-
-                @property
-                @api_response_property()
-                def keyset_id(self) -> str:
-                    return self._from_json('KeysetId')
-
-                @property
-                @api_response_property()
-                def notes(self) -> str:
-                    return self._from_json('Notes')
 
                 @property
                 @api_response_property()
@@ -260,14 +223,17 @@ class _SSH:
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='/SSH/AddUserPrivateKey')
 
-        def post(self, device_guid: str, filepath: str, username: str, format: str = None, keyset_id: str = None, passphrase: str = None):
+        # noinspection ALL
+        def post(self, device_guid: str, filepath: str, username: str, format: str = None, keyset_id: str = None,
+                 passphrase: str = None, policy_dn: str = None):
             body = {
                 'DeviceGuid': device_guid,
                 'Filepath': filepath,
                 'Format': format,
                 'KeysetId': keyset_id,
                 'Passphrase': passphrase,
-                'Username': username
+                'Username': username,
+                'PolicyDN': policy_dn
             }
 
             class _Response(APIResponse):
@@ -435,21 +401,18 @@ class _SSH:
 
             return _Response(response=self._post(data=body))
 
-    class _EditSelfServiceAuthorizedKey(API):
+    class _EditKeyOptions(API):
         def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/EditSelfServiceAuthorizedKey')
+            super().__init__(api_obj=api_obj, url='/SSH/EditKeyOptions')
 
-        def post(self, key_id: str, allowed_source_restriction: list = None, comments: str = None, denied_source_restriction: list = None,
-                 forced_command: str = None, location: str = None, notes: str = None, options: list = None):
+        def post(self, key_id: str, allowed_source_restriction: list = None, denied_source_restriction: list = None,
+                 forced_command: str = None, options: list = None):
             body = {
                 'AllowedSourceRestriction': allowed_source_restriction,
-                'Comments': comments,
-                'DeniedSourceRestriction': denied_source_restriction,
-                'ForcedCommand': forced_command,
-                'KeyId': key_id,
-                'Location': location,
-                'Notes': notes,
-                'Options': options
+                'DeniedSourceRestriction' : denied_source_restriction,
+                'ForcedCommand'           : forced_command,
+                'KeyId'                   : key_id,
+                'Options'                 : options
             }
 
             class _Response(APIResponse):
@@ -463,15 +426,43 @@ class _SSH:
 
             return _Response(response=self._post(data=body))
 
-    class _ExportSelfServiceKey(API):
+    class _EditSelfServiceAuthorizedKey(API):
         def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/ExportSelfServiceKey')
+            super().__init__(api_obj=api_obj, url='/SSH/EditSelfServiceAuthorizedKey')
 
-        def post(self, key_id: str, format: str = None, passphrase: str = None):
+        def post(self, key_id: str, allowed_source_restriction: list = None,
+                 denied_source_restriction: list = None, forced_command: str = None,
+                 location: str = None, notes: str = None, options: list = None):
+            body = {
+                'AllowedSourceRestriction': allowed_source_restriction,
+                'DeniedSourceRestriction' : denied_source_restriction,
+                'ForcedCommand'           : forced_command,
+                'KeyId'                   : key_id,
+                'Location'                : location,
+                'Notes'                   : notes,
+                'Options'                 : options
+            }
+
+            class _Response(APIResponse):
+                def __init__(self, response):
+                    super().__init__(response=response)
+
+                @property
+                @api_response_property()
+                def response(self):
+                    return SSH.Response(self._from_json('Response'))
+
+            return _Response(response=self._post(data=body))
+
+    class _ExportSelfServiceAuthorizedKey(API):
+        def __init__(self, api_obj):
+            super().__init__(api_obj=api_obj, url='/SSH/ExportSelfServiceAuthorizedKey')
+
+        # noinspection ALL
+        def post(self, key_id: str, format: str = None):
             body = {
                 'KeyId': key_id,
-                'Format': format,
-                'Passphrase': passphrase
+                'Format': format
             }
 
             class _Response(APIResponse):
@@ -494,6 +485,7 @@ class _SSH:
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='/SSH/ExportSelfServicePrivateKey')
 
+        # noinspection ALL
         def post(self, key_id: str, format: str = None, passphrase: str = None):
             body = {
                 'KeyId': key_id,
@@ -531,6 +523,7 @@ class _SSH:
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='/SSH/ImportAuthorizedKey')
 
+        # noinspection ALL
         def post(self, device_guid: str, filepath: str, format: str, key_content_base_64: str, username: str):
             body = {
                 'DeviceGuid': device_guid,
@@ -580,7 +573,9 @@ class _SSH:
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='/SSH/ImportPrivateKey')
 
-        def post(self, device_guid: str, filepath: str, format: str, key_content_base_64: str, username: str, passphrase: str = None):
+        # noinspection ALL
+        def post(self, device_guid: str, filepath: str, format: str, key_content_base_64: str, username: str,
+                 passphrase: str = None):
             body = {
                 'DeviceGuid': device_guid,
                 'Filepath': filepath,
@@ -603,31 +598,6 @@ class _SSH:
                 @api_response_property()
                 def response(self):
                     return SSH.Response(self._from_json('SshWebResponse'))
-
-            return _Response(response=self._post(data=body))
-
-    class _EditKeyOptions(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/EditKeyOptions')
-
-        def post(self, key_id: str, allowed_source_restriction: list = None, denied_source_restriction: list = None,
-                 forced_command: str = None, options: list = None):
-            body = {
-                'AllowedSourceRestriction': allowed_source_restriction,
-                'DeniedSourceRestriction': denied_source_restriction,
-                'ForcedCommand': forced_command,
-                'KeyId': key_id,
-                'Options': options
-            }
-
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
-
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json())
 
             return _Response(response=self._post(data=body))
 
@@ -760,10 +730,9 @@ class _SSH:
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='/SSH/KeyUsage')
 
-        def post(self, ssh_key_usage_filter: list, load_key_data: bool = None, page_size: int = None, offset: int = None):
+        def post(self, ssh_key_usage_filter: list, page_size: int = None, offset: int = None):
             body = {
                 'SshKeyUsageFilter': ssh_key_usage_filter,
-                'LoadKeyData': load_key_data,
                 'PageSize': page_size,
                 'Offset': offset
             }
@@ -783,9 +752,10 @@ class _SSH:
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='/SSH/MoveKeysetsToPolicy')
 
-        def post(self, keyset_ids: list, policy_path: str):
+        def post(self, keyset_ids: list, policy_dn: str = None, policy_path: str = None):
             body = {
                 'KeysetIds': keyset_ids,
+                'PolicyDN': policy_dn,
                 'PolicyPath': policy_path
             }
 
@@ -885,10 +855,11 @@ class _SSH:
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='/SSH/Rotate')
 
-        def post(self, allow_skip_on_rotation: bool, keyset_id: str):
+        def post(self, keyset_id: str, options: int = None, allow_skip_on_rotation: bool = None):
             body = {
+                'KeysetId': keyset_id,
                 'AllowSkipOnRotation': allow_skip_on_rotation,
-                'KeysetId': keyset_id
+                'Options': options
             }
 
             class _Response(APIResponse):

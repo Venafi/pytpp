@@ -240,7 +240,7 @@ class _ApplicationBase(FeatureBase):
 
         stage = self._get_stage(application=application)
         with self._Timeout(timeout=timeout) as to:
-            while not to.is_expired():
+            while not to.is_expired(poll=0.5):
                 if self._is_in_error(application=application):
                     break
                 elif not stage:

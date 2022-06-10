@@ -4,4 +4,4 @@ from pytpp.attributes.report_filter_base import ReportFilterBaseAttributes
 
 
 class ReportDemographicsWildcardAttributes(ReportBaseAttributes, ReportFilterBaseAttributes, metaclass=IterableMeta):
-	__config_class__ = "Report:Demographics Wildcard"
+    __config_class__ = "{key}"

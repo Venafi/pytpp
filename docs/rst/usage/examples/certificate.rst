@@ -39,6 +39,47 @@ Creating & Deleting Certiifcate Objects
     #### DELETE ####
     features.certificate.delete(certificate=certificate)
 
+Listing Certificates
+--------------------
+
+.. note::
+    By default, PyTPP uses a thread pool to list certificates using the GET Certificates WebSDK API.
+    The max amount of workers is configurable using the ``concurrency`` parameter. The default is 16.
+
+.. code-block:: python
+
+    from pytpp import Authenticate, Features
+    from datetime import datetime, timedelta
+
+    api = Authenticate(...)
+    features = Features(api)
+
+    #### GET ALL CERTIFICATES UNDER A GIVEN FOLDER ####
+    certificates = features.certificate.list(parent=r'|CertDn|', recursive=True)
+
+    #### GET ALL CERTIFICATES EXPIRING WITHIN THE NEXT 45 DAYS ####
+    certificates = features.certificate.list(
+        valid_to_less=datetime.today() + timedelta(days=45)
+    )
+
+    #### MODIFY CONCURRENCY AND LIMITS ####
+    certificates = features.certificate.list(
+        parent=r'|CertDn|',
+        recursive=True,
+        limit=500,      # Each thread receives a maximum of 500 results.
+        concurrency=32  # Default is 16 thread workers.
+    )
+
+    #### ONLY RETURN A LIMITED SET ####
+    # This may not return all certificates under the parent, just the top 100 found.
+    certificates = features.certificate.list(
+        parent=r'|CertDn|',
+        recursive=True,
+        limit=100,          # Return the top 100 results
+        offset=0,           # Start from the first certificate instance.
+    )
+
+
 Renewing & Downloading A Certificate
 ------------------------------------
 
@@ -52,20 +93,15 @@ Renewing & Downloading A Certificate
     certificate = features.certificate.get(certificate_dn=r'|CertDn|\|CertName|')
 
     #### RENEW IT ####
-    current_thumbprint = features.certificate.renew(certificate=certificate)
+    features.certificate.renew(certificate=certificate)
 
     #### WAIT FOR IT TO RENEW ####
-    features.certificate.wait_for_enrollment_to_complete(
-        certificate=certificate,
-        current_thumbprint=current_thumbprint
-    )
-
-    #### DOWNLOAD IT ####
-    downloaded_cert = features.certificate.download(
+    features.certificate.download(
         format=AttributeValues.Certificate.Format.base64,
         certificate=certificate,
         include_chain=True,
-        root_first_order=True
+        root_first_order=True,
+        timeout=60,  # Try downloading for 60 seconds (default) before giving up.
     )
 
 Revoking A Certificate
@@ -104,8 +140,13 @@ Resetting & Retrying Certificate Requests
     certificate_dn = r'|CertDn|\|CertName|'
 
     try:
-        current_thumbprint = features.certificate.renew(certificate=certificate_dn)
-        features.certificate.wait_for_enrollment_to_complete(certificate=certificate_dn, current_thumbprint=current_thumbprint)
+        features.certificate.renew(certificate=certificate_dn)
+        features.certificate.download(
+            format=AttributeValues.Certificate.Format.base64,
+            certificate=certificate,
+            include_chain=True,
+            root_first_order=True
+        )
     except:
         features.certificate.retry_from_current_stage(certificate=certificate_dn)
         # ---- OR ----
@@ -200,14 +241,15 @@ Handling Workflows
 
     certificate_dn = r'|CertDn|\|CertName|'
 
-    current_thumbprint = features.certificate.renew(certificate=certificate_dn)
+    features.certificate.renew(certificate=certificate_dn)
 
-    #### Expect A Workflow Ticket ####
+    #### EXPECT A WORKFLOW TICKET AT STAGE 500 ####
     certificate_details = features.certificate.wait_for_stage(
         certificate=certificate_dn,
         expect_workflow=True,
         stage=500
     ).certificate_details
+
     tickets = features.workflow.ticket.get(obj=certificate_dn)
     for ticket in tickets:
         ticket_info = features.workflow.ticket.details(ticket_name=ticket)
@@ -231,5 +273,10 @@ Handling Workflows
                     explanation='Looks good to me.'
                 )
 
-    #### Proceed To Wait For Renewal To Complete ####
-    features.certificate.wait_for_enrollment_to_complete(certificate=certificate_dn, current_thumbprint=current_thumbprint)
+    #### DOWNLOAD IT ####
+    features.certificate.download(
+        format=AttributeValues.Certificate.Format.base64,
+        certificate=certificate,
+        include_chain=True,
+        root_first_order=True
+     )

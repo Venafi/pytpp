@@ -1,5 +1,4 @@
 from typing import Union
-from pytpp.tools.logger import logger, LogTags
 from pytpp.api.session import Session
 from pytpp.properties.oauth import Scope
 from pytpp.api.websdk.endpoints.authorize import _Authorize
@@ -37,7 +36,6 @@ class WebSDK:
     currently supported. Re-authentication occurs automatically when the API Key
     becomes invalidated. When initialized, all endpoints are also initialized.
     """
-    @logger.wrap_func(log_tag=LogTags.api, mask_input_regexes=['password', 'token'])
     def __init__(self, host: str, username: str, password: str, token: str = None, application_id: str = None,
                  scope: Union[Scope, str] = None, refresh_token: str = None, proxies: dict = None,
                  certificate_path: str = None, key_file_path: str = None, verify_ssl: bool = False):
@@ -94,7 +92,7 @@ class WebSDK:
         if not token:
             if application_id:
                 if not scope:
-                    raise ValueError(f'OAuth authentication requires both an Application ID and a scope be. '
+                    raise ValueError(f'OAuth authentication requires both an Application ID and a scope. '
                                      f'The scope was not defined.')
                 elif isinstance(scope, Scope):
                     scope = scope.to_string()

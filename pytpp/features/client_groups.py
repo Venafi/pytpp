@@ -32,8 +32,10 @@ class _ClientGroupBase(FeatureBase):
         )
 
         if response.result.code != 1:
-            raise InvalidResultCode(code=response.result.code,
-                                                 code_description=response.result.credential_result)
+            raise InvalidResultCode(
+                code=response.result.code,
+                code_description=response.result.credential_result
+            )
 
     def delete(self, group: 'Union[Config.Object, str]'):
         """

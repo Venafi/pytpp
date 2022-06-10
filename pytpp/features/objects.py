@@ -136,7 +136,7 @@ class Objects(FeatureBase):
             * **locked** *(bool)* - ``True`` if the value is locked by policy.
         """
         with self._Timeout(timeout=timeout) as to:
-            while not to.is_expired():
+            while not to.is_expired(poll=0.5):
                 result, attr = self._read(
                     obj=obj,
                     attribute_name=attribute_name,
@@ -235,7 +235,7 @@ class Objects(FeatureBase):
         """
         obj_dn = self._get_dn(obj)
         with self._Timeout(timeout=timeout) as to:
-            while not to.is_expired():
+            while not to.is_expired(poll=0.5):
                 result, attr = self._read(
                     obj=obj_dn,
                     attribute_name=attribute_name,

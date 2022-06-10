@@ -1,4 +1,4 @@
-from typing import List 
+from typing import List
 from pytpp.api.api_base import API, APIResponse, api_response_property
 from pytpp.properties.response_objects.permissions import Permissions
 
@@ -36,7 +36,7 @@ class _Permissions:
                 return self._Ptype(guid=self._guid, ptype=ptype, api_obj=self._api_obj)
 
             class _Ptype:
-                def __init__(self, guid:str, ptype: str, api_obj):
+                def __init__(self, guid: str, ptype: str, api_obj):
                     self._guid = guid
                     self._ptype = ptype
                     self._api_obj = api_obj
@@ -56,7 +56,7 @@ class _Permissions:
 
                     def Principal(self, principal: str):
                         return self._Principal(guid=self._guid, ptype=self._ptype, pname=self._pname,
-                                              principal=principal, api_obj=self._api_obj)
+                                               principal=principal, api_obj=self._api_obj)
 
                     class _Principal(API):
                         def __init__(self, guid: str, ptype: str, pname: str, principal: str, api_obj):
@@ -92,18 +92,18 @@ class _Permissions:
                                  is_rename_allowed: bool = None, is_revoke_allowed: bool = None, is_view_allowed: bool = None,
                                  is_write_allowed: bool = None):
                             body = {
-                                'IsAssociateAllowed': is_associate_allowed,
-                                'IsCreateAllowed': is_create_allowed,
-                                'IsDeleteAllowed': is_delete_allowed,
+                                'IsAssociateAllowed'        : is_associate_allowed,
+                                'IsCreateAllowed'           : is_create_allowed,
+                                'IsDeleteAllowed'           : is_delete_allowed,
                                 'IsManagePermissionsAllowed': is_manage_permissions_allowed,
-                                'IsPolicyWriteAllowed': is_policy_write_allowed,
-                                'IsPrivateKeyReadAllowed': is_private_key_read_allowed,
-                                'IsPrivateKeyWriteAllowed': is_private_key_write_allowed,
-                                'IsReadAllowed': is_read_allowed,
-                                'IsRenameAllowed': is_rename_allowed,
-                                'IsRevokeAllowed': is_revoke_allowed,
-                                'IsViewAllowed': is_view_allowed,
-                                'IsWriteAllowed': is_write_allowed
+                                'IsPolicyWriteAllowed'      : is_policy_write_allowed,
+                                'IsPrivateKeyReadAllowed'   : is_private_key_read_allowed,
+                                'IsPrivateKeyWriteAllowed'  : is_private_key_write_allowed,
+                                'IsReadAllowed'             : is_read_allowed,
+                                'IsRenameAllowed'           : is_rename_allowed,
+                                'IsRevokeAllowed'           : is_revoke_allowed,
+                                'IsViewAllowed'             : is_view_allowed,
+                                'IsWriteAllowed'            : is_write_allowed
                             }
 
                             return APIResponse(response=self._post(data=body))
@@ -114,18 +114,18 @@ class _Permissions:
                                 is_rename_allowed: bool = None, is_revoke_allowed: bool = None, is_view_allowed: bool = None,
                                 is_write_allowed: bool = None):
                             body = {
-                                'IsAssociateAllowed': is_associate_allowed,
-                                'IsCreateAllowed': is_create_allowed,
-                                'IsDeleteAllowed': is_delete_allowed,
+                                'IsAssociateAllowed'        : is_associate_allowed,
+                                'IsCreateAllowed'           : is_create_allowed,
+                                'IsDeleteAllowed'           : is_delete_allowed,
                                 'IsManagePermissionsAllowed': is_manage_permissions_allowed,
-                                'IsPolicyWriteAllowed': is_policy_write_allowed,
-                                'IsPrivateKeyReadAllowed': is_private_key_read_allowed,
-                                'IsPrivateKeyWriteAllowed': is_private_key_write_allowed,
-                                'IsReadAllowed': is_read_allowed,
-                                'IsRenameAllowed': is_rename_allowed,
-                                'IsRevokeAllowed': is_revoke_allowed,
-                                'IsViewAllowed': is_view_allowed,
-                                'IsWriteAllowed': is_write_allowed
+                                'IsPolicyWriteAllowed'      : is_policy_write_allowed,
+                                'IsPrivateKeyReadAllowed'   : is_private_key_read_allowed,
+                                'IsPrivateKeyWriteAllowed'  : is_private_key_write_allowed,
+                                'IsReadAllowed'             : is_read_allowed,
+                                'IsRenameAllowed'           : is_rename_allowed,
+                                'IsRevokeAllowed'           : is_revoke_allowed,
+                                'IsViewAllowed'             : is_view_allowed,
+                                'IsWriteAllowed'            : is_write_allowed
                             }
 
                             return APIResponse(response=self._put(data=body))
@@ -183,18 +183,18 @@ class _Permissions:
                              is_rename_allowed: bool = None, is_revoke_allowed: bool = None, is_view_allowed: bool = None,
                              is_write_allowed: bool = None):
                         body = {
-                           'IsAssociateAllowed': is_associate_allowed,
-                           'IsCreateAllowed': is_create_allowed,
-                           'IsDeleteAllowed': is_delete_allowed,
-                           'IsManagePermissionsAllowed': is_manage_permissions_allowed,
-                           'IsPolicyWriteAllowed': is_policy_write_allowed,
-                           'IsPrivateKeyReadAllowed': is_private_key_read_allowed,
-                           'IsPrivateKeyWriteAllowed': is_private_key_write_allowed,
-                           'IsReadAllowed': is_read_allowed,
-                           'IsRenameAllowed': is_rename_allowed,
-                           'IsRevokeAllowed': is_revoke_allowed,
-                           'IsViewAllowed': is_view_allowed,
-                           'IsWriteAllowed': is_write_allowed
+                            'IsAssociateAllowed'        : is_associate_allowed,
+                            'IsCreateAllowed'           : is_create_allowed,
+                            'IsDeleteAllowed'           : is_delete_allowed,
+                            'IsManagePermissionsAllowed': is_manage_permissions_allowed,
+                            'IsPolicyWriteAllowed'      : is_policy_write_allowed,
+                            'IsPrivateKeyReadAllowed'   : is_private_key_read_allowed,
+                            'IsPrivateKeyWriteAllowed'  : is_private_key_write_allowed,
+                            'IsReadAllowed'             : is_read_allowed,
+                            'IsRenameAllowed'           : is_rename_allowed,
+                            'IsRevokeAllowed'           : is_revoke_allowed,
+                            'IsViewAllowed'             : is_view_allowed,
+                            'IsWriteAllowed'            : is_write_allowed
                         }
 
                         return APIResponse(response=self._post(data=body))
@@ -205,18 +205,18 @@ class _Permissions:
                             is_rename_allowed: bool = None, is_revoke_allowed: bool = None, is_view_allowed: bool = None,
                             is_write_allowed: bool = None):
                         body = {
-                            'IsAssociateAllowed': is_associate_allowed,
-                            'IsCreateAllowed': is_create_allowed,
-                            'IsDeleteAllowed': is_delete_allowed,
+                            'IsAssociateAllowed'        : is_associate_allowed,
+                            'IsCreateAllowed'           : is_create_allowed,
+                            'IsDeleteAllowed'           : is_delete_allowed,
                             'IsManagePermissionsAllowed': is_manage_permissions_allowed,
-                            'IsPolicyWriteAllowed': is_policy_write_allowed,
-                            'IsPrivateKeyReadAllowed': is_private_key_read_allowed,
-                            'IsPrivateKeyWriteAllowed': is_private_key_write_allowed,
-                            'IsReadAllowed': is_read_allowed,
-                            'IsRenameAllowed': is_rename_allowed,
-                            'IsRevokeAllowed': is_revoke_allowed,
-                            'IsViewAllowed': is_view_allowed,
-                            'IsWriteAllowed': is_write_allowed
+                            'IsPolicyWriteAllowed'      : is_policy_write_allowed,
+                            'IsPrivateKeyReadAllowed'   : is_private_key_read_allowed,
+                            'IsPrivateKeyWriteAllowed'  : is_private_key_write_allowed,
+                            'IsReadAllowed'             : is_read_allowed,
+                            'IsRenameAllowed'           : is_rename_allowed,
+                            'IsRevokeAllowed'           : is_revoke_allowed,
+                            'IsViewAllowed'             : is_view_allowed,
+                            'IsWriteAllowed'            : is_write_allowed
                         }
 
                         return APIResponse(response=self._put(data=body))

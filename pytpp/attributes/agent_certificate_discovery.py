@@ -3,4 +3,4 @@ from pytpp.attributes.agent_discovery_base import AgentDiscoveryBaseAttributes
 
 
 class AgentCertificateDiscoveryAttributes(AgentDiscoveryBaseAttributes, metaclass=IterableMeta):
-	__config_class__ = "Agent Certificate Discovery"
+    __config_class__ = "{key}"

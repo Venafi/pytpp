@@ -1,3 +1,4 @@
+import logging
 import time
 import os
 import re
@@ -7,7 +8,7 @@ from pytpp.properties.response_objects.config import Config
 from pytpp.properties.response_objects.identity import Identity
 from pytpp.properties.response_objects.dataclasses.config import Object as ConfigObject
 from pytpp.properties.response_objects.dataclasses.identity import Identity
-from pytpp.tools.logger import logger, LogTags
+from pytpp.tools.logger import logger, features_logger
 from pytpp.properties.secret_store import Namespaces
 from typing import List, Dict, Union
 from packaging.version import Version
@@ -20,9 +21,9 @@ def feature(name: str):
         if int(os.getenv('PYTPP_DOC_IN_PROGRESS', 0)):
             return cls
         setattr(cls, '__feature__', name)
-        return logger.wrap_class(
-            log_tag=LogTags.feature,
-            func_regex_exclude='_.*'
+        return features_logger.wrap_class(
+            level=logging.DEBUG,
+            exclude='_.*'
         )(cls)
     return decorate
 
@@ -37,8 +38,10 @@ class FeatureBase:
             attributes = self._name_value_list(attributes=attributes, keep_list_values=keep_list_values)
 
         dn = f'{parent_folder_dn}\\{name}'
-        response = self._api.websdk.Config.Create.post(object_dn=dn, class_name=str(config_class),
-                                                 name_attribute_list=attributes or [])
+        response = self._api.websdk.Config.Create.post(
+            object_dn=dn, class_name=str(config_class),
+            name_attribute_list=attributes or []
+        )
         result = response.result
         if result.code != 1:
             if result.code == 401 and get_if_already_exists:
@@ -72,8 +75,10 @@ class FeatureBase:
                 obj = response.object
         if valid_class_names and obj.type_name not in valid_class_names:
             valid_class_names = "\n".join(f"*  {i}" for i in valid_class_names)
-            raise TypeError(f'"{object_dn or object_guid}" exists, but is not the expected class type.\n'
-                             f'Got type "{obj.type_name}" instead of one of \n{valid_class_names}.')
+            raise TypeError(
+                f'"{object_dn or object_guid}" exists, but is not the expected class type.\n'
+                f'Got type "{obj.type_name}" instead of one of \n{valid_class_names}.'
+            )
         return obj
 
     def _get_identity_object(self, prefixed_name: str = None, prefixed_universal: str = None,
@@ -175,12 +180,13 @@ class FeatureBase:
 
     @staticmethod
     def _log_warning_message(msg: str):
-        logger.warning(msg=msg, num_prev_callers=2)
+        features_logger.warning(msg, stacklevel=2)
 
     @staticmethod
     def __no_op(*args, **kwargs):
         pass
 
+    # noinspection ALL
     @staticmethod
     def _name_type_value(name: str, type: str, value):
         return {'Name': str(name), 'Type': str(type), 'Value': str(value)}
@@ -208,10 +214,12 @@ class FeatureBase:
 
     def _is_version_compatible(self, minimum: str = '', maximum: str = ''):
         if minimum and self._api._tpp_version <= Version(minimum):
-            logger.error(f'Incompatible version. This feature requires at least TPP {minimum}.')
+            features_logger.error(f'Incompatible version. This feature requires at least TPP {minimum}.',
+                                  stacklevel=2)
             return False
         if maximum and self._api._tpp_version >= Version(maximum):
-            logger.error(f'Incompatible version. This feature is no longer available after TPP {maximum}.')
+            features_logger.error(f'Incompatible version. This feature is no longer available after TPP {maximum}.',
+                                  stacklevel=2)
             return False
         return True
 
@@ -219,23 +227,22 @@ class FeatureBase:
         def __init__(self, timeout):
             self.timeout = timeout
             self.max_time = timeout + time.time()
+            self._cm = logger.suppressed(999)
 
         def __enter__(self):
-            logger.set_rule(
-                log_tag=LogTags.feature,
-                blacklist_function=lambda x: x is LogTags.api,
-                why=f'Disabling all logs during timeout to reduce redundant logging.'
-            )
+            self._cm.__enter__()
             return self
 
         def __exit__(self, exc_type, exc_val, exc_tb):
-            logger.set_rule(
-                log_tag=LogTags.feature,
-                reset=True,
-                why=f'Enabling all logs after timeout.'
-            )
+            self._cm.__exit__(exc_type, exc_val, exc_tb)
             return
 
         def is_expired(self, poll: float = 0.5):
-            time.sleep(poll)
-            return time.time() >= self.max_time
+            if time.time() >= self.max_time:
+                return True
+            if poll:
+                time.sleep(poll)
+
+        @staticmethod
+        def poll(seconds: float):
+            time.sleep(seconds)

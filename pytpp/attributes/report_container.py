@@ -3,4 +3,4 @@ from pytpp.attributes.top import TopAttributes
 
 
 class ReportContainerAttributes(TopAttributes, metaclass=IterableMeta):
-	__config_class__ = "Report Container"
+    __config_class__ = "{key}"

@@ -3,4 +3,4 @@ from pytpp.attributes.top import TopAttributes
 
 
 class OrganizationAttributes(TopAttributes, metaclass=IterableMeta):
-	__config_class__ = "Organization"
+    __config_class__ = "{key}"

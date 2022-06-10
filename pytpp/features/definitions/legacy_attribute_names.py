@@ -5,6 +5,7 @@ from pytpp.properties.config import (
     CertificateAuthorityAttributes, PlatformsAttributes, PlacementRulesAttributeNames, ApplicationGroupAttributes
 )
 
+
 class AttributeNames(metaclass=DeprecationMeta):
     __deprecation_reason__ = 'Using AttributeNames will be deprecated soon. Please use ' \
                              'pytpp.Attributes (from pytpp import Attributes) instead.'

@@ -3,5 +3,5 @@ from pytpp.attributes.flow_action_base import FlowActionBaseAttributes
 
 
 class CodeSignPreApprovalActionAttributes(FlowActionBaseAttributes, metaclass=IterableMeta):
-	__config_class__ = "Code Sign PreApproval Action"
-	stage_identifier = Attribute('Stage Identifier', min_version='20.2')
+    __config_class__ = "{key}"
+    stage_identifier = Attribute('Stage Identifier', min_version='20.2')

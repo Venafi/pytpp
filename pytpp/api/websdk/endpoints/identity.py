@@ -23,10 +23,11 @@ class _Identity:
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='/Identity/AddGroup')
 
-        def post(self, name: str, members: list = None):
+        def post(self, name: str, members: list = None, products: list = None):
             body = {
                 'Name': name,
-                'Members': members
+                'Members': members,
+                'Products': products
             }
 
             class _Response(APIResponse):
@@ -42,6 +43,12 @@ class _Identity:
                 @api_response_property()
                 def invalid_members(self):
                     return [Identity.InvalidIdentity(im) for im in self._from_json(key='InvalidMembers', return_on_error=list)]
+
+                @property
+                @api_response_property()
+                def invalid_owners(self):
+                    return [Identity.InvalidIdentity(im) for im in
+                            self._from_json(key='InvalidOwners', return_on_error=list)]
 
                 @property
                 @api_response_property()
@@ -86,6 +93,7 @@ class _Identity:
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='/Identity/Browse')
 
+        # noinspection ALL
         def post(self, filter: str, limit: int, identity_type: int):
             body = {
                 "Filter": filter,

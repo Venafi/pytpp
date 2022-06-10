@@ -3,5 +3,5 @@ from pytpp.attributes.top import TopAttributes
 
 
 class LogNotificationContainerAttributes(TopAttributes, metaclass=IterableMeta):
-	__config_class__ = "Log Notification Container"
-	description = Attribute('Description')
+    __config_class__ = "{key}"
+    description = Attribute('Description')

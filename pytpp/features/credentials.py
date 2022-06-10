@@ -3,6 +3,7 @@ from typing import List, Union, TYPE_CHECKING
 from pytpp.tools.vtypes import Config
 from pytpp.features.bases.feature_base import FeatureBase, feature
 from pytpp.features.definitions.exceptions import InvalidResultCode
+
 if TYPE_CHECKING:
     from pytpp.tools.vtypes import Identity
 
@@ -88,7 +89,7 @@ class AmazonCredential(_CredentialBase):
             :ref:`config_object` of the credential object.
         """
         values = [
-            self._name_type_value( name='Source', type='string', value='ADFS'),
+            self._name_type_value(name='Source', type='string', value='ADFS'),
             self._name_type_value(name='AdfsUrl', type='string', value=adfs_url),
             self._name_type_value(name='AdfsCredential', type='string', value=self._get_dn(adfs_credential)),
             self._name_type_value(name='Role', type='string', value=role),

@@ -2,6 +2,7 @@ from pytpp.api.api_base import API, APIResponse, api_response_property
 from pytpp.properties.response_objects.system_status import SystemStatus
 from pytpp.tools.helpers.date_converter import from_date_string
 
+
 class _SystemStatus(API):
     def __init__(self, api_obj):
         super().__init__(api_obj=api_obj, url='/SystemStatus')
@@ -34,8 +35,8 @@ class _SystemStatus(API):
 
             def get(self, guid: str, engine_id: str, upgrade_id: str = None):
                 params = {
-                    'guid': guid,
-                    'Id': engine_id,
+                    'guid'     : guid,
+                    'Id'       : engine_id,
                     'UpgradeId': upgrade_id
                 }
 

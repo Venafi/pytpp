@@ -3,5 +3,5 @@ from pytpp.attributes.client_agent_ssh_provisioning_work import ClientAgentSSHPr
 
 
 class ClientAgentSSHKeyUsageWorkAttributes(ClientAgentSSHProvisioningWorkAttributes, metaclass=IterableMeta):
-	__config_class__ = "Client Agent SSH Key Usage Work"
-	max_row_count = Attribute('Max Row Count')
+    __config_class__ = "{key}"
+    max_row_count = Attribute('Max Row Count')

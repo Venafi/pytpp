@@ -2,7 +2,7 @@
 __project_name__ = None
 __version__ = None
 __author__ = None
-__author_email__= None
+__author_email__ = None
 __project_url__ = None
 exec(open('pytpp/_about.py', 'r').read())
 
@@ -10,18 +10,19 @@ from setuptools import setup, find_packages
 import os
 
 PROD_REQUIREMENTS = [
-    'isodate==0.6.0',
-    'logboss~=0.1.8',
-    'packaging==20.9',
-    'python-dateutil==2.8.2',
-    'requests==2.24.0',
+    'isodate~=0.6.0',
+    'packaging~=21.3',
+    'python-dateutil~=2.8.2',
+    'requests~=2.24.0',
+    'simplejson~=3.17.6',
+    'jsonpickle~=2.1.0'
 ]
 
 DEV_REQUIREMENTS = [
     'pyodbc==4.0.30',
     'lxml==4.4.1',
     'pandas==1.3.3',
-    'paramiko==2.7.1'
+    'paramiko==2.10.4'
 ]
 
 DOC_REQUIREMENTS = [
@@ -52,7 +53,7 @@ if __name__ == '__main__':
         install_requires=PROD_REQUIREMENTS,
         extras_require={
             'dev': DEV_REQUIREMENTS,
-            'doc': DOC_REQUIREMENTS ,
+            'doc': DOC_REQUIREMENTS,
             'all': DOC_REQUIREMENTS + DEV_REQUIREMENTS
         },
         classifiers=[

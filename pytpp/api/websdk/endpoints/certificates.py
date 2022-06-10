@@ -44,7 +44,7 @@ class _Certificates(API):
             @property
             @api_response_property()
             def x_record_count(self) -> int:
-                xrc = self.api_response.headers.get('X-Record-Count')
+                xrc = int(self.api_response.headers.get('X-Record-Count'))
                 return xrc
 
             @property
@@ -62,6 +62,21 @@ class _Certificates(API):
             @api_response_property()
             def total_count(self) -> int:
                 return self._from_json(key='TotalCount')
+
+        return _Response(response=self._get(params=params))
+
+    def head(self, filters: dict = None):
+        params = filters
+
+        class _Response(APIResponse):
+            def __init__(self, response):
+                super().__init__(response=response)
+
+            @property
+            @api_response_property()
+            def x_record_count(self) -> int:
+                xrc = int(self.api_response.headers.get('X-Record-Count'))
+                return xrc
 
         return _Response(response=self._get(params=params))
 
@@ -370,16 +385,48 @@ class _Certificates(API):
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='/Certificates/Renew')
 
-        def post(self, certificate_dn: str, pkcs10: str = None, reenable: bool = False):
+        # noinspection ALL
+        def post(self, certificate_dn: str, pkcs10: str = None, reenable: bool = False, format: str = None,
+                 password: str = None, include_private_key: bool = None, include_chain: bool = None,
+                 friendly_name: str = None, root_first_order: bool = None, keystore_password: str = None,
+                 work_to_do_timeout: int = None):
             body = {
                 'CertificateDN': certificate_dn,
                 'PKCS10': pkcs10,
-                'Reenable': reenable
+                'Reenable': reenable,
+                'Format'  : format,
+                'Password': password,
+                'IncludePrivateKey': include_private_key,
+                'IncludeChain': include_chain,
+                'FriendlyName': friendly_name,
+                'RootFirstOrder': root_first_order,
+                'KeystorePassword': keystore_password,
+                'WorkToDoTimeout': work_to_do_timeout
             }
 
             class _Response(APIResponse):
                 def __init__(self, response):
                     super().__init__(response=response)
+
+                @property
+                @api_response_property()
+                def certificate_data(self) -> str:
+                    return self._from_json(key='CertificateData')
+
+                @property
+                @api_response_property()
+                def certificate_dn(self) -> str:
+                    return self._from_json(key='CertificateDN')
+
+                @property
+                @api_response_property()
+                def filename(self) -> str:
+                    return self._from_json(key='Filename')
+
+                @property
+                @api_response_property()
+                def format(self) -> str:
+                    return self._from_json(key='Format')
 
                 @property
                 @api_response_property()
@@ -394,12 +441,12 @@ class _Certificates(API):
 
         def post(self, policy_dn: str, approvers: List[dict] = None, cadn: str = None,
                  ca_specific_attributes: List[dict] = None, certificate_type: str = None, city: str = None,
-                 contacts: List[dict] = None, country: str=None, custom_fields: List[dict] = None, created_by: str = None,
+                 contacts: List[dict] = None, country: str = None, custom_fields: List[dict] = None, created_by: str = None,
                  devices: List[dict] = None, disable_automatic_renewal: bool = False, elliptic_curve: str = None,
                  key_algorithm: str = None, key_bit_size: int = None, management_type: str = None, object_name: str = None,
                  organization: str = None, organizational_unit: str = None, origin: str = None, pkcs10: str = None,
                  reenable: bool = False, set_work_todo: bool = True, state: str = None, subject: str = None,
-                 subject_alt_names: List[dict] = None):
+                 subject_alt_names: List[dict] = None, work_to_do_timeout: int = None):
             body = {
                 'Approvers'              : approvers,
                 'CADN'                   : cadn,
@@ -427,11 +474,27 @@ class _Certificates(API):
                 'State'                  : state,
                 'Subject'                : subject,
                 'SubjectAltNames'        : subject_alt_names,
+                'WorkToDoTimeout'        : work_to_do_timeout
             }
 
             class _Response(APIResponse):
                 def __init__(self, response):
                     super().__init__(response=response)
+
+                @property
+                @api_response_property()
+                def certificate_data(self) -> str:
+                    return self._from_json(key='CertificateData')
+
+                @property
+                @api_response_property()
+                def filename(self) -> str:
+                    return self._from_json(key='Filename')
+
+                @property
+                @api_response_property()
+                def format(self) -> str:
+                    return self._from_json(key='Format')
 
                 @property
                 @api_response_property()
@@ -449,10 +512,11 @@ class _Certificates(API):
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='/Certificates/Reset')
 
-        def post(self, certificate_dn: str, restart: bool = False):
+        def post(self, certificate_dn: str, restart: bool = False, work_to_do_timeout: int = None):
             body = {
                 'CertificateDN': certificate_dn,
-                'Restart': restart
+                'Restart': restart,
+                'WorkToDoTimeout': work_to_do_timeout
             }
 
             class _Response(APIResponse):
@@ -485,9 +549,10 @@ class _Certificates(API):
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='/Certificates/Retrieve')
 
+        # noinspection ALL
         def get(self, certificate_dn: str, format: str, friendly_name: str, include_chain: bool = False,
                 include_private_key: bool = False, keystore_password: str = None, password: str = None,
-                root_first_order: bool = False):
+                root_first_order: bool = False, work_to_do_timeout: int = None):
             params = {
                 'CertificateDN': certificate_dn,
                 'Format': format,
@@ -496,14 +561,16 @@ class _Certificates(API):
                 'IncludePrivateKey': include_private_key,
                 'KeystorePassword': keystore_password,
                 'Password': password,
-                'RootFirstOrder': root_first_order
+                'RootFirstOrder': root_first_order,
+                'WorkToDoTimeout': work_to_do_timeout
             }
 
             return APIResponse(response=self._get(params=params))
 
+        # noinspection ALL
         def post(self, certificate_dn: str, format: str, friendly_name: str, include_chain: bool = False,
                  include_private_key: bool = False, keystore_password: str = None, password: str = None,
-                 root_first_order: bool = False):
+                 root_first_order: bool = False, work_to_do_timeout: int = None):
             body = {
                 'CertificateDN': certificate_dn,
                 'Format': format,
@@ -512,7 +579,8 @@ class _Certificates(API):
                 'IncludePrivateKey': include_private_key,
                 'KeystorePassword': keystore_password,
                 'Password': password,
-                'RootFirstOrder': root_first_order
+                'RootFirstOrder': root_first_order,
+                'WorkToDoTimeout': work_to_do_timeout
             }
             
             class _Response(APIResponse):
@@ -544,6 +612,7 @@ class _Certificates(API):
                 super().__init__(api_obj=api_obj, url='/Certificates/Retrieve/{vault_id}'.format(vault_id=vault_id))
                 self._vault_id = vault_id
 
+            # noinspection ALL
             def get(self, format: str, friendly_name: str, include_chain: bool = False,
                     include_private_key: bool = False, keystore_password: str = None, password: str = None,
                     root_first_order: bool = False):
@@ -559,6 +628,7 @@ class _Certificates(API):
 
                 return APIResponse(response=self._get(params=params))
 
+            # noinspection ALL
             def post(self, format: str, friendly_name: str, include_chain: bool = False,
                      include_private_key: bool = False, keystore_password: str = None, password: str = None,
                      root_first_order: bool = False):
@@ -597,9 +667,10 @@ class _Certificates(API):
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='/Certificates/Retry')
 
-        def post(self, certificate_dn: str):
+        def post(self, certificate_dn: str, work_to_do_timeout: int = None):
             body = {
-                'CertificateDN': certificate_dn
+                'CertificateDN': certificate_dn,
+                'WorkToDoTimeout': work_to_do_timeout
             }
 
             class _Response(APIResponse):
@@ -618,13 +689,14 @@ class _Certificates(API):
             super().__init__(api_obj=api_obj, url='/Certificates/Revoke')
 
         def post(self, certificate_dn: str = None, thumbprint: str = None, reason: str = None, comments: str = None,
-                 disable: bool = None):
+                 disable: bool = None, work_to_do_timeout: int = None):
             body = {
                 'CertificateDN': certificate_dn,
                 'Thumbprint': thumbprint,
                 'Reason': reason,
                 'Comments': comments,
-                'Disable': disable
+                'Disable': disable,
+                'WorkToDoTimeout': work_to_do_timeout
             }
 
             class _Response(APIResponse):

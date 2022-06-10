@@ -3,5 +3,5 @@ from pytpp.attributes.client_group_base import ClientGroupBaseAttributes
 
 
 class ClientGroupAttributes(ClientGroupBaseAttributes, metaclass=IterableMeta):
-	__config_class__ = "Client Group"
-	agent_type = Attribute('Agent Type', min_version='15.2')
+    __config_class__ = "{key}"
+    agent_type = Attribute('Agent Type', min_version='15.2')

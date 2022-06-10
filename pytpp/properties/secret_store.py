@@ -31,5 +31,5 @@ class VaultTypes:
     archived_pkcs8 = 1073742080
     archived_pkcs10 = 1073742336
     archived_file = 1073742848
-    archived_rsa_public_key  = 1073743872  # Obsolete: use archived_public_key instead
+    archived_rsa_public_key = 1073743872  # Obsolete: use archived_public_key instead
     archived_public_key = 1073745920

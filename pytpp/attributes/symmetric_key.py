@@ -5,5 +5,5 @@ from pytpp.attributes.top import TopAttributes
 
 
 class SymmetricKeyAttributes(LegacyKeyBaseAttributes, MonitoringBaseAttributes, TopAttributes, metaclass=IterableMeta):
-	__config_class__ = "Symmetric Key"
-	check_value = Attribute('Check Value')
+    __config_class__ = "{key}"
+    check_value = Attribute('Check Value')

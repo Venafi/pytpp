@@ -3,5 +3,5 @@ from pytpp.attributes.flow_action_approver_base import FlowActionApproverBaseAtt
 
 
 class FlowActionDirectApproversAttributes(FlowActionApproverBaseAttributes, metaclass=IterableMeta):
-	__config_class__ = "Flow Action Direct Approvers"
-	direct_approver = Attribute('Direct Approver', min_version='19.2')
+    __config_class__ = "{key}"
+    direct_approver = Attribute('Direct Approver', min_version='19.2')

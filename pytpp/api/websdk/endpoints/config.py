@@ -236,11 +236,7 @@ class _Config:
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='/Config/DefaultDN')
 
-        def post(self, default_dn: str):
-            body = {
-                'DefaultDN': default_dn
-            }
-
+        def get(self):
             class _Response(APIResponse):
                 def __init__(self, response):
                     super().__init__(response=response)
@@ -252,10 +248,10 @@ class _Config:
 
                 @property
                 @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
+                def result(self) -> int:
+                    return self._from_json(key='Result')
+
+            return _Response(response=self._get())
 
     class _Delete(API):
         def __init__(self, api_obj):
@@ -374,9 +370,8 @@ class _Config:
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='/Config/EnumerateObjectsDerivedFrom')
 
-        def post(self, derived_from: str, pattern: str = None, object_dn: str = None):
+        def post(self, derived_from: str, pattern: str = None):
             body = {
-                "ObjectDN": object_dn,
                 "DerivedFrom": derived_from,
                 "Pattern": pattern
             }

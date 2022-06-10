@@ -86,6 +86,12 @@ class DiscoveryManager(_PlatformComponentBase):
         super().__init__(api=api, module='Discovery')
 
 
+@feature('Key Manager')
+class KeyManager(_PlatformComponentBase):
+    def __init__(self, api):
+        super().__init__(api=api, module='Key Manager')
+
+
 @feature('Monitor')
 class Monitor(_PlatformComponentBase):
     def __init__(self, api):
@@ -104,6 +110,12 @@ class Reporting(_PlatformComponentBase):
         super().__init__(api=api, module='Reporting')
 
 
+@feature('SSH Certificate Manager')
+class SSHCertificateManager(_PlatformComponentBase):
+    def __init__(self, api):
+        super().__init__(api=api, module='SSH Certificate Manager')
+
+
 @feature('SSH Manager')
 class SSHManager(_PlatformComponentBase):
     def __init__(self, api):
@@ -120,6 +132,8 @@ class TrustNetManager(_PlatformComponentBase):
 class ValidationManager(_PlatformComponentBase):
     def __init__(self, api):
         super().__init__(api=api, module='Validation Manager')
+
+
 # endregion Platform Components
 
 
@@ -138,9 +152,11 @@ class Platforms(FeatureBase):
         self._certificate_revocation = None
         self._cloud_instance_monitor = None
         self._discovery_manager = None
+        self._key_manager = None
         self._monitor = None
         self._onboard_discovery_manager = None
         self._reporting = None
+        self._ssh_certificate_manager = None
         self._ssh_manager = None
         self._trustnet_manager = None
         self._validation_manager = None
@@ -187,6 +203,11 @@ class Platforms(FeatureBase):
         return self._discovery_manager
 
     @property
+    def key_manager(self) -> KeyManager:
+        self._key_manager = self._key_manager or KeyManager(self._api)
+        return self._key_manager
+
+    @property
     def monitor(self) -> Monitor:
         self._monitor = self._monitor or Monitor(self._api)
         return self._monitor
@@ -202,6 +223,11 @@ class Platforms(FeatureBase):
         return self._reporting
 
     @property
+    def ssh_certificate_manager(self) -> SSHCertificateManager:
+        self._ssh_certificate_manager = self._ssh_certificate_manager or SSHCertificateManager(self._api)
+        return self._ssh_certificate_manager
+
+    @property
     def ssh_manager(self) -> SSHManager:
         self._ssh_manager = self._ssh_manager or SSHManager(self._api)
         return self._ssh_manager
@@ -215,6 +241,7 @@ class Platforms(FeatureBase):
     def validation_manager(self) -> ValidationManager:
         self._validation_manager = self._validation_manager or ValidationManager(self._api)
         return self._validation_manager
+
     # endregion Component Properties
 
     def get(self):

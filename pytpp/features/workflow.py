@@ -45,7 +45,7 @@ class _WorkflowBase(FeatureBase):
 
     def _create(self, name: str, parent_folder: 'Union[Config.Object, str]', is_adaptable: bool, stage: int, injection_command: str = None,
                 application_class_name: str = None, approvers: str = None, reason_code: int = None, attributes: dict = None,
-                get_if_already_exists: bool = True):    
+                get_if_already_exists: bool = True):
         workflow = self._config_create(
             name=name,
             parent_folder_dn=self._get_dn(parent_folder),
@@ -98,9 +98,9 @@ class AdaptableWorkflow(_WorkflowBase):
                use_approvers_from_powershell_script: bool = False, attributes: dict = None, get_if_already_exists: bool = True):
         """
         .. note::
-            If a list of approver identity objects is provided, they will be added directly to the workflow as approvers of the 
-            workflow. If the approvers should come from the PowerShell script, do not supply this parameter. Instead, set 
-            ``use_approvers_from_powershell_script = True``. If the approvers should come from the object requiring the workflow, 
+            If a list of approver identity objects is provided, they will be added directly to the workflow as approvers of the
+            workflow. If the approvers should come from the PowerShell script, do not supply this parameter. Instead, set
+            ``use_approvers_from_powershell_script = True``. If the approvers should come from the object requiring the workflow,
             such as the certificate object, then do not supply ``approvers`` or ``use_approvers_from_powershell_script``.
 
         Args:
@@ -170,8 +170,8 @@ class AdaptableWorkflow(_WorkflowBase):
 
 @dataclass
 class RC:
-    code: int 
-    name: str 
+    code: int
+    name: str
     description: str
 
 
@@ -191,7 +191,7 @@ class ReasonCode(FeatureBase):
 
         Returns:
             A ``ReasonCode`` object with these properties
-            
+
             * **code** *(int)* - An integer code.
             * **name** *(str)* - Name of the result code.
             * **description** *(str)* - Purpose of the result code.
@@ -318,7 +318,9 @@ class Ticket(FeatureBase):
         obj_dn = self._get_dn(obj)
         workflow_dn = self._get_dn(workflow)
         approver_prefixed_names = [
-            {'PrefixedName': self._get_prefixed_name(a)} for a in approvers
+            {
+                'PrefixedName': self._get_prefixed_name(a)
+            } for a in approvers
         ]
         if isinstance(reason, RC):
             reason = reason.code
@@ -389,6 +391,7 @@ class Ticket(FeatureBase):
             ).guids
 
         obj_dn = self._get_dn(obj)
+
         def get_tickets():
             return self._api.websdk.Workflow.Ticket.Enumerate.post(
                 object_dn=obj_dn,
@@ -398,7 +401,7 @@ class Ticket(FeatureBase):
         if timeout:
             tickets = []
             with self._Timeout(timeout=timeout) as to:
-                while not to.is_expired():
+                while not to.is_expired(poll=0.5):
                     tickets = get_tickets()
                     if len(tickets) >= expected_num_tickets:
                         return tickets

@@ -16,12 +16,13 @@ from pytpp.features.definitions.attribute_values import AttributeValues
 # noinspection PyUnresolvedReferences
 from pytpp.features.definitions.classes import Classes as ClassNames
 # noinspection PyUnresolvedReferences
-from pytpp.tools.logger import logger
+from pytpp.tools.logger import logger, features_logger, api_logger
 # noinspection PyUnresolvedReferences
 from pytpp.tools import vtypes as Types
 # Legacy imports
 from pytpp.features.definitions.legacy_attribute_names import AttributeNames as __AN
 from pytpp.features.definitions.legacy_classes import Classes as __C
+
 
 def __getattr__(name):
     if name == 'AttributeNames':
@@ -29,4 +30,3 @@ def __getattr__(name):
     elif name == 'Classes':
         return __C
     raise ImportError(f'{name} cannot be imported because it does not exist.')
-

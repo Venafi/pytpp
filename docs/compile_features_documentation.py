@@ -26,6 +26,7 @@ def dataclass_module_rst_template(module: type, title: str):
        :private-members:
     """).lstrip()
 
+
 def toc_rst_template(title: str, toc_items: List[str], tag: str = 'feature_list'):
     title = title.replace('_', ' ').title()
     h1 = '=' * len(title)
@@ -41,6 +42,7 @@ def toc_rst_template(title: str, toc_items: List[str], tag: str = 'feature_list'
 
         {toc_items_rst}
     """.replace('\t', '    ')).lstrip()
+
 
 def feature_class_rst_template(module_path: str, class_: str):
     title: str = getattr(class_, '__feature__')
@@ -59,6 +61,7 @@ def feature_class_rst_template(module_path: str, class_: str):
        :show-inheritance:
        :inherited-members:
     """).lstrip()
+
 
 def get_feature_docs():
     # Recreate the features doc folder.
@@ -115,6 +118,7 @@ def get_feature_docs():
     pytpp_features_rst = f'.. _features:\n\n{pytpp_features_rst}'
     with Path(FEATURES_DOC_PATH, 'features_toc.rst').open('w') as f:
         f.write(pytpp_features_rst)
+
 
 def get_property_docs():
     from pytpp.properties.response_objects import dataclasses as dc

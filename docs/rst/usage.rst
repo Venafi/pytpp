@@ -377,28 +377,8 @@ Logging
     Only enable logging for debugging purposes. It is not recommended to enable logging in Production. Logging can
     potentially log sensitive information, such as private keys or credentials.
 
-|Product| uses `logboss <https://pypi.org/project/logboss>`_ to log the inputs and outputs to each API and Feature
-call. By default, the logger is turned off. To use the logger:
-
-.. code-block:: python
-
-    from pytpp import logger
-
-    # Log to the console only.
-    logger.start()
-
-    # ---- OR ----
-    # Redirect the log output to a text file. The path doesn't need to exist.
-    logger.redirect = '/path/to/log.txt'
-    logger.start()
-
-    # ---- OR ----
-    # Generate an HTML file output. Only use this option if you know what is being logged as the
-    # HTML file could get too large to be usable.
-    with logger.generate('html', log_file='/path/to/log.html', include_code=False):
-        ...
-
-Visit the LogBoss documentation for more usage information.
+|Product| uses a custom logger class derived from built-in logging to log the inputs and outputs to each API and Feature
+call. By default, the logger is turned off. Use Python's built-in logging module to enable logging.
 
 Parameter Interchangeability
 ----------------------------

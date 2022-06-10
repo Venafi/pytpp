@@ -4,6 +4,7 @@ from pytpp.tools.vtypes import Config, CustomFields
 from pytpp.features.bases.feature_base import FeatureBase, feature
 from pytpp.features.definitions.exceptions import InvalidResultCode
 
+
 @dataclass
 class EffectiveValues:
     locked: bool
@@ -26,7 +27,10 @@ class CustomField(FeatureBase):
     @staticmethod
     def _guid_data_list(guid_data_dict: dict):
         return [
-            {"ItemGuid": key, "List": value}
+            {
+                "ItemGuid": key,
+                "List"    : value
+            }
             for key, value in guid_data_dict.items()
         ]
 
@@ -86,31 +90,31 @@ class CustomField(FeatureBase):
         """
         item = {
             'AllowedCharacters': allowed_characters,
-            'AllowedValues': allowed_values,
-            'Category': category,
-            'Classes': classes,
-            'DateOnly': date_only,
-            'DefaultValues': default_values,
-            'DisplayAfter': display_after,
-            'ErrorMessage': error_message,
-            'Help': help_text,
-            'Label': label,
+            'AllowedValues'    : allowed_values,
+            'Category'         : category,
+            'Classes'          : classes,
+            'DateOnly'         : date_only,
+            'DefaultValues'    : default_values,
+            'DisplayAfter'     : display_after,
+            'ErrorMessage'     : error_message,
+            'Help'             : help_text,
+            'Label'            : label,
             'LocalizationTable': localization_table,
-            'LocalizedHelp': localized_help,
-            'LocalizedLabel': localized_label,
-            'LocalizedSet': localized_set,
-            'Mandatory': mandatory,
-            'Name': name,
-            'Mask': mask,
-            'MaximumLength': maximum_length,
-            'MinimumLength': minimum_length,
-            'Policyable': policyable,
+            'LocalizedHelp'    : localized_help,
+            'LocalizedLabel'   : localized_label,
+            'LocalizedSet'     : localized_set,
+            'Mandatory'        : mandatory,
+            'Name'             : name,
+            'Mask'             : mask,
+            'MaximumLength'    : maximum_length,
+            'MinimumLength'    : minimum_length,
+            'Policyable'       : policyable,
             'RegularExpression': regular_expression,
-            'RenderHidden': render_hidden,
-            'RenderReadOnly': render_read_only,
-            'Single': single,
-            'TimeOnly': time_only,
-            'Type': data_type
+            'RenderHidden'     : render_hidden,
+            'RenderReadOnly'   : render_read_only,
+            'Single'           : single,
+            'TimeOnly'         : time_only,
+            'Type'             : data_type
         }
 
         response = self._api.websdk.Metadata.DefineItem.post(item=item)
@@ -205,7 +209,7 @@ class CustomField(FeatureBase):
 
         Args:
             folder: :ref:`config_object` or :ref:`dn` of the folder.
-            custom_field: :ref:`config_object` or name of the custom field. 
+            custom_field: :ref:`config_object` or name of the custom field.
             class_name: Object class.
 
         Returns:
@@ -273,31 +277,31 @@ class CustomField(FeatureBase):
 
         item = {
             'AllowedCharacters': listify(allowed_characters),
-            'AllowedValues': listify(allowed_values),
-            'Category': listify(category),
-            'Classes': listify(classes),
-            'DateOnly': listify(date_only),
-            'DefaultValues': listify(default_values),
-            'DisplayAfter': listify(display_after),
-            'ErrorMessage': listify(error_message),
-            'Help': listify(help_text),
-            'Label': label,
+            'AllowedValues'    : listify(allowed_values),
+            'Category'         : listify(category),
+            'Classes'          : listify(classes),
+            'DateOnly'         : listify(date_only),
+            'DefaultValues'    : listify(default_values),
+            'DisplayAfter'     : listify(display_after),
+            'ErrorMessage'     : listify(error_message),
+            'Help'             : listify(help_text),
+            'Label'            : label,
             'LocalizationTable': listify(localization_table),
-            'LocalizedHelp': listify(localized_help),
-            'LocalizedLabel': listify(localized_label),
-            'LocalizedSet': listify(localized_set),
-            'Mandatory': listify(mandatory),
-            'Name': listify(name),
-            'Mask': listify(mask),
-            'MaximumLength': listify(maximum_length),
-            'MinimumLength': listify(minimum_length),
-            'Policyable': listify(policyable),
+            'LocalizedHelp'    : listify(localized_help),
+            'LocalizedLabel'   : listify(localized_label),
+            'LocalizedSet'     : listify(localized_set),
+            'Mandatory'        : listify(mandatory),
+            'Name'             : listify(name),
+            'Mask'             : listify(mask),
+            'MaximumLength'    : listify(maximum_length),
+            'MinimumLength'    : listify(minimum_length),
+            'Policyable'       : listify(policyable),
             'RegularExpression': listify(regular_expression),
-            'RenderHidden': listify(render_hidden),
-            'RenderReadOnly': listify(render_read_only),
-            'Single': listify(single),
-            'TimeOnly': listify(time_only),
-            'Type': listify(data_type)
+            'RenderHidden'     : listify(render_hidden),
+            'RenderReadOnly'   : listify(render_read_only),
+            'Single'           : listify(single),
+            'TimeOnly'         : listify(time_only),
+            'Type'             : listify(data_type)
         }
         response = self._api.websdk.Metadata.UpdateItem.post(
             update={
@@ -324,7 +328,9 @@ class CustomField(FeatureBase):
         custom_field_guid = self._get_guid(custom_field)
         response = self._api.websdk.Metadata.Set.post(
             dn=obj_dn,
-            guid_data=self._guid_data_list({custom_field_guid: values}),
+            guid_data=self._guid_data_list({
+                                               custom_field_guid: values
+                                           }),
             keep_existing=keep_existing
         )
         self._validate_result_code(result=response.result)
@@ -348,7 +354,9 @@ class CustomField(FeatureBase):
         response = self._api.websdk.Metadata.SetPolicy.post(
             dn=folder_dn,
             config_class=str(class_name),
-            guid_data=self._guid_data_list({custom_field_guid: values}),
+            guid_data=self._guid_data_list({
+                                               custom_field_guid: values
+                                           }),
             locked=locked
         )
         self._validate_result_code(result=response.result)

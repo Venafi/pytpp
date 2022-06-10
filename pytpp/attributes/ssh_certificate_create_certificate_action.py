@@ -3,4 +3,4 @@ from pytpp.attributes.flow_action_base import FlowActionBaseAttributes
 
 
 class SSHCertificateCreateCertificateActionAttributes(FlowActionBaseAttributes, metaclass=IterableMeta):
-	__config_class__ = "SSH Certificate Create Certificate Action"
+    __config_class__ = "{key}"

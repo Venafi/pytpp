@@ -14,23 +14,23 @@ class _SSHCertificates:
     class _CAKeyPair:
         def __init__(self, api_obj):
             self.Create = self._Create(api_obj=api_obj)
-        
+
         class _Create(API):
             def __init__(self, api_obj):
                 super().__init__(api_obj=api_obj, url='SSHCertificates/CAKeyPair/Create')
-            
+
             def post(self, name: str, parent_dn: str = None, key_algorithm: str = None,
                      key_storage: str = None, private_key_data: str = None,
                      private_key_passphrase: str = None):
                 body = {
-                    'Name': name,
-                    'ParentDN': parent_dn,
-                    'KeyAlgorithm': key_algorithm,
-                    'KeyStorage': key_storage,
-                    'PrivateKeyData': private_key_data,
+                    'Name'                : name,
+                    'ParentDN'            : parent_dn,
+                    'KeyAlgorithm'        : key_algorithm,
+                    'KeyStorage'          : key_storage,
+                    'PrivateKeyData'      : private_key_data,
                     'PrivateKeyPassphrase': private_key_passphrase
                 }
-                
+
                 class _Response(APIResponse):
                     def __init__(self, response):
                         super().__init__(response=response)
@@ -84,14 +84,15 @@ class _SSHCertificates:
                     @api_response_property()
                     def response(self):
                         return SSHCertificate.Response(self._from_json(key='Response'))
-                        
+
                 return _Response(response=self._post(data=body))
 
     class _Request(API):
         def __init__(self, api_obj):
             super().__init__(api_obj=api_obj, url='/SSHCertificates/Request')
 
-        def post(self, ca_dn: str,
+        def post(self,
+                 ca_dn: str,
                  key_id: str,
                  destination_address: str = None,
                  extensions: str = None,
@@ -102,24 +103,30 @@ class _SSHCertificates:
                  principals: List[str] = None,
                  public_key_data: str = None,
                  source_addresses: List[str] = None,
-                 validity_period: str = None
+                 validity_period: str = None,
+                 include_certificate_details: bool = False,
+                 include_private_key_data: bool = False,
+                 private_key_passphrase: str = None,
+                 processing_timeout: int = None
                  ):
-
             body = {
-                'CADN': ca_dn,
-                'KeyId': key_id,
+                'CADN'              : ca_dn,
+                'KeyId'             : key_id,
                 'DestinationAddress': destination_address,
-                'Extensions': extensions,
-                'ForceCommand': force_command,
-                'ObjectName': object_name,
-                'Origin': origin,
-                'PolicyDN': policy_dn,
-                'Principals': principals,
-                'PublicKeyData': public_key_data,
-                'SourceAddresses': source_addresses,
-                'ValidityPeriod': validity_period
+                'Extensions'        : extensions,
+                'ForceCommand'      : force_command,
+                'ObjectName'        : object_name,
+                'Origin'            : origin,
+                'PolicyDN'          : policy_dn,
+                'Principals'        : principals,
+                'PublicKeyData'     : public_key_data,
+                'SourceAddresses'   : source_addresses,
+                'ValidityPeriod'    : validity_period,
+                'IncludeCertificateDetails': include_certificate_details,
+                'IncludePrivateKeyData': include_private_key_data,
+                'PrivateKeyPassphrase': private_key_passphrase,
+                'ProcessingTimeout': processing_timeout
             }
-            
 
             class _Response(APIResponse):
                 def __init__(self, response):
@@ -145,7 +152,6 @@ class _SSHCertificates:
                 def processing_details(self) -> SSHCertificate.ProcessingDetails:
                     return SSHCertificate.ProcessingDetails(self._from_json('ProcessingDetails'))
 
-
             return _Response(response=self._post(data=body))
 
     class _Retrieve(API):
@@ -157,13 +163,12 @@ class _SSHCertificates:
                  include_certificate_details: bool = None,
                  include_private_key_data: bool = None,
                  private_key_passphrase: str = None):
-
             body = {
-                'DN': certificate_dn,
-                'Guid': certificate_guid,
+                'DN'                       : certificate_dn,
+                'Guid'                     : certificate_guid,
                 'IncludeCertificateDetails': include_certificate_details,
-                'IncludePrivateKeyData': include_private_key_data,
-                'PrivateKeyPassphrase': private_key_passphrase
+                'IncludePrivateKeyData'    : include_private_key_data,
+                'PrivateKeyPassphrase'     : private_key_passphrase
             }
 
             class _Response(APIResponse):
@@ -239,9 +244,9 @@ class _SSHCertificates:
 
             def post(self, template_dn: str = None, template_guid: str = None, include_ca_keypair_details: bool = None):
                 body = {
-                    'DN': template_dn,
-                    'Guid'  : template_guid,
-                    'IncludeCAKeyPairDetails' : include_ca_keypair_details
+                    'DN'                     : template_dn,
+                    'Guid'                   : template_guid,
+                    'IncludeCAKeyPairDetails': include_ca_keypair_details
                 }
 
                 class _Response(APIResponse):

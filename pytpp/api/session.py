@@ -14,6 +14,7 @@ class Session:
     def __init__(self, headers: dict, proxies: dict = None, certificate_path: str = None,
                  key_file_path: str = None, verify_ssl: bool = False, tpp_version: 'Version' = None):
         self.requests = requests
+        # noinspection PyUnresolvedReferences
         self.requests.packages.urllib3.disable_warnings()
         self.request_kwargs = {
             'headers': headers,
