@@ -3,7 +3,7 @@ from pytpp.attributes.top import TopAttributes
 
 
 class CodeSigningEnvironmentBaseAttributes(TopAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Code Signing Environment Base"
     friendly_name = Attribute('Friendly Name', min_version='20.1')
     ip_address_restriction = Attribute('IP Address Restriction', min_version='20.1')
     key_time_constraint = Attribute('Key Time Constraint', min_version='21.2')

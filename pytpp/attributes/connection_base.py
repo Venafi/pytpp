@@ -2,7 +2,7 @@ from pytpp.attributes._helper import IterableMeta, Attribute
 
 
 class ConnectionBaseAttributes(metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Connection Base"
     concurrent_connection_limit = Attribute('Concurrent Connection Limit')
     connection_method = Attribute('Connection Method')
     credential = Attribute('Credential')

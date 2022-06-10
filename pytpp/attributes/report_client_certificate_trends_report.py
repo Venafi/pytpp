@@ -4,4 +4,4 @@ from pytpp.attributes.report_filter_base import ReportFilterBaseAttributes
 
 
 class ReportClientCertificateTrendsReportAttributes(ReportBaseAttributes, ReportFilterBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Report:Client Certificate Trends Report"

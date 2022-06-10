@@ -3,7 +3,7 @@ from pytpp.attributes.code_signing_environment_base import CodeSigningEnvironmen
 
 
 class CodeSigningCertificateEnvironmentAttributes(CodeSigningEnvironmentBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Code Signing Certificate Environment"
     ca_specific_attributes = Attribute('CA Specific Attributes', min_version='21.3')
     certificate_authority = Attribute('Certificate Authority', min_version='20.3')
     certificate_dn = Attribute('Certificate DN', min_version='20.1')

@@ -4,7 +4,7 @@ from pytpp.attributes.top import TopAttributes
 
 
 class CAImportAttributes(ScheduleBaseAttributes, TopAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "CA Import"
     amazon_private_ca = Attribute('Amazon Private CA', min_version='21.2')
     assign_contact_value_to_issued_to = Attribute('Assign Contact value to Issued To', min_version='19.1')
     automatically_import = Attribute('Automatically Import')

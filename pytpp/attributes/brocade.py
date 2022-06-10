@@ -3,7 +3,7 @@ from pytpp.attributes.application_base import ApplicationBaseAttributes
 
 
 class BrocadeAttributes(ApplicationBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Brocade"
     all_cipher_suites = Attribute('All Cipher Suites')
     certificate_file = Attribute('Certificate File')
     chain_cert = Attribute('Chain Cert')

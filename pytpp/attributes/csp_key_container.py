@@ -3,7 +3,7 @@ from pytpp.attributes.top import TopAttributes
 
 
 class CSPKeyContainerAttributes(TopAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "CSP Key Container"
     certificate_vault_id = Attribute('Certificate Vault Id', min_version='19.2')
     options = Attribute('Options', min_version='19.2')
     private_key_vault_id = Attribute('Private Key Vault Id', min_version='19.2')

@@ -4,7 +4,7 @@ from pytpp.attributes.proxy import ProxyAttributes
 
 
 class VeriSignCAAttributes(HTTPCABaseAttributes, ProxyAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "VeriSign CA"
     additional_field = Attribute('Additional Field')
     admin_isd = Attribute('Admin Isd')
     allow_reissue = Attribute('Allow Reissue', min_version='17.2')

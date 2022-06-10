@@ -3,7 +3,7 @@ from pytpp.attributes.http_ca_base import HTTPCABaseAttributes
 
 
 class EntrustPKIGatewayAttributes(HTTPCABaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Entrust PKI Gateway"
     ca_capabilities = Attribute('CA Capabilities', min_version='20.2')
     ca_name = Attribute('CA Name', min_version='20.2')
     exclude_subjectvariables = Attribute('Exclude SubjectVariables', min_version='20.4')

@@ -3,7 +3,7 @@ from pytpp.attributes.client_certificate_work import ClientCertificateWorkAttrib
 
 
 class NetworkDeviceCertificateWorkAttributes(ClientCertificateWorkAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Network Device Certificate Work"
     authentication_credentials = Attribute('Authentication Credentials', min_version='20.1')
     ca_template_trust_anchors_enabled = Attribute('CA Template Trust Anchors Enabled', min_version='20.1')
     certificates_distribution_type = Attribute('Certificates Distribution Type', min_version='20.1')

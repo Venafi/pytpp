@@ -4,7 +4,7 @@ from pytpp.attributes.schedule_base import ScheduleBaseAttributes
 
 
 class ReportBaseAttributes(DriverBaseAttributes, ScheduleBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Report Base"
     csv_vault_id = Attribute('CSV Vault Id')
     configuration = Attribute('Configuration')
     creation_date = Attribute('Creation Date')

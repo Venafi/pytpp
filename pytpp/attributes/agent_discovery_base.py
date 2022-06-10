@@ -5,7 +5,7 @@ from pytpp.attributes.top import TopAttributes
 
 
 class AgentDiscoveryBaseAttributes(DiscoveryStatisticsAttributes, ScheduleBaseAttributes, TopAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Agent Discovery Base"
     configuration = Attribute('Configuration')
     discovery_exclusion_dn = Attribute('Discovery Exclusion DN')
     protection_key = Attribute('Protection Key')

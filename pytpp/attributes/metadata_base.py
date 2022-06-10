@@ -3,7 +3,7 @@ from pytpp.attributes.top import TopAttributes
 
 
 class MetadataBaseAttributes(TopAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Metadata Base"
     allowed_values = Attribute('Allowed Values')
     associated_classes = Attribute('Associated Classes')
     category = Attribute('Category')

@@ -4,7 +4,7 @@ from pytpp.attributes.top import TopAttributes
 
 
 class PlacementJobAttributes(ScheduleBaseAttributes, TopAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Placement Job"
     archive_old_certificates = Attribute('Archive Old Certificates', min_version='19.1')
     default_container = Attribute('Default Container', min_version='19.1')
     include_subfolders = Attribute('Include Subfolders', min_version='19.1')

@@ -3,4 +3,4 @@ from pytpp.attributes.top import TopAttributes
 
 
 class AgentContainerAttributes(TopAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Agent Container"

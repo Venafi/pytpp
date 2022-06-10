@@ -3,5 +3,5 @@ from pytpp.attributes.report_base import ReportBaseAttributes
 
 
 class ReportSSHDiscrepancyAttributes(ReportBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Report:SSH Discrepancy"
     options = Attribute('Options')

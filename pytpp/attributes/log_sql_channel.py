@@ -3,7 +3,7 @@ from pytpp.attributes.log_channel import LogChannelAttributes
 
 
 class LogSQLChannelAttributes(LogChannelAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Log SQL Channel"
     create_sql_expression = Attribute('Create SQL Expression')
     dsn = Attribute('DSN')
     dsn_vault_id = Attribute('DSN Vault Id', min_version='18.1')

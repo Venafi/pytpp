@@ -3,7 +3,7 @@ from pytpp.attributes.branch_base import BranchBaseAttributes
 
 
 class ClientRootAttributes(BranchBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Client Root"
     client_enrollment_anonymous_allowed = Attribute('Client Enrollment Anonymous Allowed')
     client_enrollment_default_owner = Attribute('Client Enrollment Default Owner')
     client_enrollment_secret_allowed = Attribute('Client Enrollment Secret Allowed')

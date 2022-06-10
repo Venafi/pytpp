@@ -3,4 +3,4 @@ from pytpp.attributes.organization import OrganizationAttributes
 
 
 class LayoutRuleContainerAttributes(OrganizationAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Layout Rule Container"

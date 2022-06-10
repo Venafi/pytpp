@@ -3,7 +3,7 @@ from pytpp.attributes.application_base import ApplicationBaseAttributes
 
 
 class VamSunimpAttributes(ApplicationBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "VamSunimp"
     file_validation_disabled = Attribute('File Validation Disabled', min_version='15.3')
     key_list_path = Attribute('Key List Path')
     key_store_credential = Attribute('Key Store Credential')

@@ -3,4 +3,4 @@ from pytpp.attributes.organization import OrganizationAttributes
 
 
 class CredentialContainerAttributes(OrganizationAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Credential Container"

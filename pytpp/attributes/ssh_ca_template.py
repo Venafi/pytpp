@@ -3,7 +3,7 @@ from pytpp.attributes.top import TopAttributes
 
 
 class SSHCATemplateAttributes(TopAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "SSH CA Template"
     allow_private_key_reuse = Attribute('Allow Private Key Reuse', min_version='21.3')
     allow_to_specify_certificate_identifier_on_request = Attribute('Allow To Specify Certificate Identifier On Request', min_version='21.2')
     allow_to_specify_extensions_on_request = Attribute('Allow To Specify Extensions On Request', min_version='21.2')

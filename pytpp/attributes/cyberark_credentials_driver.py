@@ -3,7 +3,7 @@ from pytpp.attributes.credential_driver_base import CredentialDriverBaseAttribut
 
 
 class CyberArkCredentialsDriverAttributes(CredentialDriverBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "CyberArk Credentials Driver"
     central_credential_provider_web_service_url = Attribute('Central Credential Provider Web Service URL', min_version='21.4')
     password_retrieval_method = Attribute('Password Retrieval Method', min_version='21.4')
     scim_server_url = Attribute('SCIM Server URL', min_version='19.3')

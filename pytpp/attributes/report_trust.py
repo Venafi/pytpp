@@ -4,7 +4,7 @@ from pytpp.attributes.report_filter_base import ReportFilterBaseAttributes
 
 
 class ReportTrustAttributes(ReportBaseAttributes, ReportFilterBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Report:Trust"
     discoverydn = Attribute('DiscoveryDN')
     grouping = Attribute('Grouping')
     options = Attribute('Options')

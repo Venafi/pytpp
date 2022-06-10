@@ -3,7 +3,7 @@ from pytpp.attributes.identity_driver import IdentityDriverAttributes
 
 
 class ActiveDirectoryIdentityDriverAttributes(IdentityDriverAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "ActiveDirectory Identity Driver"
     base_dn = Attribute('Base DN')
     computer_class_name = Attribute('Computer Class Name', min_version='19.1')
     computer_query_expression = Attribute('Computer Query Expression', min_version='19.1')

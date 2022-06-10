@@ -3,7 +3,7 @@ from pytpp.attributes.flow_action_approver_base import FlowActionApproverBaseAtt
 
 
 class FlowActionConfigReadApproversAttributes(FlowActionApproverBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Flow Action Config Read Approvers"
     attribute_name = Attribute('Attribute Name', min_version='19.2')
     object_dn = Attribute('Object DN', min_version='19.2')
     policy_read = Attribute('Policy Read', min_version='19.2')

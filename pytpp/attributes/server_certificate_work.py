@@ -5,7 +5,7 @@ from pytpp.attributes.x509_certificate_base import X509CertificateBaseAttributes
 
 
 class ServerCertificateWorkAttributes(ApplicationBaseAttributes, ClientWorkBaseAttributes, X509CertificateBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Server Certificate Work"
     application_attribute = Attribute('Application Attribute', min_version='18.3')
     application_type = Attribute('Application Type', min_version='18.3')
     certificate_container = Attribute('Certificate Container', min_version='18.3')

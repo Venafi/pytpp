@@ -3,7 +3,7 @@ from pytpp.attributes.top import TopAttributes
 
 
 class CredentialBaseAttributes(TopAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Credential Base"
     escalation_notice_interval = Attribute('Escalation Notice Interval')
     escalation_notice_start = Attribute('Escalation Notice Start')
     expiration = Attribute('Expiration')

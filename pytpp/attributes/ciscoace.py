@@ -3,7 +3,7 @@ from pytpp.attributes.application_base import ApplicationBaseAttributes
 
 
 class CiscoACEAttributes(ApplicationBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "CiscoACE"
     certificate_file = Attribute('Certificate File')
     class_map = Attribute('Class Map')
     context_name = Attribute('Context Name')

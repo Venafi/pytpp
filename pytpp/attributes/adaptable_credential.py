@@ -3,7 +3,7 @@ from pytpp.attributes.credential_base import CredentialBaseAttributes
 
 
 class AdaptableCredentialAttributes(CredentialBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Adaptable Credential"
     credential_connector = Attribute('Credential Connector', min_version='21.1')
     credential_type = Attribute('Credential Type', min_version='21.1')
     option_1 = Attribute('Option 1', min_version='21.1')

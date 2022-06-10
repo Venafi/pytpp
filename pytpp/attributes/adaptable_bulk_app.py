@@ -3,7 +3,7 @@ from pytpp.attributes.bulk_application_base import BulkApplicationBaseAttributes
 
 
 class AdaptableBulkAppAttributes(BulkApplicationBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Adaptable Bulk App"
     log_debug = Attribute('Log Debug', min_version='19.3')
     option_1 = Attribute('Option 1', min_version='18.3')
     option_2 = Attribute('Option 2', min_version='18.3')

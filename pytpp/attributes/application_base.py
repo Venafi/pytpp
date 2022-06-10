@@ -5,7 +5,7 @@ from pytpp.attributes.validation_base import ValidationBaseAttributes
 
 
 class ApplicationBaseAttributes(ConnectionBaseAttributes, DriverBaseAttributes, ValidationBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Application Base"
     adaptable_workflow_approvers = Attribute('Adaptable Workflow Approvers', min_version='18.3')
     adaptable_workflow_reference_id = Attribute('Adaptable Workflow Reference ID', min_version='18.3')
     adaptable_workflow_stage = Attribute('Adaptable Workflow Stage', min_version='18.3')

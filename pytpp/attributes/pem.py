@@ -3,7 +3,7 @@ from pytpp.attributes.application_base import ApplicationBaseAttributes
 
 
 class PEMAttributes(ApplicationBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "PEM"
     certificate_chain_file = Attribute('Certificate Chain File')
     certificate_file = Attribute('Certificate File')
     file_validation_disabled = Attribute('File Validation Disabled')

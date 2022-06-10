@@ -3,7 +3,7 @@ from pytpp.attributes.encryption_driver import EncryptionDriverAttributes
 
 
 class Pkcs11EncryptionDriverAttributes(EncryptionDriverAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Pkcs11 Encryption Driver"
     account_type = Attribute('Account Type')
     credential = Attribute('Credential')
     cryptokipath = Attribute('CryptokiPath')

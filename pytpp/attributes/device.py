@@ -6,7 +6,7 @@ from pytpp.attributes.validation_base import ValidationBaseAttributes
 
 
 class DeviceAttributes(ConnectionBaseAttributes, SshDeviceBaseAttributes, TopAttributes, ValidationBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Device"
     agentless_discovery_stage = Attribute('Agentless Discovery Stage', min_version='15.2')
     agentless_discovery_status = Attribute('Agentless Discovery Status', min_version='15.2')
     allow_agentless_discovery_and_remediation = Attribute('Allow Agentless Discovery and Remediation', min_version='15.2')

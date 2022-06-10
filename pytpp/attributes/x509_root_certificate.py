@@ -3,7 +3,7 @@ from pytpp.attributes.top import TopAttributes
 
 
 class X509RootCertificateAttributes(TopAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "X509 Root Certificate"
     aia_ca_issuer_location_description = Attribute('AIA CA Issuer Location Description')
     aia_ca_issuer_location_disabled = Attribute('AIA CA Issuer Location Disabled')
     aia_ca_issuer_location_mode = Attribute('AIA CA Issuer Location Mode')

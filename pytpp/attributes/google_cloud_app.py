@@ -3,7 +3,7 @@ from pytpp.attributes.application_base import ApplicationBaseAttributes
 
 
 class GoogleCloudAppAttributes(ApplicationBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Google Cloud App"
     file_validation_disabled = Attribute('File Validation Disabled', min_version='20.2')
     network_validation_disabled = Attribute('Network Validation Disabled', min_version='20.2')
     target_proxy_name = Attribute('Target Proxy Name', min_version='20.2')

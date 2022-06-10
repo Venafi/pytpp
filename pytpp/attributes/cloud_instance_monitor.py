@@ -4,4 +4,4 @@ from pytpp.attributes.service_module import ServiceModuleAttributes
 
 
 class CloudInstanceMonitorAttributes(ScheduleBaseAttributes, ServiceModuleAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Cloud Instance Monitor"

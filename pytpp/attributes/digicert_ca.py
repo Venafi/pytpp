@@ -3,7 +3,7 @@ from pytpp.attributes.http_ca_base import HTTPCABaseAttributes
 
 
 class DigiCertCAAttributes(HTTPCABaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "DigiCert CA"
     api_credentials = Attribute('API Credentials', min_version='17.3')
     api_key = Attribute('API Key')
     account_number = Attribute('Account Number')

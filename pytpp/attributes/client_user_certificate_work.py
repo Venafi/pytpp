@@ -5,7 +5,7 @@ from pytpp.attributes.x509_certificate_base import X509CertificateBaseAttributes
 
 
 class ClientUserCertificateWorkAttributes(ClientPortalBaseAttributes, ClientWorkBaseAttributes, X509CertificateBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Client User Certificate Work"
     certificate_bundle_capacity = Attribute('Certificate Bundle Capacity', min_version='18.3')
     certificate_bundle_capacity_mobile_config = Attribute('Certificate Bundle Capacity Mobile Config', min_version='18.3')
     certificate_container = Attribute('Certificate Container', min_version='15.2')

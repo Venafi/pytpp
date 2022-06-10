@@ -3,7 +3,7 @@ from pytpp.attributes.application_base import ApplicationBaseAttributes
 
 
 class JuniperSASAttributes(ApplicationBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Juniper SAS"
     external_port = Attribute('External Port')
     file_validation_disabled = Attribute('File Validation Disabled')
     internal_port = Attribute('Internal Port')

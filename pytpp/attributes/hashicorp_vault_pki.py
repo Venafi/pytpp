@@ -3,7 +3,7 @@ from pytpp.attributes.application_base import ApplicationBaseAttributes
 
 
 class HashiCorpVaultPKIAttributes(ApplicationBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "HashiCorp Vault PKI"
     crl_address = Attribute('CRL Address', min_version='20.1')
     create_certificate_authority = Attribute('Create Certificate Authority', min_version='20.1')
     create_pki_role = Attribute('Create PKI Role', min_version='20.1')

@@ -3,7 +3,7 @@ from pytpp.attributes.code_signing_environment_base import CodeSigningEnvironmen
 
 
 class CodeSigningKeyPairEnvironmentAttributes(CodeSigningEnvironmentBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Code Signing Key Pair Environment"
     key_algorithm = Attribute('Key Algorithm', min_version='21.2')
     key_dn = Attribute('Key DN', min_version='21.2')
     key_storage_location = Attribute('Key Storage Location', min_version='21.2')

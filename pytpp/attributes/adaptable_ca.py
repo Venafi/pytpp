@@ -4,7 +4,7 @@ from pytpp.attributes.proxy import ProxyAttributes
 
 
 class AdaptableCAAttributes(HTTPCABaseAttributes, ProxyAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Adaptable CA"
     allow_reissue = Attribute('Allow Reissue', min_version='16.2')
     certificate_credential = Attribute('Certificate Credential', min_version='16.2')
     connection_valid = Attribute('Connection Valid', min_version='16.2')

@@ -2,7 +2,7 @@ from pytpp.attributes._helper import IterableMeta, Attribute
 
 
 class TopAttributes(metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Top"
     contact = Attribute('Contact')
     created_by = Attribute('Created By', min_version='15.1')
     description = Attribute('Description')

@@ -3,7 +3,7 @@ from pytpp.attributes.application_group import ApplicationGroupAttributes
 
 
 class ApacheApplicationGroupAttributes(ApplicationGroupAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Apache Application Group"
     client_tools_path = Attribute('Client Tools Path', min_version='19.4')
     ocs_identifier = Attribute('OCS Identifier', min_version='19.4')
     partition_password_credential = Attribute('Partition Password Credential', min_version='19.4')

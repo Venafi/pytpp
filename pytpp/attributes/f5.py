@@ -3,7 +3,7 @@ from pytpp.attributes.application_base import ApplicationBaseAttributes
 
 
 class F5Attributes(ApplicationBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "F5"
     bundle_certificate = Attribute('Bundle Certificate')
     certificate_chain_name = Attribute('Certificate Chain Name')
     certificate_name = Attribute('Certificate Name')

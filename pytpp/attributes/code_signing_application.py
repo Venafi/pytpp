@@ -3,7 +3,7 @@ from pytpp.attributes.top import TopAttributes
 
 
 class CodeSigningApplicationAttributes(TopAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Code Signing Application"
     application_hash = Attribute('Application Hash', min_version='19.2')
     application_location = Attribute('Application Location', min_version='19.2')
     application_signatory_issuer = Attribute('Application Signatory Issuer', min_version='19.2')

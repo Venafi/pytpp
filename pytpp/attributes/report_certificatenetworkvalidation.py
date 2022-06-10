@@ -4,7 +4,7 @@ from pytpp.attributes.report_filter_base import ReportFilterBaseAttributes
 
 
 class ReportCertificateNetworkValidationAttributes(ReportBaseAttributes, ReportFilterBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Report:CertificateNetworkValidation"
     certificateslimit = Attribute('CertificatesLimit')
     grouping = Attribute('Grouping')
     options = Attribute('Options')

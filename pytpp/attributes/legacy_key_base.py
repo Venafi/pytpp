@@ -2,7 +2,7 @@ from pytpp.attributes._helper import IterableMeta, Attribute
 
 
 class LegacyKeyBaseAttributes(metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Legacy Key Base"
     algorithm = Attribute('Algorithm')
     approver = Attribute('Approver')
     key_bit_strength = Attribute('Key Bit Strength')

@@ -3,7 +3,7 @@ from pytpp.attributes.adaptable_flow_action_base import AdaptableFlowActionBaseA
 
 
 class SSHCertificateAdaptableFlowActionAttributes(AdaptableFlowActionBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "SSH Certificate Adaptable Flow Action"
     allow_to_modify_certificate_request = Attribute('Allow To Modify Certificate Request', min_version='21.4')
     certificate_credential = Attribute('Certificate Credential', min_version='21.4')
     ssh_certificate_adaptable_flow_action_text_field_1 = Attribute('SSH Certificate Adaptable Flow Action Text Field 1', min_version='21.4')

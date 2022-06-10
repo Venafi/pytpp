@@ -3,7 +3,7 @@ from pytpp.attributes.branch_base import BranchBaseAttributes
 
 
 class SecretStoreRootAttributes(BranchBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Secret Store Root"
     certificate_protection_key = Attribute('Certificate Protection Key')
     dsn = Attribute('DSN')
     driver_name = Attribute('Driver Name')

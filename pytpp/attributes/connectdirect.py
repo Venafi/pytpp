@@ -3,7 +3,7 @@ from pytpp.attributes.application_base import ApplicationBaseAttributes
 
 
 class ConnectDirectAttributes(ApplicationBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "ConnectDirect"
     certificate_label = Attribute('Certificate Label')
     certificate_only = Attribute('Certificate Only')
     file_validation_disabled = Attribute('File Validation Disabled')

@@ -3,7 +3,7 @@ from pytpp.attributes.branch_base import BranchBaseAttributes
 
 
 class UpgradesRootAttributes(BranchBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Upgrades Root"
     grouping_id = Attribute('Grouping Id', min_version='20.1')
     origin_version = Attribute('Origin Version', min_version='20.1')
     start_time = Attribute('Start Time', min_version='20.1')

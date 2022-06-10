@@ -3,4 +3,4 @@ from pytpp.attributes.top import TopAttributes
 
 
 class SSHCAKeyPairContainerAttributes(TopAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "SSH CA Key Pair Container"

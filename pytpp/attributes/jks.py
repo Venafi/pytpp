@@ -3,7 +3,7 @@ from pytpp.attributes.application_base import ApplicationBaseAttributes
 
 
 class JKSAttributes(ApplicationBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "JKS"
     certificate_label = Attribute('Certificate Label')
     create_store = Attribute('Create Store')
     disable_ssh_history = Attribute('Disable SSH History', min_version='19.3')

@@ -3,7 +3,7 @@ from pytpp.attributes.log_channel import LogChannelAttributes
 
 
 class LogSNMPAttributes(LogChannelAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Log SNMP"
     community = Attribute('Community')
     message_body = Attribute('Message Body')
     snmp_authentication_password = Attribute('SNMP Authentication Password')

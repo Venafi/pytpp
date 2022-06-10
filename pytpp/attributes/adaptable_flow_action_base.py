@@ -3,7 +3,7 @@ from pytpp.attributes.flow_action_base import FlowActionBaseAttributes
 
 
 class AdaptableFlowActionBaseAttributes(FlowActionBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Adaptable Flow Action Base"
     adaptable_script_max_file_size = Attribute('Adaptable Script Max File Size', min_version='21.4')
     adaptable_script_try_later_max_attempts = Attribute('Adaptable Script Try Later Max Attempts', min_version='21.4')
     adaptable_scripts_directory_name = Attribute('Adaptable Scripts Directory Name', min_version='21.4')

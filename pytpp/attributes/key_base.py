@@ -4,7 +4,7 @@ from pytpp.attributes.top import TopAttributes
 
 
 class KeyBaseAttributes(MonitoringBaseAttributes, TopAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Key Base"
     algorithm = Attribute('Algorithm', min_version='20.2')
     approver = Attribute('Approver', min_version='20.2')
     consumers = Attribute('Consumers', min_version='20.2')

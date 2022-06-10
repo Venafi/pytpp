@@ -3,7 +3,7 @@ from pytpp.attributes.certificate_authority_base import CertificateAuthorityBase
 
 
 class RSAKeonCAAttributes(CertificateAuthorityBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "RSA Keon CA"
     ca_md5 = Attribute('CA MD5')
     ca_name = Attribute('CA Name')
     certificate_block = Attribute('Certificate Block')

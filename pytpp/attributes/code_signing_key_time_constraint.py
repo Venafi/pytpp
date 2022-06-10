@@ -4,4 +4,4 @@ from pytpp.attributes.top import TopAttributes
 
 
 class CodeSigningKeyTimeConstraintAttributes(ScheduleBaseAttributes, TopAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Code Signing Key Time Constraint"

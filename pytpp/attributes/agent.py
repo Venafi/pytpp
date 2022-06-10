@@ -4,7 +4,7 @@ from pytpp.attributes.top import TopAttributes
 
 
 class AgentAttributes(AgentBaseAttributes, TopAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Agent"
     action = Attribute('Action')
     active_directory_dn_host_detail = Attribute('Active Directory DN Host Detail')
     active_directory_domain_host_detail = Attribute('Active Directory Domain Host Detail')

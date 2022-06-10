@@ -3,7 +3,7 @@ from pytpp.attributes.http_ca_base import HTTPCABaseAttributes
 
 
 class ComodoCAAttributes(HTTPCABaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Comodo CA"
     address = Attribute('Address')
     company_number = Attribute('Company Number')
     domain_control_validation = Attribute('Domain Control Validation')

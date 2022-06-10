@@ -3,7 +3,7 @@ from pytpp.attributes.log_channel import LogChannelAttributes
 
 
 class LogFileAttributes(LogChannelAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Log File"
     expiration = Attribute('Expiration')
     language = Attribute('Language')
     log_directory = Attribute('Log Directory')

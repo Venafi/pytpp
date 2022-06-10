@@ -3,7 +3,7 @@ from pytpp.attributes.code_signing_environment_template_base import CodeSigningE
 
 
 class CodeSigningGPGEnvironmentTemplateAttributes(CodeSigningEnvironmentTemplateBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Code Signing GPG Environment Template"
     authentication_key_algorithm = Attribute('Authentication Key Algorithm', min_version='20.2')
     encryption_key_algorithm = Attribute('Encryption Key Algorithm', min_version='20.2')
     internet_email_address = Attribute('Internet EMail Address', min_version='20.2')

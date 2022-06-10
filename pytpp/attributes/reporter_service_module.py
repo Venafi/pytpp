@@ -4,7 +4,7 @@ from pytpp.attributes.service_module import ServiceModuleAttributes
 
 
 class ReporterServiceModuleAttributes(ScheduleBaseAttributes, ServiceModuleAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Reporter Service Module"
     host = Attribute('Host')
     log_delivery = Attribute('Log Delivery')
     max_running_reports = Attribute('Max Running Reports', min_version='17.1')

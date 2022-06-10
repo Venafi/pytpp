@@ -3,7 +3,7 @@ from pytpp.attributes.code_signing_environment_base import CodeSigningEnvironmen
 
 
 class CodeSigningAppleEnvironmentAttributes(CodeSigningEnvironmentBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Code Signing Apple Environment"
     cn_pattern = Attribute('CN Pattern', min_version='21.2')
     certificate_authority = Attribute('Certificate Authority', min_version='22.1')
     certificate_dn = Attribute('Certificate DN', min_version='21.2')

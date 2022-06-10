@@ -3,7 +3,7 @@ from pytpp.attributes.http_ca_base import HTTPCABaseAttributes
 
 
 class EntrustNETCAAttributes(HTTPCABaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "EntrustNET CA"
     allow_reissue = Attribute('Allow Reissue', min_version='16.4')
     certificate_block = Attribute('Certificate Block')
     certificate_transparency = Attribute('Certificate Transparency', min_version='18.4')

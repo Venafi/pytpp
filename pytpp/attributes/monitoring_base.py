@@ -2,7 +2,7 @@ from pytpp.attributes._helper import IterableMeta, Attribute
 
 
 class MonitoringBaseAttributes(metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Monitoring Base"
     creation_date = Attribute('Creation Date')
     escalation_notice_interval = Attribute('Escalation Notice Interval')
     escalation_notice_start = Attribute('Escalation Notice Start')

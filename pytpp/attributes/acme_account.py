@@ -3,7 +3,7 @@ from pytpp.attributes.top import TopAttributes
 
 
 class ACMEAccountAttributes(TopAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "ACME Account"
     account_key_hash = Attribute('Account Key Hash', min_version='17.2')
     certificate_location_dn = Attribute('Certificate Location DN', min_version='17.2')
     internet_email_address = Attribute('Internet EMail Address', min_version='17.2')

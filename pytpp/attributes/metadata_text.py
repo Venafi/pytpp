@@ -3,7 +3,7 @@ from pytpp.attributes.metadata_base import MetadataBaseAttributes
 
 
 class MetadataTextAttributes(MetadataBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Metadata Text"
     allowed_characters = Attribute('Allowed Characters')
     error_message = Attribute('Error Message')
     mask = Attribute('Mask')

@@ -3,7 +3,7 @@ from pytpp.attributes.application_base import ApplicationBaseAttributes
 
 
 class CAPIAttributes(ApplicationBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "CAPI"
     binding_ip_address = Attribute('Binding IP Address')
     binding_port = Attribute('Binding Port')
     create_binding = Attribute('Create Binding')

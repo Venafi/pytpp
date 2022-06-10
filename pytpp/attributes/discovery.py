@@ -5,7 +5,7 @@ from pytpp.attributes.top import TopAttributes
 
 
 class DiscoveryAttributes(DiscoveryStatisticsAttributes, ScheduleBaseAttributes, TopAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Discovery"
     address_parsing_errors = Attribute('Address Parsing Errors', min_version='15.4')
     address_range = Attribute('Address Range')
     automatically_import = Attribute('Automatically Import')

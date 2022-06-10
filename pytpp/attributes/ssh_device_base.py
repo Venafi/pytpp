@@ -2,7 +2,7 @@ from pytpp.attributes._helper import IterableMeta, Attribute
 
 
 class SshDeviceBaseAttributes(metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Ssh Device Base"
     algorithm = Attribute('Algorithm', min_version='15.1')
     allow_duplicate_private_keys = Attribute('Allow Duplicate Private Keys', min_version='15.1')
     allow_from = Attribute('Allow From', min_version='15.1')

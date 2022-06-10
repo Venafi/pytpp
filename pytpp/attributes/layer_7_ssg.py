@@ -3,7 +3,7 @@ from pytpp.attributes.application_base import ApplicationBaseAttributes
 
 
 class Layer7SSGAttributes(ApplicationBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Layer 7 SSG"
     certificate_oid = Attribute('Certificate OID')
     certificate_only = Attribute('Certificate Only')
     chain_cert = Attribute('Chain Cert')

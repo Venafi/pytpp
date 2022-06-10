@@ -3,7 +3,7 @@ from pytpp.attributes.application_base import ApplicationBaseAttributes
 
 
 class CiscoCSSAttributes(ApplicationBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "CiscoCSS"
     certificate_file = Attribute('Certificate File')
     chain_cert = Attribute('Chain Cert')
     ftp_credential = Attribute('FTP Credential')

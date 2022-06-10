@@ -3,7 +3,7 @@ from pytpp.attributes.branch_base import BranchBaseAttributes
 
 
 class EngineRootAttributes(BranchBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Engine Root"
     acme_certificates_folder = Attribute('ACME Certificates Folder', min_version='17.2')
     acme_enabled = Attribute('ACME Enabled', min_version='17.2')
     adaptable_script_max_file_size = Attribute('Adaptable Script Max File Size', min_version='19.3')

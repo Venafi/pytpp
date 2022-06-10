@@ -3,7 +3,7 @@ from pytpp.attributes.log_channel import LogChannelAttributes
 
 
 class LogSyslogAttributes(LogChannelAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Log Syslog"
     credential = Attribute('Credential', min_version='19.3')
     enable_tls = Attribute('Enable TLS', min_version='19.3')
     facility = Attribute('Facility')

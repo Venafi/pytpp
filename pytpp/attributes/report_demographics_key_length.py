@@ -4,4 +4,4 @@ from pytpp.attributes.report_filter_base import ReportFilterBaseAttributes
 
 
 class ReportDemographicsKeyLengthAttributes(ReportBaseAttributes, ReportFilterBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Report:Demographics Key Length"

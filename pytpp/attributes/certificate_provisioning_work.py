@@ -3,7 +3,7 @@ from pytpp.attributes.client_work_base import ClientWorkBaseAttributes
 
 
 class CertificateProvisioningWorkAttributes(ClientWorkBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Certificate Provisioning Work"
     days_of_month = Attribute('Days Of Month', min_version='15.3')
     days_of_week = Attribute('Days Of Week', min_version='15.3')
     interval = Attribute('Interval', min_version='15.3')

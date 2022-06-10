@@ -3,7 +3,7 @@ from pytpp.attributes.application_base import ApplicationBaseAttributes
 
 
 class GSKAttributes(ApplicationBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "GSK"
     backup_store = Attribute('Backup Store')
     certificate_label = Attribute('Certificate Label')
     create_store = Attribute('Create Store')

@@ -3,4 +3,4 @@ from pytpp.attributes.credential_driver_base import CredentialDriverBaseAttribut
 
 
 class IntegratedCredentialDriverAttributes(CredentialDriverBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Integrated Credential Driver"

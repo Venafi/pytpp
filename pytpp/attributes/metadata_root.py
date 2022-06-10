@@ -3,4 +3,4 @@ from pytpp.attributes.branch_base import BranchBaseAttributes
 
 
 class MetadataRootAttributes(BranchBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Metadata Root"

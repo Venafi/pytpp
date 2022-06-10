@@ -3,4 +3,4 @@ from pytpp.attributes.tree_root import TreeRootAttributes
 
 
 class BranchBaseAttributes(TreeRootAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Branch Base"

@@ -5,4 +5,4 @@ from pytpp.attributes.schedule_base import ScheduleBaseAttributes
 
 
 class AgentCertificateDriverAttributes(AgentCertificateBaseAttributes, AgentDriverBaseAttributes, ScheduleBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Agent Certificate Driver"

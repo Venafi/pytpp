@@ -3,7 +3,7 @@ from pytpp.attributes.certificate_authority_base import CertificateAuthorityBase
 
 
 class UniCERTCAAttributes(CertificateAuthorityBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "UniCERT CA"
     ca_dn = Attribute('CA DN')
     ra_dn = Attribute('RA DN')
     secure = Attribute('Secure')

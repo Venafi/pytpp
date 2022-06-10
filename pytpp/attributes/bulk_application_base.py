@@ -5,7 +5,7 @@ from pytpp.attributes.schedule_base import ScheduleBaseAttributes
 
 
 class BulkApplicationBaseAttributes(ConnectionBaseAttributes, DriverBaseAttributes, ScheduleBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Bulk Application Base"
     batch_size = Attribute('Batch Size', min_version='20.1')
     certificate_thumbprint = Attribute('Certificate Thumbprint', min_version='18.3')
     device = Attribute('Device', min_version='18.3')

@@ -3,7 +3,7 @@ from pytpp.attributes.driver_base import DriverBaseAttributes
 
 
 class AgentDriverBaseAttributes(DriverBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Agent Driver Base"
     address = Attribute('Address')
     agent_discovery_redirection_rule = Attribute('Agent Discovery Redirection Rule')
     credential = Attribute('Credential')

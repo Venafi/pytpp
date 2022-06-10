@@ -3,4 +3,4 @@ from pytpp.attributes.server_agent_base_device_placement_work import ServerAgent
 
 
 class ServerAgentCertDevicePlacementWorkAttributes(ServerAgentBaseDevicePlacementWorkAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Server Agent Cert Device Placement Work"

@@ -4,7 +4,7 @@ from pytpp.attributes.monitoring_base import MonitoringBaseAttributes
 
 
 class X509CertificateBaseAttributes(DriverBaseAttributes, MonitoringBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "X509 Certificate Base"
     adaptable_ca_binary_data_vault_id = Attribute('Adaptable CA:Binary Data Vault ID', min_version='16.2')
     adaptable_ca_early_password_vault_id = Attribute('Adaptable CA:Early Password Vault ID', min_version='17.4')
     adaptable_ca_early_pkcs7_vault_id = Attribute('Adaptable CA:Early Pkcs7 Vault ID', min_version='16.2')

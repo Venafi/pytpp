@@ -3,7 +3,7 @@ from pytpp.attributes.application_base import ApplicationBaseAttributes
 
 
 class BlueCoatSSLVAAttributes(ApplicationBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "BlueCoat SSLVA"
     certificate_label = Attribute('Certificate Label')
     certificate_oid = Attribute('Certificate OID')
     certificate_only = Attribute('Certificate Only')

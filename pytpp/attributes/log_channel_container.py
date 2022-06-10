@@ -3,5 +3,5 @@ from pytpp.attributes.top import TopAttributes
 
 
 class LogChannelContainerAttributes(TopAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Log Channel Container"
     description = Attribute('Description')

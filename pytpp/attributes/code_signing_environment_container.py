@@ -3,4 +3,4 @@ from pytpp.attributes.top import TopAttributes
 
 
 class CodeSigningEnvironmentContainerAttributes(TopAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Code Signing Environment Container"

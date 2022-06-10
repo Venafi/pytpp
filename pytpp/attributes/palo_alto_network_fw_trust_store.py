@@ -3,5 +3,5 @@ from pytpp.attributes.certificate_trust_store_base import CertificateTrustStoreB
 
 
 class PaloAltoNetworkFWTrustStoreAttributes(CertificateTrustStoreBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Palo Alto Network FW Trust Store"
     lock_config = Attribute('Lock Config', min_version='15.1')

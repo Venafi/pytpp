@@ -4,7 +4,7 @@ from pytpp.attributes.top import TopAttributes
 
 
 class JumpServerAttributes(ConnectionBaseAttributes, TopAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Jump Server"
     consumers = Attribute('Consumers')
     location = Attribute('Location')
     ssh_connection_string = Attribute('SSH Connection String')

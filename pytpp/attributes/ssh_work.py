@@ -3,7 +3,7 @@ from pytpp.attributes.client_work_base import ClientWorkBaseAttributes
 
 
 class SSHWorkAttributes(ClientWorkBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "SSH Work"
     days_of_month = Attribute('Days Of Month')
     days_of_week = Attribute('Days Of Week')
     exclude_remote_mount_points = Attribute('Exclude Remote Mount Points')

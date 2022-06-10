@@ -3,7 +3,7 @@ from pytpp.attributes.application_base import ApplicationBaseAttributes
 
 
 class PaloAltoNetworkFWAttributes(ApplicationBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Palo Alto Network FW"
     certificate_only = Attribute('Certificate Only', min_version='15.1')
     chain_cert = Attribute('Chain Cert', min_version='15.1')
     create_decryption_policy = Attribute('Create Decryption Policy', min_version='15.1')

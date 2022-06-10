@@ -3,7 +3,7 @@ from pytpp.attributes.top import TopAttributes
 
 
 class WorkflowTicketAttributes(TopAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Workflow Ticket"
     approval_explanation = Attribute('Approval Explanation')
     approval_from = Attribute('Approval From')
     approval_reason = Attribute('Approval Reason')

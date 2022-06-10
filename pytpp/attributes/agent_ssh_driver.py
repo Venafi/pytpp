@@ -5,4 +5,4 @@ from pytpp.attributes.schedule_base import ScheduleBaseAttributes
 
 
 class AgentSSHDriverAttributes(AgentDriverBaseAttributes, AgentSSHBaseAttributes, ScheduleBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Agent SSH Driver"

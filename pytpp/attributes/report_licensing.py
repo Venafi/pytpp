@@ -3,5 +3,5 @@ from pytpp.attributes.report_base import ReportBaseAttributes
 
 
 class ReportLicensingAttributes(ReportBaseAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Report:Licensing"
     options = Attribute('Options')

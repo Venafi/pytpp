@@ -4,6 +4,6 @@ from pytpp.attributes.proxy import ProxyAttributes
 
 
 class SymantecLHKCAAttributes(HTTPCABaseAttributes, ProxyAttributes, metaclass=IterableMeta):
-    __config_class__ = "{key}"
+    __config_class__ = "Symantec LHK CA"
     fields = Attribute('Fields')
     uri = Attribute('URI')
