@@ -11,4 +11,7 @@ class _Revoke:
             self._url = self._url.replace('vedsdk', 'vedauth')
 
         def get(self):
-            return APIResponse(response=self._get())
+            response = APIResponse(response=self._get())
+            # Set this to None to avoid erroneous re-authentication.
+            self._api_obj._token = None
+            return response

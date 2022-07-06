@@ -12,13 +12,15 @@ class Session:
     request. It also removes all null values from all data sent to TPP.
     """
     def __init__(self, headers: dict, proxies: dict = None, certificate_path: str = None,
-                 key_file_path: str = None, verify_ssl: bool = False, tpp_version: 'Version' = None):
+                 key_file_path: str = None, verify_ssl: bool = False, tpp_version: 'Version' = None,
+                 connection_timeout: float = None, read_timeout: float = None):
         self.requests = requests
         # noinspection PyUnresolvedReferences
         self.requests.packages.urllib3.disable_warnings()
         self.request_kwargs = {
             'headers': headers,
-            'verify': verify_ssl
+            'verify': verify_ssl,
+            'timeout': (connection_timeout, read_timeout)
         }
         if proxies:
             self.request_kwargs['proxies'] = proxies

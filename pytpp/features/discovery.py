@@ -324,6 +324,9 @@ class NetworkDiscovery(FeatureBase):
                 values=['1']
             )
             response.assert_valid_response()
+        else:
+            self._log_warning_message('Cannot run place_results() because it has been deprecated since TPP 21.1. Results '
+                                      'are placed along with discovery beginning in 21.1.')
 
     def get_all_jobs(self):
         """

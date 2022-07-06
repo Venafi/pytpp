@@ -1,9 +1,12 @@
-from typing import Union
 import re
 import json
-from pytpp.api.session import Session
+import time
 from requests import Response, HTTPError
 from pytpp.tools.logger import api_logger, json_pickler
+from typing import Union, Protocol, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pytpp.api.session import Session
 
 
 def api_response_property(return_on_204: type = None):
@@ -56,6 +59,17 @@ def api_response_property(return_on_204: type = None):
     return pre_validation
 
 
+class APISource(Protocol):
+    _host: str
+    _username: str
+    _password: str
+    _token: str
+    _base_url: str
+    _session: 'Session'
+
+    def re_authenticate(self): ...
+
+
 class API:
     """
     This is the backbone of all API definitions. It performs all requests,
@@ -73,29 +87,23 @@ class API:
                 to TPP.
             url: This is the URL extension from the base URL.
         """
-        self._api_obj = api_obj
+        self._api_obj: 'APISource' = api_obj
         if not url.startswith('/'):
             url = '/' + url
         self._url = self._api_obj._base_url + url
-        self.retries = 3
+        self._retries = 3
+        self.retry_interval = 0.5
+
+    @property
+    def retries(self):
+        return self._retries + 1  # The first time isn't a "retry".
 
     @property
     def _session(self) -> 'Session':
         return self._api_obj._session
 
-    @staticmethod
-    def _is_api_key_invalid(response: Response):
-        """
-        Uses a regular expression to search the response text for an indication that the API key
-        is expired.
-
-        Args:
-            response: The raw response object.
-
-        Returns:
-            Returns ``True`` if the API key expired. Otherwise ``False``.
-        """
-        return response.status_code == 401 and bool(re.match('.*api key.*is not valid.*', response.text, flags=re.IGNORECASE))
+    def _should_re_authenticate(self, response: 'Response'):
+        return response.status_code == 401 and self._api_obj._token is not None
 
     @staticmethod
     def _rerun_transaction_required(response: Response):
@@ -121,14 +129,12 @@ class API:
             Returns the raw JSON response.
         """
         self._log_rest_call(method='DELETE', data=params)
-        retried = 0
         exc = None
-        while retried < self.retries:
-            retried += 1
+        for _ in range(self.retries):
             try:
                 response = self._session.delete(url=self._url, params=params)
                 self._log_response(response=response)
-                if self._is_api_key_invalid(response=response):
+                if self._should_re_authenticate(response=response):
                     self._re_authenticate()
                     # Trigger the retry.
                     continue
@@ -138,6 +144,7 @@ class API:
                 return response
             except (ConnectionResetError, ConnectionError) as e:
                 exc = e
+            time.sleep(self.retry_interval)
         raise exc
 
     def _get(self, params: dict = None):
@@ -152,14 +159,12 @@ class API:
             Returns the raw JSON response.
         """
         self._log_rest_call(method='GET', data=params)
-        retried = 0
         exc = None
-        while retried < self.retries:
-            retried += 1
+        for _ in range(self.retries):
             try:
                 response = self._session.get(url=self._url, params=params)
                 self._log_response(response=response)
-                if self._is_api_key_invalid(response=response):
+                if self._should_re_authenticate(response=response):
                     self._re_authenticate()
                     # Trigger the retry.
                     continue
@@ -169,6 +174,7 @@ class API:
                 return response
             except (ConnectionResetError, ConnectionError) as e:
                 exc = e
+            time.sleep(self.retry_interval)
         raise exc
 
     def _post(self, data: Union[list, dict]):
@@ -183,14 +189,12 @@ class API:
             Returns the raw JSON response.
         """
         self._log_rest_call(method='POST', data=data)
-        retried = 0
         exc = None
-        while retried < self.retries:
-            retried += 1
+        for _ in range(self.retries):
             try:
                 response = self._session.post(url=self._url, data=data)
                 self._log_response(response=response)
-                if self._is_api_key_invalid(response=response):
+                if self._should_re_authenticate(response=response):
                     self._re_authenticate()
                     # Trigger the retry.
                     continue
@@ -200,6 +204,7 @@ class API:
                 return response
             except (ConnectionResetError, ConnectionError) as e:
                 exc = e
+            time.sleep(self.retry_interval)
         raise exc
 
     def _put(self, data: Union[list, dict]):
@@ -214,14 +219,12 @@ class API:
             Returns the raw JSON response.
         """
         self._log_rest_call(method='PUT', data=data)
-        retried = 0
         exc = None
-        while retried < self.retries:
-            retried += 1
+        for _ in range(self.retries):
             try:
                 response = self._session.put(url=self._url, data=data)
                 self._log_response(response=response)
-                if self._is_api_key_invalid(response=response):
+                if self._should_re_authenticate(response=response):
                     self._re_authenticate()
                     # Trigger the retry.
                     continue
@@ -231,6 +234,7 @@ class API:
                 return response
             except (ConnectionResetError, ConnectionError) as e:
                 exc = e
+            time.sleep(self.retry_interval)
         raise exc
 
     def _re_authenticate(self):

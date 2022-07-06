@@ -214,12 +214,8 @@ class FeatureBase:
 
     def _is_version_compatible(self, minimum: str = '', maximum: str = ''):
         if minimum and self._api._tpp_version <= Version(minimum):
-            features_logger.error(f'Incompatible version. This feature requires at least TPP {minimum}.',
-                                  stacklevel=2)
             return False
         if maximum and self._api._tpp_version >= Version(maximum):
-            features_logger.error(f'Incompatible version. This feature is no longer available after TPP {maximum}.',
-                                  stacklevel=2)
             return False
         return True
 
