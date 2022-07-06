@@ -10,12 +10,12 @@ from setuptools import setup, find_packages
 import os
 
 PROD_REQUIREMENTS = [
-    'isodate~=0.6.0',
-    'packaging~=21.3',
-    'python-dateutil~=2.8.2',
-    'requests~=2.24.0',
-    'simplejson~=3.17.6',
-    'jsonpickle~=2.1.0'
+    'isodate>=0.6.0',
+    'packaging>=21.3',
+    'python-dateutil>=2.8.2',
+    'requests>=2.24.0',
+    'simplejson>=3.17.6',
+    'jsonpickle>=2.1.0'
 ]
 
 DEV_REQUIREMENTS = [
