@@ -32,6 +32,7 @@ class _Codesign:
         self.GetEnvironment = self._GetEnvironment(api_obj=api_obj)
         self.GetGlobalConfiguration = self._GetGlobalConfiguration(api_obj=api_obj)
         self.GetObjectRights = self._GetObjectRights(api_obj=api_obj)
+        self.GetProject = self._GetProject(api_obj=api_obj)
         self.GetRight = self._GetRight(api_obj=api_obj)
         self.GetTemplate = self._GetTemplate(api_obj=api_obj)
         self.GetTrusteeRights = self._GetTrusteeRights(api_obj=api_obj)
