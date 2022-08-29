@@ -33,13 +33,25 @@ Requirements
 Installation
 ------------
 
-Install using ``pip install pytpp``.
+**Using PYPI**
+
+``pip install pytpp``.
+
+**Using GitHub**
+
+``pip install git+https://github.com/Venafi/pytpp.git#egg=pytpp``
+
+Uninstallation
+--------------
+
+``pip uninstall -y pytpp``
 
 .. note::
-    PyTPP is not versioned with TPP. In fact, PyTPP is meant to be compatible with the latest released version of TPP.
-    Versioning has been baked into the PyTPP Features layer (which allows a feature to know how to accomplish its task),
-    but not the API layer. It is the responsibility of the programmer to know what APIs are compatible with the version
-    of TPP they are working with.
+   PyTPP is not versioned with TPP. In fact, PyTPP is meant to be compatible with all supported versions of TPP. There
+   are two layers of logic: Features and API. Features abstracts the API to make handy methods for easily accomplishing
+   tasks for the user, and being such it can decide which API calls to make based on version compatibility with TPP. The
+   API layer, however, is not versioned, and being such it is the developer's responsibility to ensure the API calls made
+   to the server are compatible.
 
 
 .. toctree::

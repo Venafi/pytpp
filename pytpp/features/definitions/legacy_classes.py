@@ -1,5 +1,5 @@
 from pytpp.tools.deprecation import DeprecationMeta
-from pytpp.properties.config import (
+from pytpp.api.websdk.enums.config import (
     ApplicationGroupClassNames, ApplicationClassNames, CertificateClassNames, DevicesClassNames, DiscoveryClassNames,
     IdentityClassNames, PlacementRulesClassNames, PlatformsClassNames, WorkflowClassNames, ClientWorkClassNames,
     ClientGroupsClassNames, FolderClassNames, CertificateAuthorityClassNames

@@ -6,7 +6,7 @@ from pytpp._about import (
 # noinspection PyUnresolvedReferences
 from pytpp.api.authenticate import Authenticate
 # noinspection PyUnresolvedReferences
-from pytpp.properties.oauth import Scope
+from pytpp.api.websdk.enums.oauth import Scope
 # noinspection PyUnresolvedReferences
 from pytpp.features.definitions.features import Features
 # noinspection PyUnresolvedReferences
@@ -17,16 +17,14 @@ from pytpp.features.definitions.attribute_values import AttributeValues
 from pytpp.features.definitions.classes import Classes as ClassNames
 # noinspection PyUnresolvedReferences
 from pytpp.tools.logger import logger, features_logger, api_logger
-# noinspection PyUnresolvedReferences
+# noinspection ALL
 from pytpp.tools import vtypes as Types
-# Legacy imports
-from pytpp.features.definitions.legacy_attribute_names import AttributeNames as __AN
-from pytpp.features.definitions.legacy_classes import Classes as __C
+from pytpp.api.websdk import models, enums
 
 
 def __getattr__(name):
     if name == 'AttributeNames':
-        return __AN
+        raise ImportError('Importing AttributeNames has been deprecated since PyTPP 2.0. Use "Attributes" instead.')
     elif name == 'Classes':
-        return __C
+        raise ImportError('Importing Classes has been deprecated since PyTPP 2.0. Use "ClassNames" instead.')
     raise ImportError(f'{name} cannot be imported because it does not exist.')

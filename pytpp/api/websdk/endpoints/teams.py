@@ -1,304 +1,154 @@
-from typing import List
-from pytpp.api.api_base import API, APIResponse, api_response_property
-from pytpp.properties.response_objects.identity import Identity
+from typing import List, Union
+from pytpp.api.api_base import WebSdkEndpoint, WebSdkOutputModel, generate_output, ApiField
+from pytpp.api.websdk.models import identity as ident
 
 
-class _Teams(API):
+class _Teams(WebSdkEndpoint):
     def __init__(self, api_obj):
         super().__init__(api_obj=api_obj, url='/Teams')
-        self.AddTeamMembers = self._AddTeamMembers(api_obj=api_obj)
-        self.AddTeamOwners = self._AddTeamOwners(api_obj=api_obj)
-        self.DemoteTeamOwners = self._DemoteTeamOwners(api_obj=api_obj)
-        self.RemoveTeamMembers = self._RemoveTeamMembers(api_obj=api_obj)
-        self.RenameTeam = self._RenameTeam(api_obj=api_obj)
+        self.AddTeamMembers = self._AddTeamMembers(api_obj=self._api_obj, url=f'{self._url}/AddTeamMembers')
+        self.AddTeamOwners = self._AddTeamOwners(api_obj=self._api_obj, url=f'{self._url}/AddTeamOwners')
+        self.DemoteTeamOwners = self._DemoteTeamOwners(api_obj=self._api_obj, url=f'{self._url}/DemoteTeamOwners')
+        self.RemoveTeamMembers = self._RemoveTeamMembers(api_obj=self._api_obj, url=f'{self._url}/RemoveTeamMembers')
+        self.RenameTeam = self._RenameTeam(api_obj=self._api_obj, url=f'{self._url}/RenameTeam')
 
-    def post(self, name: str, owners: list, assets: list = None, description: str = None, members: list = None,
-             products: list = None):
+    def post(self, name: str, owners: List[Union[dict, ident.Identity]], assets: List[str] = None, description: str = None,
+             members: List[Union[dict, ident.Identity]] = None, products: List[str] = None):
         body = {
-            'Assets': assets,
+            'Assets'     : assets,
             'Description': description,
-            'Name': name,
-            'Owners': owners,
-            'Members': members,
-            'Products': products
+            'Name'       : name,
+            'Owners'     : owners,
+            'Members'    : members,
+            'Products'   : products
         }
 
-        class _Response(APIResponse):
-            def __init__(self, response):
-                super().__init__(response=response)
+        class Output(WebSdkOutputModel):
+            identity: ident.Identity = ApiField(default_factory=list, alias='ID')
+            invalid_members: List[ident.InvalidIdentity] = ApiField(default_factory=list, alias='InvalidMembers')
+            invalid_owners: List[ident.InvalidIdentity] = ApiField(alias='InvalidOwners', default_factory=list)
+            message: str = ApiField(alias='Message')
 
-            @property
-            @api_response_property()
-            def identity(self):
-                return [Identity.Identity(owner) for owner in self._from_json(key='Owners')]
+        return generate_output(output_cls=Output, response=self._post(data=body))
 
-            @property
-            @api_response_property()
-            def invalid_members(self):
-                return [Identity.InvalidIdentity(member) for member in self._from_json(key='InvalidMembers')]
-
-        return _Response(response=self._post(data=body))
-
-    class _AddTeamMembers(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Teams/AddTeamMembers')
-
-        def put(self, members: list, team: dict = None, show_members: bool = None):
+    class _AddTeamMembers(WebSdkEndpoint):
+        def put(self, members: List[Union[dict, ident.Identity]], team: Union[dict, ident.Identity] = None,
+                show_members: bool = None):
             body = {
-                'Members': members,
-                'Team': team,
+                'Members'    : members,
+                'Team'       : team,
                 'ShowMembers': show_members
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                invalid_members: List[ident.InvalidIdentity] = ApiField(default_factory=list, alias='InvalidMembers')
+                members: List[ident.Identity] = ApiField(default_factory=list, alias='Members')
+                message: str = ApiField(alias='Message')
 
-                @property
-                @api_response_property()
-                def invalid_members(self):
-                    return [Identity.InvalidIdentity(member) for member in self._from_json(key='InvalidMembers')]
+            return generate_output(output_cls=Output, response=self._put(data=body))
 
-                @property
-                @api_response_property()
-                def members(self):
-                    return [Identity.Identity(member) for member in self._from_json(key='Members')]
-
-                @property
-                @api_response_property()
-                def message(self) -> str:
-                    return self._from_json(key='Message')
-
-            return _Response(response=self._put(data=body))
-
-    class _AddTeamOwners(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Teams/AddTeamOwners')
-
-        def put(self, owners: list = None, team: dict = None, show_members: bool = None):
+    class _AddTeamOwners(WebSdkEndpoint):
+        def put(self, owners: List[Union[dict, ident.Identity]] = None, team: Union[dict, ident.Identity] = None, show_members: bool = None):
             body = {
-                'Owners': owners,
-                'Team': team,
+                'Owners'     : owners,
+                'Team'       : team,
                 'ShowMembers': show_members
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                members: List[ident.Identity] = ApiField(default_factory=list, alias='Members')
+                message: str = ApiField(alias='Message')
+                owners: List[ident.Identity] = ApiField(default_factory=list, alias='Owners')
 
-                @property
-                @api_response_property()
-                def owners(self):
-                    return [Identity.Identity(owner) for owner in self._from_json(key='Owners')]
+            return generate_output(output_cls=Output, response=self._put(data=body))
 
-                @property
-                @api_response_property()
-                def members(self):
-                    return [Identity.Identity(member) for member in self._from_json(key='Members')]
-
-                @property
-                @api_response_property()
-                def message(self) -> str:
-                    return self._from_json(key='Message')
-
-            return _Response(response=self._put(data=body))
-
-    class _DemoteTeamOwners(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Teams/DemoteTeamOwners')
-
-        def put(self, owners: list = None, team: dict = None, show_members: bool = None):
+    class _DemoteTeamOwners(WebSdkEndpoint):
+        def put(self, owners: List[Union[dict, ident.Identity]] = None, team: Union[dict, ident.Identity] = None,
+                show_members: bool = None):
             body = {
-                'Owners': owners,
-                'Team': team,
+                'Owners'     : owners,
+                'Team'       : team,
                 'ShowMembers': show_members
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                invalid_members: List[ident.InvalidIdentity] = ApiField(default_factory=list, alias='InvalidMembers')
+                members: List[ident.Identity] = ApiField(default_factory=list, alias='Members')
+                message: str = ApiField(alias='Message')
+                owners: List[ident.Identity] = ApiField(default_factory=list, alias='Owners')
 
-                @property
-                @api_response_property()
-                def invalid_owners(self):
-                    return [Identity.InvalidIdentity(owner) for owner in self._from_json(key='InvalidOwners')]
-
-                @property
-                @api_response_property()
-                def owners(self):
-                    return [Identity.Identity(owner) for owner in self._from_json(key='Owners')]
-
-                @property
-                @api_response_property()
-                def members(self):
-                    return [Identity.Identity(member) for member in self._from_json(key='Members')]
-
-                @property
-                @api_response_property()
-                def message(self) -> str:
-                    return self._from_json(key='Message')
-
-            return _Response(response=self._put(data=body))
+            return generate_output(output_cls=Output, response=self._put(data=body))
 
     def Prefix(self, prefix='local'):
-        return self._Prefix(prefix=prefix, api_obj=self._api_obj)
+        return self._Prefix(api_obj=self._api_obj, url=f'{self._url}/{prefix}')
 
-    class _Prefix:
-        def __init__(self, prefix: str, api_obj):
-            self._prefix = prefix
-            self._api_obj = api_obj
-
+    class _Prefix(WebSdkEndpoint):
         def Universal(self, universal):
-            return self._Universal(
-                prefix=self._prefix,
-                universal=universal,
-                api_obj=self._api_obj
-            )
+            return self._Universal(api_obj=self._api_obj, url=f'{self._url}/{universal}')
 
-        class _Universal(API):
-            def __init__(self, prefix: str, universal: str, api_obj):
-                super().__init__(api_obj=api_obj, url=f'/Teams/{prefix}/{universal}')
-
+        class _Universal(WebSdkEndpoint):
             def delete(self):
-                
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    message: str = ApiField(alias='Message')
 
-                return _Response(response=self._delete())
+                return generate_output(output_cls=Output, response=self._delete())
 
             def get(self):
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    assets: List[str] = ApiField(default_factory=list, alias='Assets')
+                    description: str = ApiField(alias='Description')
+                    identity: ident.Identity = ApiField(alias='ID')
+                    members: List[ident.Identity] = ApiField(default_factory=list, alias='Members')
+                    message: str = ApiField(alias='Message')
+                    owners: List[ident.Identity] = ApiField(default_factory=list, alias='Owners')
+                    products: List[str] = ApiField(default_factory=list, alias='Products')
 
-                    @property
-                    @api_response_property()
-                    def assets(self) -> List[str]:
-                        return self._from_json(key='Assets')
+                return generate_output(output_cls=Output, response=self._get())
 
-                    @property
-                    @api_response_property()
-                    def description(self) -> str:
-                        return self._from_json(key='Description')
-
-                    @property
-                    @api_response_property()
-                    def identity(self):
-                        return Identity.Identity(self._from_json(key='ID'))
-
-                    @property
-                    @api_response_property()
-                    def members(self):
-                        return [Identity.Identity(member) for member in self._from_json(key='Members')]
-
-                    @property
-                    @api_response_property()
-                    def owners(self):
-                        return [Identity.Identity(owner) for owner in self._from_json(key='Owners')]
-
-                    @property
-                    @api_response_property()
-                    def products(self) -> List[str]:
-                        return self._from_json(key='Products')
-
-                return _Response(response=self._get())
-
-            def put(self, assets: list, description: str, name: str, owners: list, members: list, products: list):
+            def put(self, assets: List[str], description: str, name: str, owners: List[Union[dict, ident.Identity]],
+                    members: List[Union[dict, ident.Identity]], products: List[str]):
                 body = {
-                    'Assets': assets,
+                    'Assets'     : assets,
                     'Description': description,
-                    'Name': name,
-                    'Owners': owners,
-                    'Members': members,
-                    'Products': products
+                    'Name'       : name,
+                    'Owners'     : owners,
+                    'Members'    : members,
+                    'Products'   : products
                 }
 
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    identity: ident.Identity = ApiField(alias='ID')
+                    invalid_owners: List[ident.InvalidIdentity] = ApiField(default_factory=list, alias='InvalidOwners')
+                    invalid_members: List[ident.InvalidIdentity] = ApiField(default_factory=list, alias='InvalidMembers')
+                    message: str = ApiField(alias='Message')
 
-                    @property
-                    @api_response_property()
-                    def identity(self):
-                        return Identity.Identity(self._from_json(key='ID'))
+                return generate_output(output_cls=Output, response=self._put(data=body))
 
-                    @property
-                    @api_response_property()
-                    def invalid_owners(self):
-                        return [Identity.InvalidIdentity(owner) for owner in self._from_json(key='InvalidOwners')]
-
-                    @property
-                    @api_response_property()
-                    def invalid_members(self):
-                        return [Identity.InvalidIdentity(member) for member in self._from_json(key='InvalidMembers')]
-
-                    @property
-                    @api_response_property()
-                    def message(self) -> str:
-                        return self._from_json(key='Message')
-
-                return _Response(response=self._put(data=body))
-
-    class _RemoveTeamMembers(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Teams/RemoveTeamMembers')
-
-        def put(self, team: dict, members: list = None, show_members: bool = None):
+    class _RemoveTeamMembers(WebSdkEndpoint):
+        def put(self, team: Union[dict, ident.Identity], members: List[Union[dict, ident.Identity]] = None, show_members: bool = None):
             body = {
-                'Team': team,
-                'Members': members,
+                'Team'       : team,
+                'Members'    : members,
                 'ShowMembers': show_members
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                invalid_members: List[ident.InvalidIdentity] = ApiField(default_factory=list, alias='InvalidMembers')
+                members: List[ident.Identity] = ApiField(default_factory=list, alias='Members')
+                message: str = ApiField(alias='Message')
+                owners: List[ident.Identity] = ApiField(default_factory=list, alias='Owners')
 
-                @property
-                @api_response_property()
-                def invalid_members(self):
-                    return [Identity.InvalidIdentity(member) for member in self._from_json(key='InvalidMembers')]
+            return generate_output(output_cls=Output, response=self._put(data=body))
 
-                @property
-                @api_response_property()
-                def members(self):
-                    return [Identity.Identity(member) for member in self._from_json(key='Members')]
-
-                @property
-                @api_response_property()
-                def message(self) -> str:
-                    return self._from_json(key='Message')
-
-                @property
-                @api_response_property()
-                def owners(self):
-                    return [Identity.Identity(owner) for owner in self._from_json(key='Owners')]
-
-            return _Response(response=self._put(data=body))
-
-    class _RenameTeam(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Teams/RenameTeam')
-
-        def put(self, team: str, new_team_name: str):
+    class _RenameTeam(WebSdkEndpoint):
+        def put(self, team: Union[dict, ident.Identity], new_team_name: str):
             body = {
                 'Team'       : team,
                 'NewTeamName': new_team_name
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                identity: ident.Identity = ApiField(alias='ID')
+                message: str = ApiField(alias='Message')
 
-                @property
-                @api_response_property()
-                def identity(self):
-                    return Identity.Identity(self._from_json(key='ID'))
-
-                @property
-                @api_response_property()
-                def message(self) -> str:
-                    return self._from_json(key='Message')
-
-            return _Response(response=self._put(data=body))
+            return generate_output(output_cls=Output, response=self._put(data=body))

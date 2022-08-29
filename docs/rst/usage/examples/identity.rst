@@ -21,7 +21,7 @@ Creating & Deleting Users
     from pytpp import Features, Authenticate
 
     api = Authenticate(...)
-    features = Features(api=api)
+    features = Features(api)
 
     #### CREATE ####
     # Yep: this guy's name is Awesome Awesome.
@@ -44,7 +44,7 @@ Changing User Passwords
     from pytpp import Features, Authenticate
 
     api = Authenticate(...)
-    features = Features(api=api)
+    features = Features(api)
 
     #### CHANGE PASSWORD ####
     user = features.identity.user.set_password(
@@ -61,7 +61,7 @@ Searching Users
     from pytpp import Features, Authenticate
 
     api = Authenticate(...)
-    features = Features(api=api)
+    features = Features(api)
 
     #### SEARCH MATCHING NAMES ####
     matching_users = features.identity.user.find(
@@ -79,7 +79,7 @@ Getting Memberships
     from pytpp import Features, Authenticate
 
     api = Authenticate(...)
-    features = Features(api=api)
+    features = Features(api)
 
     #### GET USER MEMBERSHIPS ####
     groups = features.identity.user.get_memberships(identity='|LocalUser|')
@@ -97,7 +97,7 @@ Creating & Deleting Groups
     from pytpp import Features, Authenticate
 
     api = Authenticate(...)
-    features = Features(api=api)
+    features = Features(api)
 
     #### CREATE ####
     group = features.identity.group.create(
@@ -117,7 +117,7 @@ Adding, Getting, & Removing Members
     from pytpp import Features, Authenticate
 
     api = Authenticate(...)
-    features = Features(api=api)
+    features = Features(api)
 
     #### ADD MEMBERS ####
     features.identity.group.add_members(
@@ -143,7 +143,7 @@ Searching Users
     from pytpp import Features, Authenticate
 
     api = Authenticate(...)
-    features = Features(api=api)
+    features = Features(api)
 
     #### SEARCH MATCHING NAMES ####
     matching_groups = features.identity.group.find(
@@ -163,7 +163,7 @@ Getting Memberships
     from pytpp import Features, Authenticate
 
     api = Authenticate(...)
-    features = Features(api=api)
+    features = Features(api)
 
     #### GET GROUP MEMBERSHIPS ####
     groups = features.identity.group.get_memberships(identity='|LocalGroup|')
@@ -178,7 +178,7 @@ Renaming Groups
     from pytpp import Features, Authenticate
 
     api = Authenticate(...)
-    features = Features(api=api)
+    features = Features(api)
 
     group = feature.identity.group.get(prefixed_name='|LocalGroup|')
     print(f'Old name: {group.name}')

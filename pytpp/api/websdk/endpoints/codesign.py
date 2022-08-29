@@ -1,180 +1,106 @@
 from typing import List, Dict, Union
-from pytpp.api.api_base import API, APIResponse, api_response_property
-from pytpp.properties.response_objects.codesign import CodeSign
+from pytpp.api.websdk.models import codesign
+from pytpp.api.api_base import WebSdkEndpoint, WebSdkOutputModel, generate_output, ApiField
 
 
-class _Codesign:
+class _Codesign(WebSdkEndpoint):
     def __init__(self, api_obj):
-        self.AddAdministrator = self._AddAdministrator(api_obj=api_obj)
-        self.AddApplicationAdministrator = self._AddApplicationAdministrator(api_obj=api_obj)
-        self.AddProjectAdministrator = self._AddProjectAdministrator(api_obj=api_obj)
-        self.AddProjectApprover = self._AddProjectApprover(api_obj=api_obj)
-        self.CountReferences = self._CountReferences(api_obj=api_obj)
-        self.CreateApplication = self._CreateApplication(api_obj=api_obj)
-        self.CreateApplicationCollection = self._CreateApplicationCollection(api_obj=api_obj)
-        self.CreateEnvironment = self._CreateEnvironment(api_obj=api_obj)
-        self.CreateProject = self._CreateProject(api_obj=api_obj)
-        self.CreateTemplate = self._CreateTemplate(api_obj=api_obj)
-        self.DeleteApplication = self._DeleteApplication(api_obj=api_obj)
-        self.DeleteApplicationCollection = self._DeleteApplicationCollection(api_obj=api_obj)
-        self.DeleteEnvironment = self._DeleteEnvironment(api_obj=api_obj)
-        self.DeleteProject = self._DeleteProject(api_obj=api_obj)
-        self.DeleteTemplate = self._DeleteTemplate(api_obj=api_obj)
-        self.EnumerateApplications = self._EnumerateApplications(api_obj=api_obj)
-        self.EnumerateApplicationCollections = self._EnumerateApplicationCollections(api_obj=api_obj)
-        self.EnumerateProjects = self._EnumerateProjects(api_obj=api_obj)
-        self.EnumerateReferences = self._EnumerateReferences(api_obj=api_obj)
-        self.EnumerateTemplates = self._EnumerateTemplates(api_obj=api_obj)
-        self.GetApplication = self._GetApplication(api_obj=api_obj)
-        self.GetApplicationCollection = self._GetApplicationCollection(api_obj=api_obj)
-        self.GetApplicationCollectionMembers = self._GetApplicationCollectionMembers(api_obj=api_obj)
-        self.GetApplicationCollectionMemberDNs = self._GetApplicationCollectionMemberDNs(api_obj=api_obj)
-        self.GetEnvironment = self._GetEnvironment(api_obj=api_obj)
-        self.GetGlobalConfiguration = self._GetGlobalConfiguration(api_obj=api_obj)
-        self.GetObjectRights = self._GetObjectRights(api_obj=api_obj)
-        self.GetProject = self._GetProject(api_obj=api_obj)
-        self.GetRight = self._GetRight(api_obj=api_obj)
-        self.GetTemplate = self._GetTemplate(api_obj=api_obj)
-        self.GetTrusteeRights = self._GetTrusteeRights(api_obj=api_obj)
-        self.RemoveAdministrator = self._RemoveAdministrator(api_obj=api_obj)
-        self.RemoveApplicationAdministrator = self._RemoveApplicationAdministrator(api_obj=api_obj)
-        self.RemoveProjectAdministrator = self._RemoveProjectAdministrator(api_obj=api_obj)
-        self.RenameApplication = self._RenameApplication(api_obj=api_obj)
-        self.RenameApplicationCollection = self._RenameApplicationCollection(api_obj=api_obj)
-        self.RenameProject = self._RenameProject(api_obj=api_obj)
-        self.RenameTemplate = self._RenameTemplate(api_obj=api_obj)
-        self.SetGlobalConfiguration = self._SetGlobalConfiguration(api_obj=api_obj)
-        self.UpdateApplication = self._UpdateApplication(api_obj=api_obj)
-        self.UpdateApplicationCollection = self._UpdateApplicationCollection(api_obj=api_obj)
-        self.UpdateEnvironment = self._UpdateEnvironment(api_obj=api_obj)
-        self.UpdateProject = self._UpdateProject(api_obj=api_obj)
-        self.UpdateProjectStatus = self._UpdateProjectStatus(api_obj=api_obj)
-        self.UpdateTemplate = self._UpdateTemplate(api_obj=api_obj)
+        super().__init__(api_obj=api_obj, url='/Codesign')
+        self.AddAdministrator = self._AddAdministrator(api_obj=api_obj, url=f'{self._url}/AddAdministrator')
+        self.AddApplicationAdministrator = self._AddApplicationAdministrator(api_obj=api_obj, url=f'{self._url}/AddApplicationAdministrator')
+        self.AddProjectAdministrator = self._AddProjectAdministrator(api_obj=api_obj, url=f'{self._url}/AddProjectAdministrator')
+        self.AddProjectApprover = self._AddProjectApprover(api_obj=api_obj, url=f'{self._url}/AddProjectApprover')
+        self.CountReferences = self._CountReferences(api_obj=api_obj, url=f'{self._url}/CountReferences')
+        self.CreateApplication = self._CreateApplication(api_obj=api_obj, url=f'{self._url}/CreateApplication')
+        self.CreateApplicationCollection = self._CreateApplicationCollection(api_obj=api_obj, url=f'{self._url}/CreateApplicationCollection')
+        self.CreateEnvironment = self._CreateEnvironment(api_obj=api_obj, url=f'{self._url}/CreateEnvironment')
+        self.CreateProject = self._CreateProject(api_obj=api_obj, url=f'{self._url}/CreateProject')
+        self.CreateTemplate = self._CreateTemplate(api_obj=api_obj, url=f'{self._url}/CreateTemplate')
+        self.DeleteApplication = self._DeleteApplication(api_obj=api_obj, url=f'{self._url}/DeleteApplication')
+        self.DeleteApplicationCollection = self._DeleteApplicationCollection(api_obj=api_obj, url=f'{self._url}/DeleteApplicationCollection')
+        self.DeleteEnvironment = self._DeleteEnvironment(api_obj=api_obj, url=f'{self._url}/DeleteEnvironment')
+        self.DeleteProject = self._DeleteProject(api_obj=api_obj, url=f'{self._url}/DeleteProject')
+        self.DeleteTemplate = self._DeleteTemplate(api_obj=api_obj, url=f'{self._url}/DeleteTemplate')
+        self.EnumerateApplications = self._EnumerateApplications(api_obj=api_obj, url=f'{self._url}/EnumerateApplications')
+        self.EnumerateApplicationCollections = self._EnumerateApplicationCollections(api_obj=api_obj, url=f'{self._url}/EnumerateApplicationCollections')
+        self.EnumerateProjects = self._EnumerateProjects(api_obj=api_obj, url=f'{self._url}/EnumerateProjects')
+        self.EnumerateReferences = self._EnumerateReferences(api_obj=api_obj, url=f'{self._url}/EnumerateReferences')
+        self.EnumerateTemplates = self._EnumerateTemplates(api_obj=api_obj, url=f'{self._url}/EnumerateTemplates')
+        self.GetApplication = self._GetApplication(api_obj=api_obj, url=f'{self._url}/GetApplication')
+        self.GetApplicationCollection = self._GetApplicationCollection(api_obj=api_obj, url=f'{self._url}/GetApplicationCollection')
+        self.GetApplicationCollectionMembers = self._GetApplicationCollectionMembers(api_obj=api_obj, url=f'{self._url}/GetApplicationCollectionMembers')
+        self.GetApplicationCollectionMemberDNs = self._GetApplicationCollectionMemberDNs(api_obj=api_obj, url=f'{self._url}/GetApplicationCollectionMemberDNs')
+        self.GetEnvironment = self._GetEnvironment(api_obj=api_obj, url=f'{self._url}/GetEnvironment')
+        self.GetGlobalConfiguration = self._GetGlobalConfiguration(api_obj=api_obj, url=f'{self._url}/GetGlobalConfiguration')
+        self.GetObjectRights = self._GetObjectRights(api_obj=api_obj, url=f'{self._url}/GetObjectRights')
+        self.GetProject = self._GetProject(api_obj=api_obj, url=f'{self._url}/GetProject')
+        self.GetRight = self._GetRight(api_obj=api_obj, url=f'{self._url}/GetRight')
+        self.GetTemplate = self._GetTemplate(api_obj=api_obj, url=f'{self._url}/GetTemplate')
+        self.GetTrusteeRights = self._GetTrusteeRights(api_obj=api_obj, url=f'{self._url}/GetTrusteeRights')
+        self.RemoveAdministrator = self._RemoveAdministrator(api_obj=api_obj, url=f'{self._url}/RemoveAdministrator')
+        self.RemoveApplicationAdministrator = self._RemoveApplicationAdministrator(api_obj=api_obj, url=f'{self._url}/RemoveApplicationAdministrator')
+        self.RemoveProjectAdministrator = self._RemoveProjectAdministrator(api_obj=api_obj, url=f'{self._url}/RemoveProjectAdministrator')
+        self.RenameApplication = self._RenameApplication(api_obj=api_obj, url=f'{self._url}/RenameApplication')
+        self.RenameApplicationCollection = self._RenameApplicationCollection(api_obj=api_obj, url=f'{self._url}/RenameApplicationCollection')
+        self.RenameProject = self._RenameProject(api_obj=api_obj, url=f'{self._url}/RenameProject')
+        self.RenameTemplate = self._RenameTemplate(api_obj=api_obj, url=f'{self._url}/RenameTemplate')
+        self.SetGlobalConfiguration = self._SetGlobalConfiguration(api_obj=api_obj, url=f'{self._url}/SetGlobalConfiguration')
+        self.UpdateApplication = self._UpdateApplication(api_obj=api_obj, url=f'{self._url}/UpdateApplication')
+        self.UpdateApplicationCollection = self._UpdateApplicationCollection(api_obj=api_obj, url=f'{self._url}/UpdateApplicationCollection')
+        self.UpdateEnvironment = self._UpdateEnvironment(api_obj=api_obj, url=f'{self._url}/UpdateEnvironment')
+        self.UpdateProject = self._UpdateProject(api_obj=api_obj, url=f'{self._url}/UpdateProject')
+        self.UpdateProjectStatus = self._UpdateProjectStatus(api_obj=api_obj, url=f'{self._url}/UpdateProjectStatus')
+        self.UpdateTemplate = self._UpdateTemplate(api_obj=api_obj, url=f'{self._url}/UpdateTemplate')
 
-    class _AddAdministrator(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/AddAdministrator')
-
+    class _AddAdministrator(WebSdkEndpoint):
         def post(self, trustee: str):
             body = {
                 'Trustee': trustee
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _AddApplicationAdministrator(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/AddApplicationAdministrator')
-
+    class _AddApplicationAdministrator(WebSdkEndpoint):
         def post(self, trustee: str):
             body = {
                 'Trustee': trustee
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _AddProjectAdministrator(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/AddProjectAdministrator')
-
+    class _AddProjectAdministrator(WebSdkEndpoint):
         def post(self, trustee: str):
             body = {
                 'Trustee': trustee
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _AddProjectApprover(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/AddProjectApprover')
-
+    class _AddProjectApprover(WebSdkEndpoint):
         def post(self, trustee: str):
             body = {
                 'Trustee': trustee
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _AddPreApproval(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/AddPreApproval')
-
+    class _AddPreApproval(WebSdkEndpoint):
         def post(self, dn: str, comment: str, user: str, hours: int = None, ip_address: str = None,
                  signing_executable: str = None, single_use: bool = None, not_before: str = None, ):
             body = {
@@ -188,137 +114,54 @@ class _Codesign:
                 'NotBefore'        : not_before
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _CountReferences(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/CountReferences')
-
-        def post(self, application: dict = None, application_collection: dict = None):
+    class _CountReferences(WebSdkEndpoint):
+        def post(self, application: Union[dict, codesign.Application] = None, 
+                 application_collection: Union[dict, codesign.ApplicationCollection] = None):
             body = {
                 'Application'          : application,
                 'ApplicationCollection': application_collection
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                count: int = ApiField(alias='Count')
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def count(self) -> int:
-                    return self._from_json(key='Count')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _CreateApplication(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/CreateApplication')
-
+    class _CreateApplication(WebSdkEndpoint):
         def post(self, dn: str):
             body = {
                 'Dn': dn
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                application: codesign.Application = ApiField(alias='Application')
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def application(self):
-                    return CodeSign.Application(self._from_json(key='Application'))
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _CreateApplicationCollection(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/CreateApplicationCollection')
-
+    class _CreateApplicationCollection(WebSdkEndpoint):
         def post(self, dn: str):
             body = {
                 'Dn': dn
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                application: codesign.ApplicationCollection = ApiField(alias='ApplicationCollection')
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def application(self):
-                    return CodeSign.ApplicationCollection(self._from_json(key='ApplicationCollection'))
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _CreateEnvironment(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/CreateEnvironment')
-
+    class _CreateEnvironment(WebSdkEndpoint):
         def post(self, dn: str, environment_name: str, project: Dict[str, Union[str, int]],
                  template: List[Dict[str, str]], template_dn: str = None):
             body = {
@@ -329,148 +172,53 @@ class _Codesign:
                 'TemplateDn'     : template_dn
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                apple_environment: codesign.AppleEnvironment = ApiField(alias='AppleEnvironment')
+                certificate_environment: codesign.CertificateEnvironment = ApiField(alias='CertificateEnvironment')
+                csp_environment: codesign.CSPEnvironment = ApiField(alias='CSPEnvironment')
+                dot_net_environment: codesign.DotNetEnvironment = ApiField(alias='DotNetEnvironment')
+                gpg_environment: codesign.GPGEnvironment = ApiField(alias='GPGEnvironment')
+                key_pair_environment: codesign.KeyPairEnvironment = ApiField(alias='KeyPairEnvironment')
+                apple_template: codesign.AppleTemplate = ApiField(alias='AppleTemplate')
+                certificate_template: codesign.CertificateTemplate = ApiField(alias='CertificateTemplate')
+                csp_template: codesign.CSPTemplate = ApiField(alias='CSPTemplate')
+                dot_net_template: codesign.DotNetTemplate = ApiField(alias='DotNetTemplate')
+                gpg_template: codesign.GPGTemplate = ApiField(alias='GPGTemplate')
+                key_pair_template: codesign.KeyPairTemplate = ApiField(alias='KeyPairTemplate')
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def apple_environment(self) -> str:
-                    return CodeSign.AppleEnvironment(self._from_json(key='AppleEnvironment'))
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def csp_environment(self) -> str:
-                    return CodeSign.CSPEnvironment(self._from_json(key='CSPEnvironment'))
-
-                @property
-                @api_response_property()
-                def dot_net_environment(self) -> str:
-                    return CodeSign.DotNetEnvironment(self._from_json(key='DotNetEnvironment'))
-
-                @property
-                @api_response_property()
-                def gpg_environment(self) -> str:
-                    return CodeSign.GPGEnvironment(self._from_json(key='GPGEnvironment'))
-
-                @property
-                @api_response_property()
-                def key_pair_environment(self) -> str:
-                    return CodeSign.KeyPairEnvironment(self._from_json(key='KeyPairEnvironment'))
-
-                @property
-                @api_response_property()
-                def apple_template(self) -> str:
-                    return CodeSign.AppleTemplate(self._from_json(key='AppleTemplate'))
-
-                @property
-                @api_response_property()
-                def csp_template(self) -> str:
-                    return CodeSign.CSPTemplate(self._from_json(key='EnviCSPTemplateronment'))
-
-                @property
-                @api_response_property()
-                def dot_net_template(self) -> str:
-                    return CodeSign.DotNetTemplate(self._from_json(key='DotNetTemplate'))
-
-                @property
-                @api_response_property()
-                def gpg_template(self) -> str:
-                    return CodeSign.GPGTemplate(self._from_json(key='GPGTemplate'))
-
-                @property
-                @api_response_property()
-                def key_pair_environment(self) -> str:
-                    return CodeSign.KeyPairTemplate(self._from_json(key='KeyPairTemplate'))
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _CreateProject(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/CreateProject')
-
+    class _CreateProject(WebSdkEndpoint):
         def post(self, dn: str):
             body = {
                 'Dn': dn
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                project: codesign.Project = ApiField(alias='Project')
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def project(self):
-                    return CodeSign.Project(self._from_json(key='Project'))
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _CreateTemplate(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/CreateTemplate')
-
-        def post(self, dn: str, template_type: str, per_user: bool):
+    class _CreateTemplate(WebSdkEndpoint):
+        def post(self, dn: str, template_type: codesign.TemplateType = None, per_user: bool = None):
             body = {
                 'Dn'          : dn,
                 'TemplateType': template_type,
                 'PerUser'     : per_user
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                certificate_template: codesign.CertificateTemplate = ApiField(alias='CertificateTemplate')
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def certificate_template(self):
-                    return CodeSign.CertificateTemplate(self._from_json(key='CertificateTemplate'))
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _DeleteApplication(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/DeleteApplication')
-
+    class _DeleteApplication(WebSdkEndpoint):
         def post(self, dn: str = None, guid: str = None, id: int = None):
             body = {
                 'Dn'  : dn,
@@ -478,31 +226,13 @@ class _Codesign:
                 'Id'  : id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _DeleteApplicationCollection(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/DeleteApplicationCollection')
-
+    class _DeleteApplicationCollection(WebSdkEndpoint):
         def post(self, dn: str = None, guid: str = None, id: int = None):
             body = {
                 'Dn'  : dn,
@@ -510,31 +240,13 @@ class _Codesign:
                 'Id'  : id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _DeleteEnvironment(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/DeleteEnvironment')
-
+    class _DeleteEnvironment(WebSdkEndpoint):
         def post(self, dn: str = None, guid: str = None, id: int = None):
             body = {
                 'Dn'  : dn,
@@ -542,31 +254,13 @@ class _Codesign:
                 'Id'  : id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _DeleteProject(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/DeleteProject')
-
+    class _DeleteProject(WebSdkEndpoint):
         def post(self, dn: str = None, guid: str = None, id: int = None):
             body = {
                 'Dn'  : dn,
@@ -574,31 +268,13 @@ class _Codesign:
                 'Id'  : id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _DeleteTemplate(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/DeleteTemplate')
-
+    class _DeleteTemplate(WebSdkEndpoint):
         def post(self, dn: str = None, force: bool = None, guid: str = None, id: int = None):
             body = {
                 'Dn'   : dn,
@@ -607,108 +283,41 @@ class _Codesign:
                 'Id'   : id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _EnumerateApplications(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/EnumerateApplications')
-
+    class _EnumerateApplications(WebSdkEndpoint):
         # noinspection ALL
         def post(self, filter: str = None):
             body = {
                 'Filter': filter
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                applications: List[codesign.Application] = ApiField(alias='Applications', default_factory=list)
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def applications(self):
-                    return [
-                        CodeSign.Application(a) for a in self._from_json(key='Applications')
-                    ]
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _EnumerateApplicationCollections(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/EnumerateApplicationCollections')
-
+    class _EnumerateApplicationCollections(WebSdkEndpoint):
         # noinspection ALL
         def post(self, filter: str = None):
             body = {
                 'Filter': filter
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                application_collections: List[codesign.ApplicationCollection] = ApiField(alias='ApplicationCollections', default_factory=list)
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def application_collections(self):
-                    return [
-                        CodeSign.ApplicationCollection(ac)
-                        for ac in self._from_json(key='ApplicationCollections')
-                    ]
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _EnumerateProjects(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/EnumerateProjects')
-
+    class _EnumerateProjects(WebSdkEndpoint):
         # noinspection ALL
         def post(self, filter: str = None, rights: int = None):
             body = {
@@ -716,37 +325,16 @@ class _Codesign:
                 'Rights': rights
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                projects: List[codesign.Project] = ApiField(alias='Projects', default_factory=list)
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def projects(self):
-                    return [CodeSign.Project(p) for p in self._from_json(key='Projects')]
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _EnumerateReferences(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/EnumerateReferences')
-
-        def post(self, application: dict = None, application_collection: dict = None,
+    class _EnumerateReferences(WebSdkEndpoint):
+        def post(self, application: Union[dict, codesign.Application] = None, 
+                 application_collection: Union[dict] = None,
                  application_dn: str = None, application_guid: str = None,
                  collection_dn: str = None, collection_guid: str = None):
             body = {
@@ -758,99 +346,33 @@ class _Codesign:
                 'CollectionGuid'       : collection_guid
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                reference_dns: List[str] = ApiField(alias='ReferenceDNs', default_factory=list)
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def reference_dns(self) -> List[str]:
-                    return self._from_json(key='ReferenceDNs')
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _EnumerateTemplates(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/EnumerateTemplates')
-
+    class _EnumerateTemplates(WebSdkEndpoint):
         # noinspection ALL
         def post(self, filter: str = None):
             body = {
                 'Filter': filter
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                apple_templates: List[codesign.AppleTemplate] = ApiField(alias='AppleTemplates', default_factory=list)
+                certificate_templates: List[codesign.CertificateTemplate] = ApiField(alias='CertificateTemplates', default_factory=list)
+                csp_templates: List[codesign.CSPTemplate] = ApiField(alias='CSPTemplates', default_factory=list)
+                dot_net_templates: List[codesign.DotNetTemplate] = ApiField(alias='DotNetTemplates', default_factory=list)
+                gpg_templates: List[codesign.GPGTemplate] = ApiField(alias='GPGTemplates', default_factory=list)
+                key_pair_templates: List[codesign.KeyPairTemplate] = ApiField(alias='KeyPairTemplates', default_factory=list)
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def certificate_templates(self):
-                    return [
-                        CodeSign.CertificateTemplate(t)
-                        for t in self._from_json(key='CertificateTemplates')
-                    ]
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def csp_templates(self):
-                    return [
-                        CodeSign.CSPTemplate(t)
-                        for t in self._from_json(key='CSPTemplates')
-                    ]
-
-                @property
-                @api_response_property()
-                def dot_net_templates(self):
-                    return [
-                        CodeSign.DotNetTemplate(t)
-                        for t in self._from_json(key='DotNetTemplates')
-                    ]
-
-                @property
-                @api_response_property()
-                def gpg_templates(self):
-                    return [
-                        CodeSign.GPGTemplate(t)
-                        for t in self._from_json(key='GPGTemplates')
-                    ]
-
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _GetApplication(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/GetApplication')
-
+    class _GetApplication(WebSdkEndpoint):
         def post(self, dn: str = None, guid: str = None, id: int = None):
             body = {
                 'Dn'  : dn,
@@ -858,36 +380,14 @@ class _Codesign:
                 'Id'  : id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                application: codesign.Application = ApiField(alias='Application')
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def application(self):
-                    return CodeSign.Application(self._from_json(key='Application'))
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _GetApplicationCollection(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/GetApplicationCollection')
-
+    class _GetApplicationCollection(WebSdkEndpoint):
         def post(self, dn: str = None, guid: str = None, id: int = None):
             body = {
                 'Dn'  : dn,
@@ -895,36 +395,14 @@ class _Codesign:
                 'Id'  : id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                application_collection: codesign.ApplicationCollection = ApiField(alias='ApplicationCollection')
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def application_collection(self):
-                    return CodeSign.ApplicationCollection(self._from_json(key='ApplicationCollection'))
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _GetApplicationCollectionMembers(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/GetApplicationCollectionMembers')
-
+    class _GetApplicationCollectionMembers(WebSdkEndpoint):
         def post(self, dn: str = None, guid: str = None, id: int = None):
             body = {
                 'Dn'  : dn,
@@ -932,36 +410,32 @@ class _Codesign:
                 'Id'  : id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                application_collection: codesign.ApplicationCollection = ApiField(alias='ApplicationCollection')
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def application_collection(self):
-                    return CodeSign.ApplicationCollection(self._from_json(key='ApplicationCollection'))
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+    class _GetApplicationCollectionMemberDNs(WebSdkEndpoint):
+        def post(self, dn: str = None, guid: str = None, id: int = None, application: Union[dict, codesign.Application] = None):
+            body = {
+                'Application': application,
+                'Dn'         : dn,
+                'Guid'       : guid,
+                'Id'         : id
+            }
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
+            class Output(WebSdkOutputModel):
+                application_collection: codesign.ApplicationCollection = ApiField(alias='ApplicationCollection')
+                application_collection_dns: List[str] = ApiField(alias='ApplicationCollectionDNs', default_factory=list)
+                application_dns: List[str] = ApiField(alias='ApplicationDNs', default_factory=list)
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-            return _Response(response=self._post(data=body))
-
-    class _GetApplicationCollectionMemberDNs(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/GetApplicationCollectionMemberDNs')
-
+    class _GetEnvironment(WebSdkEndpoint):
         def post(self, dn: str = None, guid: str = None, id: int = None):
             body = {
                 'Dn'  : dn,
@@ -969,149 +443,41 @@ class _Codesign:
                 'Id'  : id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                apple_environment: codesign.AppleEnvironment = ApiField(alias='AppleEnvironment')
+                certificate_environment: codesign.CertificateEnvironment = ApiField(alias='CertificateEnvironment')
+                csp_environment: codesign.CSPEnvironment = ApiField(alias='CSPEnvironment')
+                dot_net_environment: codesign.DotNetEnvironment = ApiField(alias='DotNetEnvironment')
+                gpg_environment: codesign.GPGEnvironment = ApiField(alias='GPGEnvironment')
+                key_pair_environment: codesign.KeyPairEnvironment = ApiField(alias='KeyPairEnvironment')
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def application_collection(self):
-                    return CodeSign.ApplicationCollection(self._from_json(key='ApplicationCollection'))
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def application_collection_dns(self) -> List[str]:
-                    return self._from_json(key='ApplicationCollectionDNs')
-
-                @property
-                @api_response_property()
-                def application_dns(self) -> List[str]:
-                    return self._from_json(key='ApplicationDNs')
-
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _GetEnvironment(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/GetEnvironment')
-
-        def post(self, dn: str = None, guid: str = None, id: int = None):
-            body = {
-                'Dn'  : dn,
-                'Guid': guid,
-                'Id'  : id
-            }
-
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
-
-                @property
-                @api_response_property()
-                def certificate_environment(self):
-                    return CodeSign.CertificateEnvironment(self._from_json(key='CertificateEnvironment'))
-
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _GetGlobalConfiguration(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/GetGlobalConfiguration')
-
+    class _GetGlobalConfiguration(WebSdkEndpoint):
         def get(self):
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                global_configuration: codesign.GlobalConfiguration = ApiField(alias='GlobalConfiguration')
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._get(), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def global_configuration(self):
-                    return CodeSign.GlobalConfiguration(self._from_json(key='GlobalConfiguration'))
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._get())
-
-    class _GetObjectRights(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/GetObjectRights')
-
+    class _GetObjectRights(WebSdkEndpoint):
         def post(self, dn: str):
             body = {
                 'Dn': dn
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                rights_list: List[codesign.RightsKeyValue] = ApiField(alias='RightsList', default_factory=list)
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def rights_list(self):
-                    return [CodeSign.RightsKeyValue(r) for r in self._from_json(key='RightsList')]
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _GetProject(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/GetProject')
-
+    class _GetProject(WebSdkEndpoint):
         def post(self, dn: str = None, guid: str = None, id: int = None):
             body = {
                 'Dn'  : dn,
@@ -1119,71 +485,27 @@ class _Codesign:
                 'Id'  : id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                project: codesign.Project = ApiField(alias='Project')
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def project(self):
-                    return CodeSign.Project(self._from_json(key='Project'))
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _GetRight(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/GetRight')
-
+    class _GetRight(WebSdkEndpoint):
         def post(self, dn: str):
             body = {
                 'Dn': dn
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                rights: codesign.Rights = ApiField(alias='Rights', converter=lambda x: codesign.Rights(value=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def rights(self):
-                    return CodeSign.Rights(self._from_json(key='Rights'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _GetTemplate(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/GetTemplate')
-
+    class _GetTemplate(WebSdkEndpoint):
         def post(self, dn: str = None, guid: str = None, id: int = None):
             body = {
                 'Dn'  : dn,
@@ -1191,253 +513,106 @@ class _Codesign:
                 'Id'  : id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                apple_template: codesign.AppleTemplate = ApiField(alias='AppleTemplate')
+                certificate_template: codesign.CertificateTemplate = ApiField(alias='CertificateTemplate')
+                csp_template: codesign.CSPTemplate = ApiField(alias='CSPTemplate')
+                dot_net_template: codesign.DotNetTemplate = ApiField(alias='DotNetTemplate')
+                gpg_template: codesign.GPGTemplate = ApiField(alias='GPGTemplate')
+                key_pair_template: codesign.KeyPairTemplate = ApiField(alias='KeyPairTemplate')
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def certificate_template(self):
-                    return CodeSign.CertificateTemplate(self._from_json(key='CertificateTemplate'))
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _GetTrusteeRights(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/GetTrusteeRights')
-
+    class _GetTrusteeRights(WebSdkEndpoint):
         def post(self, trustee: str):
             body = {
                 'Trustee': trustee
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                rights_list: List[codesign.RightsKeyValue] = ApiField(alias='RightsList', default_factory=list)
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def rights_list(self):
-                    return [CodeSign.RightsKeyValue(r) for r in self._from_json(key='RightsList')]
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _RemoveAdministrator(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/RemoveAdministrator')
-
+    class _RemoveAdministrator(WebSdkEndpoint):
         def post(self, trustee: str):
             body = {
                 'Trustee': trustee
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _RemoveApplicationAdministrator(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/RemoveApplicationAdministrator')
-
+    class _RemoveApplicationAdministrator(WebSdkEndpoint):
         def post(self, trustee: str):
             body = {
                 'Trustee': trustee
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _RemoveProjectAdministrator(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/RemoveProjectAdministrator')
-
+    class _RemoveProjectAdministrator(WebSdkEndpoint):
         def post(self, trustee: str):
             body = {
                 'Trustee': trustee
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _RemoveProjectApprover(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/RemoveProjectApprover')
-
+    class _RemoveProjectApprover(WebSdkEndpoint):
         def post(self, trustee: str):
             body = {
                 'Trustee': trustee
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _RenameApplication(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/RenameApplication')
-
+    class _RenameApplication(WebSdkEndpoint):
         def post(self, dn: str, new_dn: str):
             body = {
                 'Dn'   : dn,
                 'NewDn': new_dn
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _RenameApplicationCollection(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/RenameApplicationCollection')
-
+    class _RenameApplicationCollection(WebSdkEndpoint):
         def post(self, dn: str, new_dn: str):
             body = {
                 'Dn'   : dn,
                 'NewDn': new_dn
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _RenameProject(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/RenameProject')
-
+    class _RenameProject(WebSdkEndpoint):
         def post(self, new_dn: str, dn: str = None, guid: str = None, id: int = None):
             body = {
                 'Dn'   : dn,
@@ -1446,218 +621,104 @@ class _Codesign:
                 'NewDn': new_dn
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _RenameTemplate(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/RenameTemplate')
-
-        def post(self, dn: str = None, guid: str = None, id: int = None):
+    class _RenameTemplate(WebSdkEndpoint):
+        def post(self, new_dn: str, dn: str = None, guid: str = None):
             body = {
-                'Dn'  : dn,
-                'Guid': guid,
-                'Id'  : id
+                'Dn'   : dn,
+                'Guid' : guid,
+                'Id'   : id,
+                'NewDn': new_dn
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _SetGlobalConfiguration(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/SetGlobalConfiguration')
-
-        def post(self, global_configuration: dict):
+    class _SetGlobalConfiguration(WebSdkEndpoint):
+        def post(self, global_configuration: Union[dict, codesign.GlobalConfiguration]):
             body = {
                 'GlobalConfiguration': global_configuration
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _UpdateApplication(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/UpdateApplication')
-
-        def post(self, application: dict):
+    class _UpdateApplication(WebSdkEndpoint):
+        def post(self, application: Union[dict, codesign.Application]):
             body = {
                 'Application': application
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _UpdateApplicationCollection(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/UpdateApplicationCollection')
-
-        def post(self, application_collection: dict):
+    class _UpdateApplicationCollection(WebSdkEndpoint):
+        def post(self, application_collection: Union[dict, codesign.ApplicationCollection]):
             body = {
                 'ApplicationCollection': application_collection
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _UpdateEnvironment(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/UpdateEnvironment')
-
-        def post(self, certificate_environment: dict):
+    class _UpdateEnvironment(WebSdkEndpoint):
+        def post(self, certificate_environment: Union[dict, codesign.CertificateEnvironment] = None,
+                 apple_environment: Union[dict, codesign.AppleEnvironment] = None,
+                 csp_environment: Union[dict, codesign.CSPEnvironment] = None,
+                 dot_net_environment: Union[dict, codesign.DotNetEnvironment] = None,
+                 gpg_environment: Union[dict, codesign.GPGEnvironment] = None,
+                 key_pair_environment: Union[dict, codesign.KeyPairEnvironment] = None):
             body = {
-                'CertificateEnvironment': certificate_environment
+                'AppleEnvironment'      : apple_environment,
+                'CertificateEnvironment': certificate_environment,
+                'CSPEnvironment'        : csp_environment,
+                'DotNetEnvironment'     : dot_net_environment,
+                'GPGEnvironment'        : gpg_environment,
+                'KeyPairEnvironment'    : key_pair_environment
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                apple_environment: codesign.AppleEnvironment = ApiField(alias='AppleEnvironment')
+                certificate_environment: codesign.CertificateEnvironment = ApiField(alias='CertificateEnvironment')
+                csp_environment: codesign.CSPEnvironment = ApiField(alias='CSPEnvironment')
+                dot_net_environment: codesign.DotNetEnvironment = ApiField(alias='DotNetEnvironment')
+                gpg_environment: codesign.GPGEnvironment = ApiField(alias='GPGEnvironment')
+                key_pair_environment: codesign.KeyPairEnvironment = ApiField(alias='KeyPairEnvironment')
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def certificate_environment(self):
-                    return CodeSign.CertificateEnvironment(self._from_json(key='CertificateEnvironment'))
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _UpdateProject(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/UpdateProject')
-
-        def post(self, project: dict):
+    class _UpdateProject(WebSdkEndpoint):
+        def post(self, project: Union[dict, codesign.Project]):
             body = {
                 'Project': project
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _UpdateProjectStatus(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/UpdateProjectStatus')
-
+    class _UpdateProjectStatus(WebSdkEndpoint):
         def post(self, project_status: int, dn: str = None, guid: str = None, id: int = None):
             body = {
                 'Dn'           : dn,
@@ -1666,55 +727,24 @@ class _Codesign:
                 'ProjectStatus': project_status,
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _UpdateTemplate(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Codesign/UpdateTemplate')
-
-        def post(self, dn: str, certificate_template: dict, object_naming_pattern: str = None):
+    class _UpdateTemplate(WebSdkEndpoint):
+        def post(self, dn: str, certificate_template: Union[dict, codesign.CertificateTemplate, codesign.CSPTemplate,
+                 codesign.DotNetTemplate, codesign.AppleTemplate, codesign.GPGTemplate, codesign.KeyPairTemplate],
+                 object_naming_pattern: str = None):
             body = {
                 'Dn'                 : dn,
                 'CertificateTemplate': certificate_template,
                 'ObjectNamingPattern': object_naming_pattern
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: codesign.ResultCode = ApiField(alias='Result', converter=lambda x: codesign.ResultCode(code=x))
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return CodeSign.ResultCode(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
+            return generate_output(response=self._post(data=body), output_cls=Output)

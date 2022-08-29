@@ -1,27 +1,27 @@
+from datetime import datetime
+from pytpp.api.api_base import WebSdkEndpoint, WebSdkOutputModel, generate_output, ApiField
+from pytpp.api.websdk.models import workflow, identity as ident
 from typing import List
-from pytpp.api.api_base import API, APIResponse, api_response_property
-from pytpp.properties.response_objects.worfklow import Workflow
 
 
-class _Workflow:
+class _Workflow(WebSdkEndpoint):
     def __init__(self, api_obj):
-        self.Ticket = self._Ticket(api_obj=api_obj)
+        super().__init__(api_obj=api_obj, url='/Workflow')
+        self.Ticket = self._Ticket(api_obj=api_obj, url=f'{self._url}/Ticket')
 
-    class _Ticket:
-        def __init__(self, api_obj):
-            self.Create = self._Create(api_obj=api_obj)
-            self.Delete = self._Delete(api_obj=api_obj)
-            self.Details = self._Details(api_obj=api_obj)
-            self.Enumerate = self._Enumerate(api_obj=api_obj)
-            self.Exists = self._Exists(api_obj=api_obj)
-            self.Status = self._Status(api_obj=api_obj)
-            self.UpdateStatus = self._UpdateStatus(api_obj=api_obj)
+    class _Ticket(WebSdkEndpoint):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.Create = self._Create(api_obj=self._api_obj, url=f'{self._url}/Create')
+            self.Delete = self._Delete(api_obj=self._api_obj, url=f'{self._url}/Delete')
+            self.Details = self._Details(api_obj=self._api_obj, url=f'{self._url}/Details')
+            self.Enumerate = self._Enumerate(api_obj=self._api_obj, url=f'{self._url}/Enumerate')
+            self.Exists = self._Exists(api_obj=self._api_obj, url=f'{self._url}/Exists')
+            self.Status = self._Status(api_obj=self._api_obj, url=f'{self._url}/Status')
+            self.UpdateStatus = self._UpdateStatus(api_obj=self._api_obj, url=f'{self._url}/UpdateStatus')
 
-        class _Create(API):
-            def __init__(self, api_obj):
-                super().__init__(api_obj=api_obj, url='/Workflow/Ticket/Create')
-
-            def post(self, object_dn: str, approvers: list, reason: str, workflow_dn: str, user_data: str = None):
+        class _Create(WebSdkEndpoint):
+            def post(self, object_dn: str, approvers: List[ident.Identity], reason: str, workflow_dn: str, user_data: str = None):
                 body = {
                     'ObjectDN'  : object_dn,
                     'Approvers' : approvers,
@@ -30,153 +30,83 @@ class _Workflow:
                     'WorkflowDN': workflow_dn
                 }
 
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    guid: str = ApiField(alias='GUID')
+                    result: workflow.Result = ApiField(alias='Result')
 
-                    @property
-                    @api_response_property()
-                    def guid(self) -> str:
-                        return self._from_json('GUID')
+                return generate_output(output_cls=Output, response=self._post(data=body))
 
-                    @property
-                    @api_response_property()
-                    def result(self):
-                        return Workflow.Result(self._from_json('Result'))
-
-                return _Response(response=self._post(data=body))
-
-        class _Delete(API):
-            def __init__(self, api_obj):
-                super().__init__(api_obj=api_obj, url='/Workflow/Ticket/Delete')
-
+        class _Delete(WebSdkEndpoint):
             def post(self, guid: str):
                 body = {
                     'GUID': guid
                 }
 
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    result: workflow.Result = ApiField(alias='Result')
 
-                    @property
-                    @api_response_property()
-                    def result(self):
-                        return Workflow.Result(self._from_json('Result'))
+                return generate_output(output_cls=Output, response=self._post(data=body))
 
-                return _Response(response=self._post(data=body))
-
-        class _Details(API):
-            def __init__(self, api_obj):
-                super().__init__(api_obj=api_obj, url='/Workflow/Ticket/Details')
-
+        class _Details(WebSdkEndpoint):
             def post(self, guid: str):
                 body = {
                     'GUID': guid
                 }
 
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    approval_explanation: str = ApiField(alias='ApprovalExplanation')
+                    approval_from: str = ApiField(alias='ApprovalFrom')
+                    approval_reason: str = ApiField(alias='ApprovalReason')
+                    approvers: List[str] = ApiField(alias='Approvers', default_factory=list)
+                    blocking: str = ApiField(alias='Blocking')
+                    created: datetime = ApiField(alias='Created')
+                    issued_due_to: str = ApiField(alias='IssuedDueTo')
+                    result: workflow.Result = ApiField(alias='Result')
+                    status: str = ApiField(alias='Status')
+                    updated: datetime = ApiField(alias='Updated')
 
-                    @property
-                    @api_response_property()
-                    def details(self):
-                        return Workflow.Details(self._from_json())
+                return generate_output(output_cls=Output, response=self._post(data=body))
 
-                    @property
-                    @api_response_property()
-                    def result(self):
-                        return Workflow.Result(self._from_json('Result'))
-
-                return _Response(response=self._post(data=body))
-
-        class _Enumerate(API):
-            def __init__(self, api_obj):
-                super().__init__(api_obj=api_obj, url='/Workflow/Ticket/Enumerate')
-
+        class _Enumerate(WebSdkEndpoint):
             def post(self, object_dn: str = None, user_data: str = None):
                 body = {
                     'ObjectDN': object_dn,
                     'UserData': user_data
                 }
 
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    guids: List[str] = ApiField(default_factory=list, alias='GUIDS')
+                    result: workflow.Result = ApiField(alias='Result')
 
-                    @property
-                    @api_response_property()
-                    def guids(self) -> List[str]:
-                        return self._from_json('GUIDS')
+                return generate_output(output_cls=Output, response=self._post(data=body))
 
-                    @property
-                    @api_response_property()
-                    def result(self):
-                        return Workflow.Result(self._from_json('Result'))
-
-                return _Response(response=self._post(data=body))
-
-        class _Exists(API):
-            def __init__(self, api_obj):
-                super().__init__(api_obj=api_obj, url='/Workflow/Ticket/Exists')
-
+        class _Exists(WebSdkEndpoint):
             def post(self, guid: str):
                 body = {
                     'GUID': guid
                 }
 
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    result: workflow.Result = ApiField(alias='Result')
 
-                    @property
-                    @api_response_property()
-                    def result(self):
-                        return Workflow.Result(self._from_json('Result'))
+                return generate_output(output_cls=Output, response=self._post(data=body))
 
-                return _Response(response=self._post(data=body))
-
-        class _Status(API):
-            def __init__(self, api_obj):
-                super().__init__(api_obj=api_obj, url='/Workflow/Ticket/Status')
-
+        class _Status(WebSdkEndpoint):
             def post(self, guid: str):
                 body = {
                     'GUID': guid
                 }
 
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    status: str = ApiField(alias='Status')
+                    result: workflow.Result = ApiField(alias='Result')
 
-                    @property
-                    @api_response_property()
-                    def status(self) -> str:
-                        return self._from_json('Status')
+                return generate_output(output_cls=Output, response=self._post(data=body))
 
-                    @property
-                    @api_response_property()
-                    def result(self):
-                        return Workflow.Result(self._from_json('Result'))
-
-                return _Response(response=self._post(data=body))
-
-        class _UpdateStatus(API):
-            def __init__(self, api_obj):
-                super().__init__(api_obj=api_obj, url='/Workflow/Ticket/UpdateStatus')
-
-            def post(self,
-                     guid: str,
-                     status: str,
-                     explanation: str = None,
-                     scheduled_start: str = None,
-                     scheduled_stop: str = None,
-                     approvers: List[str] = None,
-                     object_dn: str = None,
-                     reason: str = None,
-                     user_data=None
-                     ):
+        class _UpdateStatus(WebSdkEndpoint):
+            def post(self, guid: str, status: str, explanation: str = None, scheduled_start: str = None,
+                     scheduled_stop: str = None, approvers: List[str] = None, object_dn: str = None,
+                     reason: str = None, user_data=None):
                 body = {
                     'GUID'          : guid,
                     'Status'        : status,
@@ -189,13 +119,7 @@ class _Workflow:
                     'UserData'      : user_data
                 }
 
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    result: workflow.Result = ApiField(alias='Result')
 
-                    @property
-                    @api_response_property()
-                    def result(self):
-                        return Workflow.Result(self._from_json('Result'))
-
-                return _Response(response=self._post(data=body))
+                return generate_output(output_cls=Output, response=self._post(data=body))

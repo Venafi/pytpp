@@ -15,7 +15,8 @@ PROD_REQUIREMENTS = [
     'python-dateutil>=2.8.2',
     'requests>=2.24.0',
     'simplejson>=3.17.6',
-    'jsonpickle>=2.1.0'
+    'jsonpickle>=2.1.0',
+    'pydantic>=1.9.1'
 ]
 
 DEV_REQUIREMENTS = [

@@ -1,19 +1,18 @@
 from datetime import datetime, timedelta
-from typing import List, Union, TYPE_CHECKING
-from pytpp.tools.vtypes import Config
 from pytpp.features.bases.feature_base import FeatureBase, feature
 from pytpp.features.definitions.exceptions import InvalidResultCode
+from typing import List, Union, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from pytpp.tools.vtypes import Identity
+    from pytpp.api.websdk.models import config, identity as ident
 
 
 class _CredentialBase(FeatureBase):
     def __init__(self, api):
         super().__init__(api=api)
 
-    def _create(self, name: str, parent_folder: 'Union[Config.Object, str]', friendly_name: str, values: List[dict], expiration: int,
-                description: str = None, encryption_key: str = None, shared: bool = False, contacts: 'List[Union[Identity.Identity, str]]' = None,
+    def _create(self, name: str, parent_folder: 'Union[config.Object, str]', friendly_name: str, values: List[dict], expiration: int,
+                description: str = None, encryption_key: str = None, shared: bool = False, contacts: 'List[Union[ident.Identity, str]]' = None,
                 get_if_already_exists: bool = True):
         parent_folder_dn = self._get_dn(parent_folder)
         dn = f'{parent_folder_dn}\\{name}'
@@ -36,7 +35,7 @@ class _CredentialBase(FeatureBase):
 
         return self._get_config_object(object_dn=dn)
 
-    def delete(self, credential: 'Union[Config.Object, str]'):
+    def delete(self, credential: 'Union[config.Object, str]'):
         """
         Deletes the credential object.
 
@@ -68,9 +67,9 @@ class AmazonCredential(_CredentialBase):
     def __init__(self, api):
         super().__init__(api)
 
-    def create_adfs(self, name: str, parent_folder: 'Union[Config.Object, str]', adfs_credential: 'Union[Config.Object, str]', adfs_url: str,
+    def create_adfs(self, name: str, parent_folder: 'Union[config.Object, str]', adfs_credential: 'Union[config.Object, str]', adfs_url: str,
                     role: str, expiration: int = 6, description: str = None, encryption_key: str = None, shared: bool = False,
-                    contacts: 'List[Union[Identity.Identity, str]]' = None, get_if_already_exists: bool = True):
+                    contacts: 'List[Union[ident.Identity, str]]' = None, get_if_already_exists: bool = True):
         """
         Args:
             name: Name of the credential object.
@@ -107,9 +106,9 @@ class AmazonCredential(_CredentialBase):
             get_if_already_exists=get_if_already_exists
         )
 
-    def create_local(self, name: str, parent_folder: 'Union[Config.Object, str]', access_key: str, secret_key: str, role: str = None,
+    def create_local(self, name: str, parent_folder: 'Union[config.Object, str]', access_key: str, secret_key: str, role: str = None,
                      external_id: str = None, expiration: int = 6, description: str = None, encryption_key: str = None,
-                     shared: bool = False, contacts: 'List[Union[Identity.Identity, str]]' = None, get_if_already_exists: bool = True):
+                     shared: bool = False, contacts: 'List[Union[ident.Identity, str]]' = None, get_if_already_exists: bool = True):
         """
         Args:
             name: Name of the credential object.
@@ -154,8 +153,8 @@ class CertificateCredential(_CredentialBase):
     def __init__(self, api):
         super().__init__(api)
 
-    def create(self, name: str, parent_folder: 'Union[Config.Object, str]', certificate: str, password: str = None, expiration: int = 6,
-               description: str = None, encryption_key: str = None, shared: bool = False, contacts: 'List[Union[Identity.Identity, str]]' = None,
+    def create(self, name: str, parent_folder: 'Union[config.Object, str]', certificate: str, password: str = None, expiration: int = 6,
+               description: str = None, encryption_key: str = None, shared: bool = False, contacts: 'List[Union[ident.Identity, str]]' = None,
                get_if_already_exists: bool = True):
         """
         Args:
@@ -198,8 +197,8 @@ class GoogleCredential(_CredentialBase):
     def __init__(self, api):
         super().__init__(api)
 
-    def create(self, name: str, parent_folder: 'Union[Config.Object, str]', json_content: 'str', expiration: int = 6,
-               description: str = None, encryption_key: str = None, shared: bool = False, contacts: 'List[Union[Identity.Identity, str]]' = None,
+    def create(self, name: str, parent_folder: 'Union[config.Object, str]', json_content: 'str', expiration: int = 6,
+               description: str = None, encryption_key: str = None, shared: bool = False, contacts: 'List[Union[ident.Identity, str]]' = None,
                get_if_already_exists: bool = True):
         """
         Args:
@@ -240,8 +239,8 @@ class GenericCredential(_CredentialBase):
     def __init__(self, api):
         super().__init__(api)
 
-    def create(self, name: str, parent_folder: 'Union[Config.Object, str]', generic: str, password: str = None, expiration: int = 6,
-               description: str = None, encryption_key: str = None, shared: bool = False, contacts: 'List[Union[Identity.Identity, str]]' = None,
+    def create(self, name: str, parent_folder: 'Union[config.Object, str]', generic: str, password: str = None, expiration: int = 6,
+               description: str = None, encryption_key: str = None, shared: bool = False, contacts: 'List[Union[ident.Identity, str]]' = None,
                get_if_already_exists: bool = True):
         """
         Args:
@@ -283,8 +282,8 @@ class PasswordCredential(_CredentialBase):
     def __init__(self, api):
         super().__init__(api)
 
-    def create(self, name: str, parent_folder: 'Union[Config.Object, str]', password: str, expiration: int = 6, description: str = None,
-               encryption_key: str = None, shared: bool = False, contacts: 'List[Union[Identity.Identity, str]]' = None,
+    def create(self, name: str, parent_folder: 'Union[config.Object, str]', password: str, expiration: int = 6, description: str = None,
+               encryption_key: str = None, shared: bool = False, contacts: 'List[Union[ident.Identity, str]]' = None,
                get_if_already_exists: bool = True):
         """
         Args:
@@ -324,8 +323,8 @@ class PrivateKeyCredential(_CredentialBase):
     def __init__(self, api):
         super().__init__(api)
 
-    def create(self, name: str, parent_folder: 'Union[Config.Object, str]', private_key: str, username: str, expiration: int = 6,
-               description: str = None, encryption_key: str = None, shared: bool = False, contacts: 'List[Union[Identity.Identity, str]]' = None,
+    def create(self, name: str, parent_folder: 'Union[config.Object, str]', private_key: str, username: str, expiration: int = 6,
+               description: str = None, encryption_key: str = None, shared: bool = False, contacts: 'List[Union[ident.Identity, str]]' = None,
                get_if_already_exists: bool = True):
         """
         Args:
@@ -367,8 +366,8 @@ class UsernamePasswordCredential(_CredentialBase):
     def __init__(self, api):
         super().__init__(api)
 
-    def create(self, name: str, parent_folder: 'Union[Config.Object, str]', username: str, password: str, expiration: int = 6,
-               description: str = None, encryption_key: str = None, shared: bool = False, contacts: 'List[Union[Identity.Identity, str]]' = None,
+    def create(self, name: str, parent_folder: 'Union[config.Object, str]', username: str, password: str, expiration: int = 6,
+               description: str = None, encryption_key: str = None, shared: bool = False, contacts: 'List[Union[ident.Identity, str]]' = None,
                get_if_already_exists: bool = True):
         """
         Args:

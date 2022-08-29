@@ -14,9 +14,9 @@ Creating & Deleting Certiifcate Objects
     from pytpp import Features, Authenticate, AttributeValues
 
     api = Authenticate(...)
-    features = Features(api=api)
+    features = Features(api)
 
-    ### CREATE ####
+    #### CREATE ####
     certificate = features.certificate.create(
         name='|CertName|',
         parent_folder=r'|CertDn|',
@@ -88,7 +88,7 @@ Renewing & Downloading A Certificate
     from pytpp import Features, Authenticate, AttributeValues
 
     api = Authenticate(...)
-    features = Features(api=api)
+    features = Features(api)
 
     certificate = features.certificate.get(certificate_dn=r'|CertDn|\|CertName|')
 
@@ -113,7 +113,7 @@ Revoking A Certificate
     from datetime import datetime
 
     api = Authenticate(...)
-    features = Features(api=api)
+    features = Features(api)
 
     previous_versions = features.certificate.get_previous_versions(
         certificate=r'|CertDn|\|CertName|',
@@ -135,7 +135,7 @@ Resetting & Retrying Certificate Requests
     from pytpp import Features, Authenticate, AttributeValues
 
     api = Authenticate(...)
-    features = Features(api=api)
+    features = Features(api)
 
     certificate_dn = r'|CertDn|\|CertName|'
 
@@ -160,7 +160,7 @@ File & SSL Validation
     from pytpp import Features, Authenticate
 
     api = Authenticate(...)
-    features = Features(api=api)
+    features = Features(api)
 
     #### VALIDATE A CERTIFICATE ####
     validated_certificates, warnings = features.certificate.validate(
@@ -189,7 +189,7 @@ Getting Certificate Data
     from pytpp import Features, Authenticate
 
     api = Authenticate(...)
-    features = Features(api=api)
+    features = Features(api)
 
     details = features.certificate.details(
         certificate=r'|CertDn|\|CertName|'
@@ -204,7 +204,7 @@ Associating/Dissociating A Certificate
     from pytpp import Features, Authenticate
 
     api = Authenticate(...)
-    features = Features(api=api)
+    features = Features(api)
 
     #### ASSOCIATE CERTIFICATE TO APPLICATION ####
     features.certificate.associate_application(
@@ -237,7 +237,7 @@ Handling Workflows
     from pytpp import Features, Authenticate, AttributeValues
 
     api = Authenticate(...)
-    features = Features(api=api)
+    features = Features(api)
 
     certificate_dn = r'|CertDn|\|CertName|'
 

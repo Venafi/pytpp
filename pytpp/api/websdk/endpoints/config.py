@@ -1,1038 +1,539 @@
-from typing import List 
-from pytpp.api.api_base import API, APIResponse, api_response_property
-from pytpp.properties.response_objects.config import Config
+from typing import Dict, List
+from pytpp.api.api_base import WebSdkEndpoint, WebSdkOutputModel, generate_output, ApiField
+from pytpp.api.websdk.models import config
 
 
-class _Config:
+class _Config(WebSdkEndpoint):
     def __init__(self, api_obj):
-        self.AddDnValue = self._AddDnValue(api_obj=api_obj)
-        self.AddPolicyValue = self._AddPolicyValue(api_obj=api_obj)
-        self.AddValue = self._AddValue(api_obj=api_obj)
-        self.ClearAttribute = self._ClearAttribute(api_obj=api_obj)
-        self.ClearPolicyAttribute = self._ClearPolicyAttribute(api_obj=api_obj)
-        self.ContainableClasses = self._ContainableClasses(api_obj=api_obj)
-        self.Create = self._Create(api_obj=api_obj)
-        self.DefaultDN = self._DefaultDN(api_obj=api_obj)
-        self.Delete = self._Delete(api_obj=api_obj)
-        self.DnToGuid = self._DnToGuid(api_obj=api_obj)
-        self.Enumerate = self._Enumerate(api_obj=api_obj)
-        self.EnumerateAll = self._EnumerateAll(api_obj=api_obj)
-        self.EnumerateObjectsDerivedFrom = self._EnumerateObjectsDerivedFrom(api_obj=api_obj)
-        self.EnumeratePolicies = self._EnumeratePolicies(api_obj=api_obj)
-        self.Find = self._Find(api_obj=api_obj)
-        self.FindObjectsOfClass = self._FindObjectsOfClass(api_obj=api_obj)
-        self.FindPolicy = self._FindPolicy(api_obj=api_obj)
-        self.GetHighestRevision = self._GetHighestRevision(api_obj=api_obj)
-        self.GetRevision = self._GetRevision(api_obj=api_obj)
-        self.GuidToDn = self._GuidToDn(api_obj=api_obj)
-        self.IdInfo = self._IdInfo(api_obj=api_obj)
-        self.IsValid = self._IsValid(api_obj=api_obj)
-        self.MutateObject = self._MutateObject(api_obj=api_obj)
-        self.Read = self._Read(api_obj=api_obj)
-        self.ReadAll = self._ReadAll(api_obj=api_obj)
-        self.ReadDn = self._ReadDn(api_obj=api_obj)
-        self.ReadDnReferences = self._ReadDnReferences(api_obj=api_obj)
-        self.ReadEffectivePolicy = self._ReadEffectivePolicy(api_obj=api_obj)
-        self.ReadPolicy = self._ReadPolicy(api_obj=api_obj)
-        self.RemoveDnValue = self._RemoveDnValue(api_obj=api_obj)
-        self.RemovePolicyValue = self._RemovePolicyValue(api_obj=api_obj)
-        self.RenameObject = self._RenameObject(api_obj=api_obj)
-        self.Write = self._Write(api_obj=api_obj)
-        self.WriteDn = self._WriteDn(api_obj=api_obj)
-        self.WritePolicy = self._WritePolicy(api_obj=api_obj)
+        super().__init__(api_obj=api_obj, url='/Config')
+        self.AddDnValue = self._AddDnValue(api_obj=api_obj, url=f'{self._url}/AddDnValue')
+        self.AddPolicyValue = self._AddPolicyValue(api_obj=api_obj, url=f'{self._url}/AddPolicyValue')
+        self.AddValue = self._AddValue(api_obj=api_obj, url=f'{self._url}/AddValue')
+        self.ClearAttribute = self._ClearAttribute(api_obj=api_obj, url=f'{self._url}/ClearAttribute')
+        self.ClearPolicyAttribute = self._ClearPolicyAttribute(api_obj=api_obj, url=f'{self._url}/ClearPolicyAttribute')
+        self.ContainableClasses = self._ContainableClasses(api_obj=api_obj, url=f'{self._url}/ContainableClasses')
+        self.Create = self._Create(api_obj=api_obj, url=f'{self._url}/Create')
+        self.DefaultDN = self._DefaultDN(api_obj=api_obj, url=f'{self._url}/DefaultDN')
+        self.Delete = self._Delete(api_obj=api_obj, url=f'{self._url}/Delete')
+        self.DnToGuid = self._DnToGuid(api_obj=api_obj, url=f'{self._url}/DnToGuid')
+        self.Enumerate = self._Enumerate(api_obj=api_obj, url=f'{self._url}/Enumerate')
+        self.EnumerateAll = self._EnumerateAll(api_obj=api_obj, url=f'{self._url}/EnumerateAll')
+        self.EnumerateObjectsDerivedFrom = self._EnumerateObjectsDerivedFrom(api_obj=api_obj, url=f'{self._url}/EnumerateObjectsDerivedFrom')
+        self.EnumeratePolicies = self._EnumeratePolicies(api_obj=api_obj, url=f'{self._url}/EnumeratePolicies')
+        self.Find = self._Find(api_obj=api_obj, url=f'{self._url}/Find')
+        self.FindObjectsOfClass = self._FindObjectsOfClass(api_obj=api_obj, url=f'{self._url}/FindObjectsOfClass')
+        self.FindPolicy = self._FindPolicy(api_obj=api_obj, url=f'{self._url}/FindPolicy')
+        self.GetHighestRevision = self._GetHighestRevision(api_obj=api_obj, url=f'{self._url}/GetHighestRevision')
+        self.GetRevision = self._GetRevision(api_obj=api_obj, url=f'{self._url}/GetRevision')
+        self.GuidToDn = self._GuidToDn(api_obj=api_obj, url=f'{self._url}/GuidToDn')
+        self.IdInfo = self._IdInfo(api_obj=api_obj, url=f'{self._url}/IdInfo')
+        self.IsValid = self._IsValid(api_obj=api_obj, url=f'{self._url}/IsValid')
+        self.MutateObject = self._MutateObject(api_obj=api_obj, url=f'{self._url}/MutateObject')
+        self.Read = self._Read(api_obj=api_obj, url=f'{self._url}/Read')
+        self.ReadAll = self._ReadAll(api_obj=api_obj, url=f'{self._url}/ReadAll')
+        self.ReadDn = self._ReadDn(api_obj=api_obj, url=f'{self._url}/ReadDn')
+        self.ReadDnReferences = self._ReadDnReferences(api_obj=api_obj, url=f'{self._url}/ReadDnReferences')
+        self.ReadEffectivePolicy = self._ReadEffectivePolicy(api_obj=api_obj, url=f'{self._url}/ReadEffectivePolicy')
+        self.ReadPolicy = self._ReadPolicy(api_obj=api_obj, url=f'{self._url}/ReadPolicy')
+        self.RemoveDnValue = self._RemoveDnValue(api_obj=api_obj, url=f'{self._url}/RemoveDnValue')
+        self.RemovePolicyValue = self._RemovePolicyValue(api_obj=api_obj, url=f'{self._url}/RemovePolicyValue')
+        self.RenameObject = self._RenameObject(api_obj=api_obj, url=f'{self._url}/RenameObject')
+        self.Write = self._Write(api_obj=api_obj, url=f'{self._url}/Write')
+        self.WriteDn = self._WriteDn(api_obj=api_obj, url=f'{self._url}/WriteDn')
+        self.WritePolicy = self._WritePolicy(api_obj=api_obj, url=f'{self._url}/WritePolicy')
 
-    class _AddDnValue(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/AddDnValue')
-
+    class _AddDnValue(WebSdkEndpoint):
         def post(self, object_dn: str, attribute_name: str, value: str):
             body = {
-                'ObjectDN': object_dn,
+                'ObjectDN'     : object_dn,
                 'AttributeName': attribute_name,
-                'Value': value
+                'Value'        : value
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-                    
-            return _Response(response=self._post(data=body))
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-    class _AddPolicyValue(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/AddPolicyValue')
-
+    class _AddPolicyValue(WebSdkEndpoint):
         def post(self, object_dn: str, attribute_name: str, class_name: str, value: str, locked: bool):
             body = {
-                'ObjectDN': object_dn,
+                'ObjectDN'     : object_dn,
                 'AttributeName': attribute_name,
-                'Class': class_name,
-                'Value': value,
-                'Locked': locked
+                'Class'        : class_name,
+                'Value'        : value,
+                'Locked'       : locked
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-            return _Response(response=self._post(data=body))
-
-    class _AddValue(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/AddValue')
-
+    class _AddValue(WebSdkEndpoint):
         def post(self, object_dn: str, attribute_name: str, value: str):
             body = {
-                'ObjectDN': object_dn,
+                'ObjectDN'     : object_dn,
                 'AttributeName': attribute_name,
-                'Value': value,
+                'Value'        : value,
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-    class _ClearAttribute(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/ClearAttribute')
-
+    class _ClearAttribute(WebSdkEndpoint):
         def post(self, object_dn: str, attribute_name: str):
             body = {
-                'ObjectDN': object_dn,
+                'ObjectDN'     : object_dn,
                 'AttributeName': attribute_name
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-    class _ClearPolicyAttribute(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/ClearPolicyAttribute')
-
+    class _ClearPolicyAttribute(WebSdkEndpoint):
         def post(self, object_dn: str, class_name: str, attribute_name: str):
             body = {
-                'ObjectDN': object_dn,
-                'Class': class_name,
+                'ObjectDN'     : object_dn,
+                'Class'        : class_name,
                 'AttributeName': attribute_name
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-    class _ContainableClasses(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/ContainableClasses')
-
+    class _ContainableClasses(WebSdkEndpoint):
         def post(self, object_dn: str):
             body = {
                 'ObjectDN': object_dn
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                class_names: List[str] = ApiField(alias='ClassNames', default_factory=list)
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def class_names(self) -> List[str]:
-                    return self._from_json(key='ClassNames')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
-
-    class _CountObjects(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/CountObjects')
-
+    class _CountObjects(WebSdkEndpoint):
         def post(self, object_dn: str, type_name: str, recursive: bool = False, pattern: str = None):
             body = {
-                'ObjectDN': object_dn,
-                'Type': type_name,
-                'Pattern': pattern,
+                'ObjectDN' : object_dn,
+                'Type'     : type_name,
+                'Pattern'  : pattern,
                 'Recursive': recursive
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                count: int = ApiField(alias='Count')
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def count(self) -> int:
-                    return self._from_json(key='Count')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
-
-    class _Create(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/Create')
-
-        def post(self, object_dn: str, class_name: str, name_attribute_list: list):
+    class _Create(WebSdkEndpoint):
+        def post(self, object_dn: str, class_name: str, name_attribute_list: List[config.NameAttribute]):
             body = {
-                "ObjectDN": object_dn,
-                "Class": class_name,
+                "ObjectDN"         : object_dn,
+                "Class"            : class_name,
                 "NameAttributeList": name_attribute_list
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                object: config.Object = ApiField(alias='Object')
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def object(self):
-                    return Config.Object(self._from_json(key='Object'))
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-
-            return _Response(response=self._post(data=body))
-
-    class _DefaultDN(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/DefaultDN')
-
+    class _DefaultDN(WebSdkEndpoint):
         def get(self):
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                default_dn: str = ApiField(alias='DefaultDN')
+                result: int = ApiField(alias='Result')
 
-                @property
-                @api_response_property()
-                def default_dn(self) -> str:
-                    return self._from_json(key='DefaultDN')
+            return generate_output(response=self._get(), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self) -> int:
-                    return self._from_json(key='Result')
-
-            return _Response(response=self._get())
-
-    class _Delete(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/Delete')
-
+    class _Delete(WebSdkEndpoint):
         def post(self, object_dn: str, recursive: bool = False):
             body = {
-                "ObjectDN": object_dn,
+                "ObjectDN" : object_dn,
                 "Recursive": recursive
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-    class _DnToGuid(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/DnToGuid')
-
+    class _DnToGuid(WebSdkEndpoint):
         def post(self, object_dn: str):
             body = {
                 "ObjectDN": object_dn,
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                class_name: str = ApiField(alias='ClassName')
+                guid: str = ApiField(alias='GUID')
+                revision: str = ApiField(alias='Revision')
+                hierarchical_guid: str = ApiField(alias='HierarchicalGUID')
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def class_name(self) -> str:
-                    return self._from_json(key='ClassName')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def guid(self) -> str:
-                    return self._from_json(key='GUID')
-
-                @property
-                @api_response_property()
-                def revision(self) -> str:
-                    return self._from_json(key='Revision')
-
-                @property
-                @api_response_property()
-                def hierarchical_guid(self) -> str:
-                    return self._from_json(key='HierarchicalGUID')
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
-
-    class _Enumerate(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/Enumerate')
-
+    class _Enumerate(WebSdkEndpoint):
         def post(self, object_dn: str = None, recursive: bool = False, pattern: str = None):
             body = {
-                "ObjectDN": object_dn,
+                "ObjectDN" : object_dn,
                 "Recursive": recursive,
-                "Pattern": pattern
+                "Pattern"  : pattern
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                objects: List[config.Object] = ApiField(alias='Objects', default_factory=list)
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def objects(self):
-                    return [Config.Object(obj) for obj in self._from_json(key='Objects')]
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
-
-    class _EnumerateAll(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/EnumerateAll')
-
+    class _EnumerateAll(WebSdkEndpoint):
         def post(self, pattern: str):
             body = {
                 "Pattern": pattern
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                objects: List[config.Object] = ApiField(alias='Objects', default_factory=list)
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def objects(self):
-                    return [Config.Object(obj) for obj in self._from_json(key='Objects')]
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
-
-    class _EnumerateObjectsDerivedFrom(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/EnumerateObjectsDerivedFrom')
-
+    class _EnumerateObjectsDerivedFrom(WebSdkEndpoint):
         def post(self, derived_from: str, pattern: str = None):
             body = {
                 "DerivedFrom": derived_from,
-                "Pattern": pattern
+                "Pattern"    : pattern
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                objects: List[config.Object] = ApiField(alias='Objects', default_factory=list)
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def objects(self):
-                    return [Config.Object(obj) for obj in self._from_json(key='Objects')]
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
-
-    class _EnumeratePolicies(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/EnumeratePolicies')
-
+    class _EnumeratePolicies(WebSdkEndpoint):
         def post(self, object_dn: str):
             body = {
                 "ObjectDN": object_dn
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                policies: List[config.Policy] = ApiField(alias='Policies', default_factory=list)
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def policies(self):
-                    return [Config.Policy(obj) for obj in self._from_json(key='Policies')]
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
-
-    class _Find(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/Find')
-
-        def post(self, pattern: str, attribute_names: str = None):
+    class _Find(WebSdkEndpoint):
+        def post(self, pattern: str, attribute_names: List[str] = None):
             body = {
-                "Pattern": pattern,
+                "Pattern"       : pattern,
                 "AttributeNames": attribute_names
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                objects: List[config.Object] = ApiField(alias='Objects', default_factory=list)
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def objects(self):
-                    return [Config.Object(obj) for obj in self._from_json(key='Objects')]
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
-
-    class _FindContainers(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/FindContainers')
-
+    class _FindContainers(WebSdkEndpoint):
         def post(self, object_dn: str, recursive: bool = False):
             body = {
-                "ObjectDN": object_dn,
+                "ObjectDN" : object_dn,
                 "Recursive": recursive
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                objects: List[config.Object] = ApiField(alias='Objects', default_factory=list)
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def objects(self):
-                    return [Config.Object(obj) for obj in self._from_json(key='Objects')]
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
-
-    class _FindObjectsOfClass(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/FindObjectsOfClass')
-
-        def post(self, classes: str = None, class_name: str = None, object_dn: str = None, pattern: str = None, recursive: bool = False):
+    class _FindObjectsOfClass(WebSdkEndpoint):
+        def post(self, classes: str = None, class_name: str = None, object_dn: str = None, pattern: str = None,
+                 recursive: bool = False):
             if not (classes or class_name):
                 raise AssertionError('One of "classes" or "class_name" parameters must be provided.')
             body = {
-                "Classes": classes,
-                "Class": class_name,
-                'ObjectDN': object_dn,
-                'Pattern': pattern,
+                "Classes"  : classes,
+                "Class"    : class_name,
+                'ObjectDN' : object_dn,
+                'Pattern'  : pattern,
                 'Recursive': recursive
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                objects: List[config.Object] = ApiField(alias='Objects', default_factory=list)
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def objects(self):
-                    return [Config.Object(obj) for obj in self._from_json(key='Objects')]
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
-
-    class _FindPolicy(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/FindPolicy')
-
+    class _FindPolicy(WebSdkEndpoint):
         def post(self, object_dn: str, class_name: str, attribute_name: str):
             body = {
-                "ObjectDN": object_dn,
-                "Class": class_name,
+                "ObjectDN"     : object_dn,
+                "Class"        : class_name,
                 "AttributeName": attribute_name
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                locked: bool = ApiField(alias='Locked')
+                policy_dn: str = ApiField(alias='PolicyDN')
+                values: List[str] = ApiField(alias='Values', default_factory=list)
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def locked(self) -> bool:
-                    return self._from_json(key='Locked')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def policy_dn(self) -> str:
-                    return self._from_json(key='PolicyDN')
-
-                @property
-                @api_response_property()
-                def values(self) -> List[str]:
-                    return self._from_json(key='Values')
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
-
-    class _GetHighestRevision(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/GetHighestRevision')
-
+    class _GetHighestRevision(WebSdkEndpoint):
         def post(self, object_dn: str, classes: str = None):
             body = {
                 "ObjectDN": object_dn,
-                'Classes': classes
+                'Classes' : classes
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                revision: int = ApiField(alias='Revision')
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def revision(self) -> str:
-                    return self._from_json(key='Revision')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
-
-    class _GetRevision(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/GetRevision')
-
+    class _GetRevision(WebSdkEndpoint):
         def post(self, object_dn: str):
             body = {
                 "ObjectDN": object_dn
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                revision: int = ApiField(alias='Revision')
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def revision(self) -> str:
-                    return self._from_json(key='Revision')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
-
-    class _GuidToDn(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/GuidToDn')
-
+    class _GuidToDn(WebSdkEndpoint):
         def post(self, object_guid: str):
             body = {
                 "ObjectGUID": object_guid
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                object_dn: str = ApiField(alias='ObjectDN')
+                class_name: str = ApiField(alias='ClassName')
+                revision: str = ApiField(alias='Revision')
+                hierarchical_guid: str = ApiField(alias='HierarchicalGUID')
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def object_dn(self) -> str:
-                    return self._from_json(key='ObjectDN')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def class_name(self) -> str:
-                    return self._from_json(key='ClassName')
-
-                @property
-                @api_response_property()
-                def revision(self) -> str:
-                    return self._from_json(key='Revision')
-
-                @property
-                @api_response_property()
-                def hierarchical_guid(self) -> str:
-                    return self._from_json(key='HierarchicalGUID')
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
-
-    class _IdInfo(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/IdInfo')
-
+    class _IdInfo(WebSdkEndpoint):
         def post(self, object_id: str):
             body = {
                 "ObjectID": object_id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                guid: str = ApiField(alias='GUID')
+                class_name: str = ApiField(alias='ClassName')
+                revision: str = ApiField(alias='Revision')
+                hierarchical_guid: str = ApiField(alias='HierarchicalGUID')
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def guid(self) -> str:
-                    return self._from_json(key='GUID')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def class_name(self) -> str:
-                    return self._from_json(key='ClassName')
-
-                @property
-                @api_response_property()
-                def revision(self) -> str:
-                    return self._from_json(key='Revision')
-
-                @property
-                @api_response_property()
-                def hierarchical_guid(self) -> str:
-                    return self._from_json(key='HierarchicalGUID')
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
-
-    class _IsValid(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/IsValid')
-
+    class _IsValid(WebSdkEndpoint):
         def post(self, object_dn: str = None, object_guid: str = None):
-            if not (object_dn or object_guid):
-                raise AssertionError('One of "classes" or "class_name" parameters must be provided.')
             body = {
                 "ObjectGUID": object_guid,
-                "ObjectDN": object_dn
+                "ObjectDN"  : object_dn
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                object: config.Object = ApiField(alias='Object')
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def object(self):
-                    return Config.Object(self._from_json(key='Object'))
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
-
-    class _MutateObject(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/MutateObject')
-
+    class _MutateObject(WebSdkEndpoint):
         def post(self, object_dn: str, class_name: str):
             body = {
                 "ObjectDN": object_dn,
-                "Class": class_name
+                "Class"   : class_name
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-    class _Read(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/Read')
-
+    class _Read(WebSdkEndpoint):
         def post(self, object_dn: str, attribute_name: str):
             body = {
-                "ObjectDN": object_dn,
+                "ObjectDN"     : object_dn,
                 "AttributeName": attribute_name
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                values: List[str] = ApiField(alias='Values', default_factory=list)
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def object_dn(self) -> str:
-                    return self._from_json(key='ObjectDN')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def attribute_name(self) -> str:
-                    return self._from_json(key='AttributeName')
-
-                @property
-                @api_response_property()
-                def values(self) -> List[str]:
-                    return self._from_json(key='Values')
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
-
-    class _ReadAll(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/ReadAll')
-
+    class _ReadAll(WebSdkEndpoint):
         def post(self, object_dn: str):
             body = {
                 "ObjectDN": object_dn
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                name_values: List[config.NameValues[str]] = ApiField(alias='NameValues', default_factory=list)
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def name_values(self):
-                    return [Config.NameValues(nv) for nv in self._from_json(key='NameValues')]
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-
-            return _Response(response=self._post(data=body))
-
-    class _ReadDn(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/ReadDn')
-
+    class _ReadDn(WebSdkEndpoint):
         def post(self, object_dn: str, attribute_name: str):
             body = {
-                "ObjectDN": object_dn,
+                "ObjectDN"     : object_dn,
                 "AttributeName": attribute_name
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                values: List[str] = ApiField(alias='Values', default_factory=list)
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def values(self) -> List[str]:
-                    return self._from_json(key='Values')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-
-            return _Response(response=self._post(data=body))
-
-    class _ReadDnReferences(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/ReadDnReferences')
-
+    class _ReadDnReferences(WebSdkEndpoint):
         def post(self, object_dn: str, reference_attribute_name: str, attribute_name: str):
             body = {
-                "ObjectDN": object_dn,
+                "ObjectDN"              : object_dn,
                 "ReferenceAttributeName": reference_attribute_name,
-                "AttributeName": attribute_name
+                "AttributeName"         : attribute_name
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                values: List[str] = ApiField(alias='Values', default_factory=list)
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def values(self) -> List[str]:
-                    return self._from_json(key='Values', return_on_error=list)
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-
-            return _Response(response=self._post(data=body))
-
-    class _ReadEffectivePolicy(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/ReadEffectivePolicy')
-
+    class _ReadEffectivePolicy(WebSdkEndpoint):
         def post(self, object_dn: str, attribute_name: str):
             body = {
-                "ObjectDN": object_dn,
+                "ObjectDN"     : object_dn,
                 "AttributeName": attribute_name
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                values: List[str] = ApiField(alias='Values', default_factory=list)
+                locked: bool = ApiField(alias='Locked')
+                overridden: bool = ApiField(alias='Overridden')
+                policy_dn: str = ApiField(alias='PolicyDN')
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def values(self) -> List[str]:
-                    return self._from_json(key='Values')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def locked(self) -> bool:
-                    return self._from_json(key='Locked')
-
-                @property
-                @api_response_property()
-                def overridden(self) -> bool:
-                    return self._from_json(key='Overridden')
-
-                @property
-                @api_response_property()
-                def policy_dn(self) -> str:
-                    return self._from_json(key='PolicyDN')
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
-
-    class _ReadPolicy(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/ReadPolicy')
-
+    class _ReadPolicy(WebSdkEndpoint):
         def post(self, object_dn: str, attribute_name: str, class_name: str):
             body = {
-                "ObjectDN": object_dn,
+                "ObjectDN"     : object_dn,
                 "AttributeName": attribute_name,
-                "Class": class_name
+                "Class"        : class_name
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                locked: bool = ApiField(alias='Locked')
+                values: List[str] = ApiField(alias='Values', default_factory=list)
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def locked(self) -> bool:
-                    return self._from_json(key='Locked')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def values(self) -> List[str]:
-                    return self._from_json(key='Values', return_on_error=list)
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
-
-    class _RemoveDnValue(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/RemoveDnValue')
-
+    class _RemoveDnValue(WebSdkEndpoint):
         def post(self, object_dn: str, attribute_name: str, value: str):
             body = {
-                "ObjectDN": object_dn,
+                "ObjectDN"     : object_dn,
                 "AttributeName": attribute_name,
-                "Value": value
+                "Value"        : value
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))                    
-            
-            return _Response(response=self._post(data=body))
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-    class _RemovePolicyValue(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/RemovePolicyValue')
-
+    class _RemovePolicyValue(WebSdkEndpoint):
         def post(self, object_dn: str, attribute_name: str, class_name: str, value: str):
             body = {
-                "ObjectDN": object_dn,
+                "ObjectDN"     : object_dn,
                 "AttributeName": attribute_name,
-                "Class": class_name,
-                "Value": value
+                "Class"        : class_name,
+                "Value"        : value
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-    class _RenameObject(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/RenameObject')
-
+    class _RenameObject(WebSdkEndpoint):
         def post(self, object_dn: str, new_object_dn: str):
             body = {
-                "ObjectDN": object_dn,
+                "ObjectDN"   : object_dn,
                 "NewObjectDN": new_object_dn
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-            return _Response(response=self._post(data=body))
-
-    class _Write(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/Write')
-
-        def post(self, object_dn: str, attribute_data: dict):
+    class _Write(WebSdkEndpoint):
+        def post(self, object_dn: str, attribute_data: List[Dict[str, List[str]]]):
             body = {
-                "ObjectDN": object_dn,
+                "ObjectDN"     : object_dn,
                 "AttributeData": attribute_data
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-    class _WriteDn(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/WriteDn')
-
+    class _WriteDn(WebSdkEndpoint):
         def post(self, object_dn: str, attribute_name: str, values: List[str]):
             body = {
-                "ObjectDN": object_dn,
+                "ObjectDN"     : object_dn,
                 "AttributeName": attribute_name,
-                "Values": values
+                "Values"       : values
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-    class _WritePolicy(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Config/WritePolicy')
-
-        def post(self, object_dn: str, class_name: str, attribute_name: str, locked: bool = False, values: str = None):
+    class _WritePolicy(WebSdkEndpoint):
+        def post(self, object_dn: str, class_name: str, attribute_name: str, locked: bool = False, values: List[str] = None):
             body = {
-                "ObjectDN": object_dn,
-                "Class": class_name,
+                "ObjectDN"     : object_dn,
+                "Class"        : class_name,
                 "AttributeName": attribute_name,
-                "Locked": locked,
-                "Values": values
+                "Locked"       : locked,
+                "Values"       : values
             }
-            
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return Config.Result(self._from_json(key='Result'))
-            
-            return _Response(response=self._post(data=body))
+            class Output(WebSdkOutputModel):
+                result: config.Result = ApiField(alias='Result', converter=lambda x: config.Result(code=x))
+
+            return generate_output(response=self._post(data=body), output_cls=Output)

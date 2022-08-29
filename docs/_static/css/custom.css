@@ -50,6 +50,12 @@ html {
 
 /* endregion Side Bar */
 
+/* region Scrolling */
+* {
+    scroll-margin-top: 75px;
+}
+/* endregion Scrolling */
+
 /* Footer */
 footer {
     font-size: 0;
@@ -204,6 +210,10 @@ html[data-theme='dark'] .highlight {
 /* Function name */
 html[data-theme='dark'] .highlight .nf {
     color: #8694fd !important;
+}
+
+html[data-theme='dark'] .highlight .nc {
+    color: #BB21FF !important;
 }
 
 /* endregion Code Examples */

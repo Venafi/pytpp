@@ -1,76 +1,48 @@
 import re
 import json
 import time
+import pydantic.main
+from datetime import datetime
+from pydantic.fields import Undefined
 from requests import Response, HTTPError
+from pydantic import BaseModel, root_validator, Field
 from pytpp.tools.logger import api_logger, json_pickler
-from typing import Union, Protocol, TYPE_CHECKING
+from typing import Any, Callable, Optional, Union, Protocol, TYPE_CHECKING, Type, TypeVar, get_origin
 
 if TYPE_CHECKING:
+    from pydantic.typing import AbstractSetIntStr, MappingIntStrAny, NoArgAnyCallable
     from pytpp.api.session import Session
 
-
-def api_response_property(return_on_204: type = None):
-    """
-    This function serves as a decorator for all API response objects. Each
-    response property must be validated before returning the object. This
-    function depends upon the API class.
-
-    The ``on_204`` parameter suggests what data type is expected to be
-    returned when the response status code is valid, but has no content.
-    Since there is no content to return, an empty object representing that
-    object will be returned instead. For example,
-
-    .. code-block:: python
-
-        # No 204 should ever be returned, so just validate the response
-        # status codes and return the object on 200.
-        @property
-        @api_response_property()
-        def value1(self) -> str:
-            return self._from_json(key='Value1')
-
-        # 204 could be returned by TPP, so just send an empty response
-        # of the same object type as the expected response.
-        @property
-        @api_response_property(on_204=list)
-        def value2(self) -> list:
-            return self._from_json(key='Value2')
-
-    Args:
-        return_on_204: type
-
-    Returns: Key of response content returned by TPP.
-
-    """
-
-    def pre_validation(func):
-        def wrap(self: APIResponse, *args, **kwargs):
-            if not self._validated:
-                self._validate()
-            if return_on_204 and self.api_response.status_code == 204:
-                if callable(return_on_204):
-                    return return_on_204()
-                else:
-                    return return_on_204
-            return func(self, *args, **kwargs)
-
-        return wrap
-
-    return pre_validation
+T_ = TypeVar('T_')
 
 
-class APISource(Protocol):
+class ApiModelMetaclass(pydantic.main.ModelMetaclass):
+    def __new__(mcs, name, bases, namespaces, **kwargs):
+        annotations = namespaces.get('__annotations__', {})
+        for base in bases:
+            annotations.update(getattr(base, '__annotations__', {}))
+        for field in annotations:
+            if not field.startswith('__') and get_origin(annotations[field]) is not Union:
+                annotations[field] = Union[annotations[field], Any]
+        namespaces['__annotations__'] = annotations
+        return super().__new__(mcs, name, bases, namespaces, **kwargs)
+
+
+# region Endpoint Definitions
+class ApiSource(Protocol):
     _host: str
     _username: str
     _password: str
     _token: str
     _base_url: str
+    _app_url: str
+    _scheme: str
     _session: 'Session'
 
     def re_authenticate(self): ...
 
 
-class API:
+class ApiEndpoint(object):
     """
     This is the backbone of all API definitions. It performs all requests,
     validations, logging, re-authentication, and holds the raw response. This
@@ -87,10 +59,12 @@ class API:
                 to TPP.
             url: This is the URL extension from the base URL.
         """
-        self._api_obj: 'APISource' = api_obj
-        if not url.startswith('/'):
-            url = '/' + url
-        self._url = self._api_obj._base_url + url
+        self._api_obj: 'ApiSource' = api_obj
+        url = url.strip('/')
+        if url.startswith(self._api_obj._base_url):
+            self._url = url
+        else:
+            self._url = f'{self._api_obj._app_url}/{url}'
         self._retries = 3
         self.retry_interval = 0.5
 
@@ -287,21 +261,100 @@ class API:
         )
 
 
-class APIResponse:
-    def __init__(self, response: Response):
-        self._api_response = response
-        self._decoded_api_response = None
-        self._validated = False
+class WebSdkEndpoint(ApiEndpoint):  ...
 
-    @property
-    def api_response(self) -> Response:
-        return self._api_response
 
-    @api_response.setter
-    def api_response(self, value):
-        # When set, a new raw response is stored and hasn't been validated, so invalidate.
-        self._validated = False
-        self._api_response = value
+# endregion Endpoint Definitions
+
+
+# region Model And Field Definitions
+def ApiField(default: Any = None, *, default_factory: 'Optional[NoArgAnyCallable]' = None, alias: str = None, title: str = None,
+             description: str = None, exclude: 'Union[AbstractSetIntStr, MappingIntStrAny, Any]' = None,
+             include: 'Union[AbstractSetIntStr, MappingIntStrAny, Any]' = None, const: bool = None, gt: float = None,
+             ge: float = None, lt: float = None, le: float = None, multiple_of: float = None, max_digits: int = None,
+             decimal_places: int = None, min_items: int = None, max_items: int = None, unique_items: bool = None,
+             min_length: int = None, max_length: int = None, allow_mutation: bool = True, regex: str = None,
+             discriminator: str = None, repr: bool = True, converter: Callable[[Any], Any] = None, **extra: Any) -> Any:
+    if callable(default_factory):
+        default = Undefined
+    if converter is not None and callable(converter):
+        extra['converter'] = converter
+    return Field(default=default, default_factory=default_factory, alias=alias, title=title, description=description,
+                 exclude=exclude, include=include, const=const, gt=gt, ge=ge, lt=lt, le=le, multiple_of=multiple_of,
+                 max_digits=max_digits, decimal_places=decimal_places, min_items=min_items, max_items=max_items,
+                 unique_items=unique_items, min_length=min_length, max_length=max_length, allow_mutation=allow_mutation,
+                 regex=regex, discriminator=discriminator, repr=repr, **extra)
+
+
+# region Output Models
+def generate_output(response: Response, output_cls: Type[T_], root_field: str = None) -> T_:
+    """
+    Args:
+        response: Response instance returned by the ``requests`` call to the server.
+        output_cls: Custom APIResponse class.
+        root_field: In the case that the returned JSON is an array of objects, then the ``root_field``
+            is used to assign that value.
+
+    Returns:
+        An instance of ``response_cls``.
+    """
+    try:
+        result = response.json()
+    except:
+        result = {}
+    if not isinstance(result, dict):
+        if not root_field:
+            raise AttributeError('Unable to assign ')
+        result = {
+            str(root_field): result
+        }
+    elif root_field:
+        result = {
+            str(root_field): result,
+            **result
+        }
+    response_inst = output_cls(api_response=response, **result)
+    try:
+        response.raise_for_status()
+        if isinstance(result, dict) and (error_key := getattr(response_inst, 'error', 'Unknown')) in result.keys():
+            # There is an error message, but the status is a valid status, so just log the error instead.
+            api_logger.error('An error occurred: "%s"' % result[error_key], response=response)
+        return response_inst
+    except HTTPError as error:
+        if isinstance(result, dict) and (error_msg := getattr(response_inst, 'error', None)) is not None:
+            raise InvalidResponseError(f'An error occurred: "{error_msg}"', response=response) from error
+        raise InvalidResponseError(str(error), response=response)
+
+
+class ObjectModel(BaseModel, metaclass=ApiModelMetaclass):
+    class Config:
+        arbitrary_types_allowed = True
+        allow_population_by_field_name = True
+
+    @root_validator(pre=True, allow_reuse=True)
+    def _case_insensitive_validator(cls, values: dict):
+        new_values = {}
+        lowered_values = {k.lower(): v for k, v in values.items()}
+        for fk, fv in cls.__fields__.items():
+            if fv.name in values:
+                new_value = values[fv.name]
+            elif fv.alias.lower() in lowered_values:
+                new_value = lowered_values[fv.alias.lower()]
+            else:
+                continue
+            if fv.type_ is datetime and '\\Date' in new_value:
+                new_value = re.sub(r'\D', '', new_value)
+            if (converter := fv.field_info.extra.get('converter')) is not None:
+                new_value = converter(new_value)
+            new_values[fv.alias] = new_value
+        return new_values
+
+
+class RootOutputModel(ObjectModel):
+    api_response: Response = ApiField(alias='api_response', exclude=True)
+
+    class Config(ObjectModel.Config):
+        fields = {'api_response': {'exclude': True}}
 
     def assert_valid_response(self):
         """
@@ -309,8 +362,7 @@ class APIResponse:
         throw an error if the return code is invalid. This simply asserts that a valid response
         status code was returned by TPP.
         """
-        if not self._validated:
-            self._validate()
+        self.api_response.raise_for_status()
 
     def is_valid_response(self):
         """
@@ -318,68 +370,21 @@ class APIResponse:
         TPP, otherwise ``False``.
         """
         try:
-            self._validate()
+            self.api_response.raise_for_status()
             return True
         except:
             return False
 
-    def _from_json(self, key: str = None, error_key: str = None, return_on_error: type = None):
-        """
-        Returns the particular key within the response dictionary. If no key is provided, then
-        the full response is returned as a dictionary.
 
-        If ``key`` is provided, then it is searched in the response content. It is not case
-        sensitive. If ``key`` is not found, an error is thrown and logged.
+class WebSdkOutputModel(RootOutputModel):
+    error: str = ApiField(alias='Error')
 
-        TPP often returns a key with an error message. When an ``error_key`` is provided and an
-        error message is returned an error is thrown and logged with the message provided by TPP.
 
-        Args:
-            key: Key within the top level of the response content.
-            error_key: Error key within the top level of the response content.
-            return_on_error: If an error occurs in retrieving content or accessing a key, this
-                type will be returned instead of throwing an error.
-
-        Returns:
-            If a key is provided, returns the response content at that key. Otherwise, the full
-            response content.
-        """
-        try:
-            result = self.api_response.json()
-        except json.decoder.JSONDecodeError:
-            if return_on_error:
-                return return_on_error()
-            raise InvalidResponseError(f'{self.api_response.url} return no content. '
-                                       f'Got status code {self.api_response.status_code}.')
-        if error_key and error_key in result.keys():
-            raise InvalidResponseError('An error occurred: "%s"' % result[error_key])
-        if not key:
-            return result
-        for k in result.keys():
-            if key.lower() == k.lower():
-                return result[k]
-
-        if return_on_error:
-            return return_on_error()
-        raise KeyError(f'{key} was not returned by TPP.')
-
-    def _validate(self):
-        """
-        Validates the current response property by validating that there are expected return codes
-        and that the actual return code is one of the valid return codes. If the return code is
-        invalid, an error is thrown and logged.
-        """
-        self._validated = True
-        try:
-            self.api_response.raise_for_status()
-        except HTTPError as err:
-            error_msg = self.api_response.text or self.api_response.reason or 'No error message found.'
-            body = json_pickler.dumps(
-                json.loads(err.request.body)
-            ) if err.request.body else ''
-            error_msg = '\n'.join(err.args) + f"\nERROR: {error_msg}\nCONTENT: {body}"
-            raise InvalidResponseError(error_msg)
+# endregion Output Models
 
 
 class InvalidResponseError(Exception):
-    pass
+    def __init__(self, msg: str, response: Response):
+        self.response = response
+        super().__init__(msg)
+# endregion Response Definitions

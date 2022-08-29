@@ -1,54 +1,32 @@
-from pytpp.api.api_base import API, APIResponse, api_response_property
-from pytpp.properties.response_objects.config_schema import ConfigSchema
+from typing import List
+from pytpp.api.websdk.models import config_schema
+from pytpp.api.api_base import WebSdkEndpoint, WebSdkOutputModel, generate_output, ApiField
 
 
-class _ConfigSchema:
+class _ConfigSchema(WebSdkEndpoint):
     def __init__(self, api_obj):
-        self.Attributes = self._Attributes(api_obj=api_obj)
-        self.Class = self._Class(api_obj=api_obj)
+        super().__init__(api_obj=api_obj, url='/ConfigSchema')
+        self.Attributes = self._Attributes(api_obj=api_obj, url=f'{self._url}/Attributes')
+        self.Class = self._Class(api_obj=api_obj, url=f'{self._url}/Class')
 
-    class _Attributes(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/ConfigSchema/Attributes')
-
+    class _Attributes(WebSdkEndpoint):
         def post(self):
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                attribute_definitions: List[config_schema.AttributeDefinition] = ApiField(
+                    default_factory=list, alias='AttributeDefinitions'
+                )
+                result: config_schema.Result = ApiField(alias='Result', converter=lambda x: config_schema.Result(code=x))
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return ConfigSchema.Result(self._from_json(key='Result'))
+            return generate_output(response=self._post(data={}), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def attribute_definitions(self):
-                    return [ConfigSchema.AttributeDefinition(attr) for attr in self._from_json('AttributeDefinitions')]
-
-            return _Response(response=self._post(data={}))
-
-    class _Class(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/ConfigSchema/Class')
-
+    class _Class(WebSdkEndpoint):
         def post(self, class_name: str):
             body = {
                 "Class": class_name
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                class_definition: config_schema.ClassDefinition = ApiField(alias='ClassDefinition')
+                result: config_schema.Result = ApiField(alias='Result', converter=lambda x: config_schema.Result(code=x))
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return ConfigSchema.Result(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def class_definition(self):
-                    return ConfigSchema.ClassDefinition(self._from_json('ClassDefinition'))
-
-            return _Response(response=self._post(data=body))
+            return generate_output(response=self._post(data=body), output_cls=Output)

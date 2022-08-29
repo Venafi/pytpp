@@ -1,8 +1,10 @@
-from typing import List, Union
-from pytpp.tools.vtypes import Config
-from pytpp.properties.config import PlacementRulesAttributeValues
+from pytpp.api.websdk.enums.config import PlacementRulesAttributeValues
 from pytpp.features.bases.feature_base import FeatureBase, feature
 from pytpp.attributes.layout_rule_base import LayoutRuleBaseAttributes
+from typing import List, Union, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pytpp.api.websdk.models import config
 
 
 @feature('Placement Rule Condition')
@@ -179,8 +181,8 @@ class PlacementRules(FeatureBase):
         super().__init__(api=api)
         self._layout_rules_dn = r'\VED\Layout Root\Rules'
 
-    def _format_rule_attribute(self, conditions: List[str], device_location: 'Union[Config.Object, str]',
-                               certificate_location: 'Union[Config.Object, str]' = None,
+    def _format_rule_attribute(self, conditions: List[str], device_location: 'Union[config.Object, str]',
+                               certificate_location: 'Union[config.Object, str]' = None,
                                rule_type: str = 'X509 Certificate'):
         """
         Formats the rule attribute on the Placement Rule object.
@@ -195,8 +197,8 @@ class PlacementRules(FeatureBase):
 
         return f"{context}\n{rule_types}\n{conditions}\n{locations}\nEND"
 
-    def create(self, name: str, conditions: List[str], device_location: 'Union[Config.Object, str]',
-               certificate_location: 'Union[Config.Object, str]' = None, rule_type: str = 'X509 Certificate',
+    def create(self, name: str, conditions: List[str], device_location: 'Union[config.Object, str]',
+               certificate_location: 'Union[config.Object, str]' = None, rule_type: str = 'X509 Certificate',
                get_if_already_exists: bool = True):
         """
         Args:
@@ -217,18 +219,12 @@ class PlacementRules(FeatureBase):
             certificate_location=certificate_location,
             rule_type=rule_type
         )
-        rule = self._config_create(
-            name=name,
-            parent_folder_dn=self._layout_rules_dn,
-            attributes={
-                LayoutRuleBaseAttributes.rule: rule_attr
-            },
-            config_class=LayoutRuleBaseAttributes.__config_class__,
-            get_if_already_exists=get_if_already_exists
-        )
+        rule = self._config_create(name=name, parent_folder_dn=self._layout_rules_dn, config_class=LayoutRuleBaseAttributes.__config_class__, attributes={
+            LayoutRuleBaseAttributes.rule: rule_attr
+        }, get_if_already_exists=get_if_already_exists)
         return rule
 
-    def delete(self, rule: 'Union[Config.Object, str]'):
+    def delete(self, rule: 'Union[config.Object, str]'):
         """
         Deletes a placement rule.
 
@@ -239,7 +235,7 @@ class PlacementRules(FeatureBase):
         response = self._config_delete(object_dn=rule_dn)
         response.assert_valid_response()
 
-    def update(self, rule: 'Union[Config.Object, str]', conditions: List[str] = None, device_location: str = None,
+    def update(self, rule: 'Union[config.Object, str]', conditions: List[str] = None, device_location: str = None,
                certificate_location: str = None, rule_type: str = 'X509 Certificate'):
         """
         Updates a placement rule. If certain parameters are not provided, the current parameters will be rewritten
@@ -269,7 +265,7 @@ class PlacementRules(FeatureBase):
                 get_locations = False
             elif line.strip() == 'THEN':
                 get_conditions = False
-                if not(new_certificate_dn and new_device_dn):
+                if not (new_certificate_dn and new_device_dn):
                     get_locations = True
             elif line.strip() == 'END':
                 break

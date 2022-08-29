@@ -1,412 +1,252 @@
-from typing import List
-from pytpp.api.api_base import API, APIResponse, api_response_property
-from pytpp.properties.response_objects.ssh import SSH
+from typing import Any, Dict, List, Union
+from pytpp.api.websdk.models import ssh
+from pytpp.api.api_base import WebSdkEndpoint, WebSdkOutputModel, generate_output, ApiField
 
 
-class _SSH:
+class _SSH(WebSdkEndpoint):
     def __init__(self, api_obj):
-        self.AddAuthorizedKey = self._AddAuthorizedKey(api_obj=api_obj)
-        self.AddHostPrivateKey = self._AddHostPrivateKey(api_obj=api_obj)
-        self.AddKnownHostKey = self._AddKnownHostKey(api_obj=api_obj)
-        self.AddSelfServiceAuthorizedKey = self._AddSelfServiceAuthorizedKey(api_obj=api_obj)
-        self.AddSelfServicePrivateKey = self._AddSelfServicePrivateKey(api_obj=api_obj)
-        self.AddUserPrivateKey = self._AddUserPrivateKey(api_obj=api_obj)
-        self.ApproveKeyOperation = self._ApproveKeyOperation(api_obj=api_obj)
-        self.CancelKeyOperation = self._CancelKeyOperation(api_obj=api_obj)
-        self.CancelRotation = self._CancelRotation(api_obj=api_obj)
-        self.ChangePrivateKeyPassphrase = self._ChangePrivateKeyPassphrase(api_obj=api_obj)
-        self.ConfirmSelfServiceKeyInstallation = self._ConfirmSelfServiceKeyInstallation(api_obj=api_obj)
-        self.DeleteUnmatchedKeyset = self._DeleteUnmatchedKeyset(api_obj=api_obj)
-        self.Devices = self._Devices(api_obj=api_obj)
-        self.EditKeyOptions = self._EditKeyOptions(api_obj=api_obj)
-        self.EditSelfServiceAuthorizedKey = self._EditSelfServiceAuthorizedKey(api_obj=api_obj)
-        self.ExportSelfServiceAuthorizedKey = self._ExportSelfServiceAuthorizedKey(api_obj=api_obj)
-        self.ExportSelfServicePrivateKey = self._ExportSelfServicePrivateKey(api_obj=api_obj)
-        self.ImportAuthorizedKey = self._ImportAuthorizedKey(api_obj=api_obj)
-        self.ImportKeyUsageData = self._ImportKeyUsageData(api_obj=api_obj)
-        self.ImportPrivateKey = self._ImportPrivateKey(api_obj=api_obj)
-        self.KeyDetails = self._KeyDetails(api_obj=api_obj)
-        self.KeysetDetails = self._KeysetDetails(api_obj=api_obj)
-        self.KeyUsage = self._KeyUsage(api_obj=api_obj)
-        self.MoveKeysetsToPolicy = self._MoveKeysetsToPolicy(api_obj=api_obj)
-        self.RejectKeyOperation = self._RejectKeyOperation(api_obj=api_obj)
-        self.RemoveKey = self._RemoveKey(api_obj=api_obj)
-        self.RetryKeyOperation = self._RetryKeyOperation(api_obj=api_obj)
-        self.RetryRotation = self._RetryRotation(api_obj=api_obj)
-        self.Rotate = self._Rotate(api_obj=api_obj)
-        self.SetUnmatchedKeysetPassPhrase = self._SetUnmatchedKeysetPassPhrase(api_obj=api_obj)
-        self.SkipKeyRotation = self._SkipKeyRotation(api_obj=api_obj)
-        self.TestDeviceConnection = self._TestDeviceConnection(api_obj=api_obj)
-        self.Widget = self._Widget(api_obj=api_obj)
+        super().__init__(api_obj=api_obj, url='/SSH')
+        self.AddAuthorizedKey = self._AddAuthorizedKey(api_obj=self._api_obj, url=f'{self._url}/AddAuthorizedKey')
+        self.AddHostPrivateKey = self._AddHostPrivateKey(api_obj=self._api_obj, url=f'{self._url}/AddHostPrivateKey')
+        self.AddKnownHostKey = self._AddKnownHostKey(api_obj=self._api_obj, url=f'{self._url}/AddKnownHostKey')
+        self.AddSelfServiceAuthorizedKey = self._AddSelfServiceAuthorizedKey(api_obj=self._api_obj, url=f'{self._url}/AddSelfServiceAuthorizedKey')
+        self.AddSelfServicePrivateKey = self._AddSelfServicePrivateKey(api_obj=self._api_obj, url=f'{self._url}/AddSelfServicePrivateKey')
+        self.AddUserPrivateKey = self._AddUserPrivateKey(api_obj=self._api_obj, url=f'{self._url}/AddUserPrivateKey')
+        self.ApproveKeyOperation = self._ApproveKeyOperation(api_obj=self._api_obj, url=f'{self._url}/ApproveKeyOperation')
+        self.CancelKeyOperation = self._CancelKeyOperation(api_obj=self._api_obj, url=f'{self._url}/CancelKeyOperation')
+        self.CancelRotation = self._CancelRotation(api_obj=self._api_obj, url=f'{self._url}/CancelRotation')
+        self.ChangePrivateKeyPassphrase = self._ChangePrivateKeyPassphrase(api_obj=self._api_obj, url=f'{self._url}/ChangePrivateKeyPassphrase')
+        self.ConfirmSelfServiceKeyInstallation = self._ConfirmSelfServiceKeyInstallation(api_obj=self._api_obj, url=f'{self._url}/ConfirmSelfServiceKeyInstallation')
+        self.DeleteUnmatchedKeyset = self._DeleteUnmatchedKeyset(api_obj=self._api_obj, url=f'{self._url}/DeleteUnmatchedKeyset')
+        self.Devices = self._Devices(api_obj=self._api_obj, url=f'{self._url}/Devices')
+        self.EditKeyOptions = self._EditKeyOptions(api_obj=self._api_obj, url=f'{self._url}/EditKeyOptions')
+        self.EditSelfServiceAuthorizedKey = self._EditSelfServiceAuthorizedKey(api_obj=self._api_obj, url=f'{self._url}/EditSelfServiceAuthorizedKey')
+        self.ExportSelfServiceAuthorizedKey = self._ExportSelfServiceAuthorizedKey(api_obj=self._api_obj, url=f'{self._url}/ExportSelfServiceAuthorizedKey')
+        self.ExportSelfServicePrivateKey = self._ExportSelfServicePrivateKey(api_obj=self._api_obj, url=f'{self._url}/ExportSelfServicePrivateKey')
+        self.ImportAuthorizedKey = self._ImportAuthorizedKey(api_obj=self._api_obj, url=f'{self._url}/ImportAuthorizedKey')
+        self.ImportKeyUsageData = self._ImportKeyUsageData(api_obj=self._api_obj, url=f'{self._url}/ImportKeyUsageData')
+        self.ImportPrivateKey = self._ImportPrivateKey(api_obj=self._api_obj, url=f'{self._url}/ImportPrivateKey')
+        self.KeyDetails = self._KeyDetails(api_obj=self._api_obj, url=f'{self._url}/KeyDetails')
+        self.KeysetDetails = self._KeysetDetails(api_obj=self._api_obj, url=f'{self._url}/KeysetDetails')
+        self.KeyUsage = self._KeyUsage(api_obj=self._api_obj, url=f'{self._url}/KeyUsage')
+        self.MoveKeysetsToPolicy = self._MoveKeysetsToPolicy(api_obj=self._api_obj, url=f'{self._url}/MoveKeysetsToPolicy')
+        self.RejectKeyOperation = self._RejectKeyOperation(api_obj=self._api_obj, url=f'{self._url}/RejectKeyOperation')
+        self.RemoveKey = self._RemoveKey(api_obj=self._api_obj, url=f'{self._url}/RemoveKey')
+        self.RetryKeyOperation = self._RetryKeyOperation(api_obj=self._api_obj, url=f'{self._url}/RetryKeyOperation')
+        self.RetryRotation = self._RetryRotation(api_obj=self._api_obj, url=f'{self._url}/RetryRotation')
+        self.Rotate = self._Rotate(api_obj=self._api_obj, url=f'{self._url}/Rotate')
+        self.SetUnmatchedKeysetPassPhrase = self._SetUnmatchedKeysetPassPhrase(api_obj=self._api_obj, url=f'{self._url}/SetUnmatchedKeysetPassPhrase')
+        self.SkipKeyRotation = self._SkipKeyRotation(api_obj=self._api_obj, url=f'{self._url}/SkipKeyRotation')
+        self.TestDeviceConnection = self._TestDeviceConnection(api_obj=self._api_obj, url=f'{self._url}/TestDeviceConnection')
+        self.Widget = self._Widget(api_obj=self._api_obj, url=f'{self._url}/Widget')
 
-    class _AddAuthorizedKey(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/AddAuthorizedKey')
-
+    class _AddAuthorizedKey(WebSdkEndpoint):
         # noinspection ALL
-        def post(self, device_guid: str, filepath: str, keyset_id: str, username: str, allowed_source_restriction: list = None,
-                 denied_source_restriction: list = None, forced_command: str = None, format: str = None, options: list = None):
+        def post(self, device_guid: str, filepath: str, keyset_id: str, username: str, allowed_source_restriction: List[str] = None,
+                 denied_source_restriction: List[str] = None, forced_command: str = None, format: str = None, 
+                 options: List[str] = None):
             body = {
                 'AllowedSourceRestriction': allowed_source_restriction,
-                'DeniedSourceRestriction': denied_source_restriction,
-                'DeviceGuid': device_guid,
-                'Filepath': filepath,
-                'ForcedCommand': forced_command,
-                'Format': format,
-                'KeysetId': keyset_id,
-                'Options': options,
-                'Username': username
+                'DeniedSourceRestriction' : denied_source_restriction,
+                'DeviceGuid'              : device_guid,
+                'Filepath'                : filepath,
+                'ForcedCommand'           : forced_command,
+                'Format'                  : format,
+                'KeysetId'                : keyset_id,
+                'Options'                 : options,
+                'Username'                : username
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                key_id: int = ApiField(alias='KeyId')
+                response: ssh.SshWebResponse = ApiField(alias='Response')
 
-                @property
-                @api_response_property()
-                def key_id(self) -> str:
-                    return self._from_json('KeyId')
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json('Response'))
-
-            return _Response(response=self._post(data=body))
-
-    class _AddHostPrivateKey(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/AddHostPrivateKey')
-
+    class _AddHostPrivateKey(WebSdkEndpoint):
         # noinspection ALL
         def post(self, device_guid: str, filepath: str, username: str, format: str = None, policy_dn: str = None):
             body = {
                 'DeviceGuid': device_guid,
-                'Filepath': filepath,
-                'Format': format,
-                'Username': username,
-                'PolicyDN': policy_dn
+                'Filepath'  : filepath,
+                'Format'    : format,
+                'Username'  : username,
+                'PolicyDN'  : policy_dn
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                key_id: int = ApiField(alias='KeyId')
+                keyset_id: str = ApiField(alias='KeysetId')
+                response: ssh.SshWebResponse = ApiField(alias='Response')
 
-                @property
-                @api_response_property()
-                def key_id(self) -> str:
-                    return self._from_json('KeyId')
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-                @property
-                @api_response_property()
-                def keyset_id(self) -> str:
-                    return self._from_json('KeysetId')
-
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json('Response'))
-
-            return _Response(response=self._post(data=body))
-
-    class _AddKnownHostKey(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/AddKnownHostKey')
-
+    class _AddKnownHostKey(WebSdkEndpoint):
         # noinspection ALL
         def post(self, device_guid: str, filepath: str, keyset_id: str, username: str, format: str = None):
             body = {
                 'DeviceGuid': device_guid,
-                'Filepath': filepath,
-                'Format': format,
-                'KeysetId': keyset_id,
-                'Username': username
+                'Filepath'  : filepath,
+                'Format'    : format,
+                'KeysetId'  : keyset_id,
+                'Username'  : username
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                key_id: int = ApiField(alias='KeyId')
+                response: ssh.SshWebResponse = ApiField(alias='Response')
 
-                @property
-                @api_response_property()
-                def key_id(self) -> str:
-                    return self._from_json('KeyId')
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json('Response'))
-
-            return _Response(response=self._post(data=body))
-
-    class _AddSelfServiceAuthorizedKey(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/AddSelfServiceAuthorizedKey')
-
-        def post(self, allowed_source_restriction: list, denied_source_restriction: list, folder_id: str, location: str, notes: str,
-                 options: list, owner: str, contact_email: str = None, forced_command: str = None, keyset_id: str = None):
+    class _AddSelfServiceAuthorizedKey(WebSdkEndpoint):
+        def post(self, allowed_source_restriction: List[str], denied_source_restriction: List[str], folder_id: str, location: str, 
+                 notes: str, options: List[str], owner: str, contact_email: str = None, forced_command: str = None, 
+                 keyset_id: str = None):
             body = {
                 'AllowedSourceRestriction': allowed_source_restriction,
-                'ContactEmail': contact_email,
-                'DeniedSourceRestriction': denied_source_restriction,
-                'FolderId': folder_id,
-                'ForcedCommand': forced_command,
-                'KeysetId': keyset_id,
-                'Location': location,
-                'Notes': notes,
-                'Options': options,
-                'Owner': owner
+                'ContactEmail'            : contact_email,
+                'DeniedSourceRestriction' : denied_source_restriction,
+                'FolderId'                : folder_id,
+                'ForcedCommand'           : forced_command,
+                'KeysetId'                : keyset_id,
+                'Location'                : location,
+                'Notes'                   : notes,
+                'Options'                 : options,
+                'Owner'                   : owner
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                key_id: int = ApiField(alias='KeyId')
+                keyset_id: str = ApiField(alias='KeysetId')
+                notes: str = ApiField(alias='Notes')
+                response: ssh.SshWebResponse = ApiField(alias='Response')
 
-                @property
-                @api_response_property()
-                def key_id(self) -> str:
-                    return self._from_json('KeyId')
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-                @property
-                @api_response_property()
-                def keyset_id(self) -> str:
-                    return self._from_json('KeysetId')
-
-                @property
-                @api_response_property()
-                def notes(self) -> str:
-                    return self._from_json('Notes')
-
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json('Response'))
-
-            return _Response(response=self._post(data=body))
-
-    class _AddSelfServicePrivateKey(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/AddSelfServicePrivateKey')
-
+    class _AddSelfServicePrivateKey(WebSdkEndpoint):
         def post(self, folder_id: str, location: str, notes: str, owner: str, contact_email: str = None, keyset_id: str = None):
             body = {
                 'ContactEmail': contact_email,
-                'FolderId': folder_id,
-                'KeysetId': keyset_id,
-                'Location': location,
-                'Notes': notes,
-                'Owner': owner
+                'FolderId'    : folder_id,
+                'KeysetId'    : keyset_id,
+                'Location'    : location,
+                'Notes'       : notes,
+                'Owner'       : owner
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                key_id: int = ApiField(alias='KeyId')
+                keyset_id: str = ApiField(alias='KeysetId')
+                notes: str = ApiField(alias='Notes')
+                response: ssh.SshWebResponse = ApiField(alias='Response')
 
-                @property
-                @api_response_property()
-                def owner(self) -> str:
-                    return self._from_json('Owner')
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-                @property
-                @api_response_property()
-                def location(self) -> str:
-                    return self._from_json('Location')
-
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json('Response'))
-
-            return _Response(response=self._post(data=body))
-
-    class _AddUserPrivateKey(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/AddUserPrivateKey')
-
+    class _AddUserPrivateKey(WebSdkEndpoint):
         # noinspection ALL
         def post(self, device_guid: str, filepath: str, username: str, format: str = None, keyset_id: str = None,
                  passphrase: str = None, policy_dn: str = None):
             body = {
                 'DeviceGuid': device_guid,
-                'Filepath': filepath,
-                'Format': format,
-                'KeysetId': keyset_id,
+                'Filepath'  : filepath,
+                'Format'    : format,
+                'KeysetId'  : keyset_id,
                 'Passphrase': passphrase,
-                'Username': username,
-                'PolicyDN': policy_dn
+                'Username'  : username,
+                'PolicyDN'  : policy_dn
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                key_id: int = ApiField(alias='KeyId')
+                keyset_id: str = ApiField(alias='KeysetId')
+                response: ssh.SshWebResponse = ApiField(alias='Response')
 
-                @property
-                @api_response_property()
-                def key_id(self) -> str:
-                    return self._from_json('KeyId')
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-                @property
-                @api_response_property()
-                def keyset_id(self) -> str:
-                    return self._from_json('KeysetId')
-
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json('Response'))
-
-            return _Response(response=self._post(data=body))
-
-    class _ApproveKeyOperation(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/ApproveKeyOperation')
-
-        def post(self, key_id: str, comment: str):
+    class _ApproveKeyOperation(WebSdkEndpoint):
+        def post(self, key_id: int, comment: str):
             body = {
-                'KeyId': key_id,
+                'KeyId'  : key_id,
                 'Comment': comment
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                response: ssh.SshWebResponse = ApiField(alias='Response')
 
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json())
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-            return _Response(response=self._post(data=body))
-
-    class _CancelKeyOperation(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/CancelKeyOperation')
-
-        def post(self, key_id: str):
+    class _CancelKeyOperation(WebSdkEndpoint):
+        def post(self, key_id: int):
             body = {
                 'KeyId': key_id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                response: ssh.SshWebResponse = ApiField(alias='Response')
 
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json())
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-            return _Response(response=self._post(data=body))
-
-    class _CancelRotation(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/CancelRotation')
-
+    class _CancelRotation(WebSdkEndpoint):
         def post(self, keyset_id: str):
             body = {
                 'KeysetId': keyset_id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                response: ssh.SshWebResponse = ApiField(alias='Response')
 
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json())
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-            return _Response(response=self._post(data=body))
-
-    class _ChangePrivateKeyPassphrase(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/ChangePrivateKeyPassphrase')
-
-        def post(self, key_id: str, passphrase: str):
+    class _ChangePrivateKeyPassphrase(WebSdkEndpoint):
+        def post(self, key_id: int, passphrase: str):
             body = {
-                'KeysetId': key_id,
+                'KeysetId'  : key_id,
                 'Passphrase': passphrase
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                response: ssh.SshWebResponse = ApiField(alias='Response')
 
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json())
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-            return _Response(response=self._post(data=body))
-
-    class _ConfirmSelfServiceKeyInstallation(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/ConfirmSelfServiceKeyInstallation')
-
+    class _ConfirmSelfServiceKeyInstallation(WebSdkEndpoint):
         def post(self, keyset_id: str):
             body = {
                 'KeysetId': keyset_id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                response: ssh.SshWebResponse = ApiField(alias='Response')
 
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json())
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-            return _Response(response=self._post(data=body))
-
-    class _DeleteUnmatchedKeyset(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/DeleteUnmatchedKeyset')
-
+    class _DeleteUnmatchedKeyset(WebSdkEndpoint):
         def post(self, unmatched_trust_id: str):
             body = {
                 'UnmatchedTrustId': unmatched_trust_id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                response: ssh.SshWebResponse = ApiField(alias='Response')
 
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json())
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-            return _Response(response=self._post(data=body))
-
-    class _Devices(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/Devices')
-
-        def post(self, page_size: int, offset: int = None, ssh_device_filter: dict = None):
+    class _Devices(WebSdkEndpoint):
+        def post(self, page_size: int, offset: int = None, ssh_device_filter: Union[dict, ssh.SshDeviceFilter] = None):
             body = {
-                'PageSize': page_size,
-                'Offset': offset,
+                'PageSize'       : page_size,
+                'Offset'         : offset,
                 'SshDeviceFilter': ssh_device_filter
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                data: List[ssh.DeviceData] = ApiField(default_factory=list, alias='Data')
 
-                @property
-                @api_response_property()
-                def data(self):
-                    return [SSH.DeviceData(d) for d in self._from_json('Data')]
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-            return _Response(response=self._post(data=body))
-
-    class _EditKeyOptions(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/EditKeyOptions')
-
-        def post(self, key_id: str, allowed_source_restriction: list = None, denied_source_restriction: list = None,
-                 forced_command: str = None, options: list = None):
+    class _EditKeyOptions(WebSdkEndpoint):
+        def post(self, key_id: int, allowed_source_restriction: List[str] = None, denied_source_restriction: List[str] = None,
+                 forced_command: str = None, options: List[str] = None):
             body = {
                 'AllowedSourceRestriction': allowed_source_restriction,
                 'DeniedSourceRestriction' : denied_source_restriction,
@@ -415,24 +255,15 @@ class _SSH:
                 'Options'                 : options
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                response: ssh.SshWebResponse = ApiField(alias='Response')
 
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json('Response'))
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-            return _Response(response=self._post(data=body))
-
-    class _EditSelfServiceAuthorizedKey(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/EditSelfServiceAuthorizedKey')
-
-        def post(self, key_id: str, allowed_source_restriction: list = None,
-                 denied_source_restriction: list = None, forced_command: str = None,
-                 location: str = None, notes: str = None, options: list = None):
+    class _EditSelfServiceAuthorizedKey(WebSdkEndpoint):
+        def post(self, key_id: int, allowed_source_restriction: List[str] = None,
+                 denied_source_restriction: List[str] = None, forced_command: str = None,
+                 location: str = None, notes: str = None, options: List[str] = None):
             body = {
                 'AllowedSourceRestriction': allowed_source_restriction,
                 'DeniedSourceRestriction' : denied_source_restriction,
@@ -443,630 +274,293 @@ class _SSH:
                 'Options'                 : options
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                response: ssh.SshWebResponse = ApiField(alias='Response')
 
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json('Response'))
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-            return _Response(response=self._post(data=body))
-
-    class _ExportSelfServiceAuthorizedKey(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/ExportSelfServiceAuthorizedKey')
-
+    class _ExportSelfServiceAuthorizedKey(WebSdkEndpoint):
         # noinspection ALL
-        def post(self, key_id: str, format: str = None):
+        def post(self, key_id: int, format: str = None):
             body = {
-                'KeyId': key_id,
+                'KeyId' : key_id,
                 'Format': format
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                key_material: str = ApiField(alias='KeyMaterial')
+                response: ssh.SshWebResponse = ApiField(alias='Response')
 
-                @property
-                @api_response_property()
-                def key_material(self) -> str:
-                    return self._from_json('KeyMaterial')
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json('Response'))
-
-            return _Response(response=self._post(data=body))
-
-    class _ExportSelfServicePrivateKey(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/ExportSelfServicePrivateKey')
-
+    class _ExportSelfServicePrivateKey(WebSdkEndpoint):
         # noinspection ALL
-        def post(self, key_id: str, format: str = None, passphrase: str = None):
+        def post(self, key_id: int, format: str = None, passphrase: str = None):
             body = {
-                'KeyId': key_id,
-                'Format': format,
+                'KeyId'     : key_id,
+                'Format'    : format,
                 'Passphrase': passphrase
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                key_material: str = ApiField(alias='KeyMaterial')
+                response: ssh.SshWebResponse = ApiField(alias='Response')
 
-                @property
-                @api_response_property()
-                def key_id(self) -> str:
-                    return self._from_json('KeyId')
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-                @property
-                @api_response_property()
-                def keyset_id(self) -> str:
-                    return self._from_json('KeysetId')
-
-                @property
-                @api_response_property()
-                def notes(self) -> str:
-                    return self._from_json('Notes')
-
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json('Response'))
-
-            return _Response(response=self._post(data=body))
-
-    class _ImportAuthorizedKey(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/ImportAuthorizedKey')
-
+    class _ImportAuthorizedKey(WebSdkEndpoint):
         # noinspection ALL
         def post(self, device_guid: str, filepath: str, format: str, key_content_base_64: str, username: str):
             body = {
-                'DeviceGuid': device_guid,
-                'Filepath': filepath,
-                'Format': format,
+                'DeviceGuid'      : device_guid,
+                'Filepath'        : filepath,
+                'Format'          : format,
                 'KeyContentBase64': key_content_base_64,
-                'Username': username
+                'Username'        : username
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                key_id: int = ApiField(alias='KeyId')
+                response: ssh.SshWebResponse = ApiField(alias='SshWebResponse')
 
-                @property
-                @api_response_property()
-                def key_id(self) -> str:
-                    return self._from_json('KeyId')
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json('SshWebResponse'))
-
-            return _Response(response=self._post(data=body))
-
-    class _ImportKeyUsageData(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/ImportKeyUsageData')
-
-        def post(self, log_data: list):
+    class _ImportKeyUsageData(WebSdkEndpoint):
+        def post(self, log_data: List[ssh.LogData]):
             body = {
                 'LogData': log_data
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                response: ssh.SshWebResponse = ApiField(alias='SshWebResponse')
 
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json('SshWebResponse'))
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-            return _Response(response=self._post(data=body))
-
-    class _ImportPrivateKey(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/ImportPrivateKey')
-
+    class _ImportPrivateKey(WebSdkEndpoint):
         # noinspection ALL
         def post(self, device_guid: str, filepath: str, format: str, key_content_base_64: str, username: str,
                  passphrase: str = None):
             body = {
-                'DeviceGuid': device_guid,
-                'Filepath': filepath,
-                'Format': format,
+                'DeviceGuid'      : device_guid,
+                'Filepath'        : filepath,
+                'Format'          : format,
                 'KeyContentBase64': key_content_base_64,
-                'Passphrase': passphrase,
-                'Username': username
+                'Passphrase'      : passphrase,
+                'Username'        : username
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                key_id: int = ApiField(alias='KeyId')
+                response: ssh.SshWebResponse = ApiField(alias='SshWebResponse')
 
-                @property
-                @api_response_property()
-                def key_id(self) -> str:
-                    return self._from_json('KeyId')
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json('SshWebResponse'))
-
-            return _Response(response=self._post(data=body))
-
-    class _KeyDetails(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/KeyDetails')
-
-        def post(self, key_id: list):
+    class _KeyDetails(WebSdkEndpoint):
+        def post(self, key_id: int):
             body = {
                 'KeyId': key_id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                key_data: List[ssh.KeyData] = ApiField(default_factory=list)
 
-                @property
-                @api_response_property()
-                def key_data(self):
-                    return [SSH.KeyData(d) for d in self._from_json('KeyData')]
+            return generate_output(output_cls=Output, response=self._post(data=body), root_field='key_data')
 
-            return _Response(response=self._post(data=body))
-
-    class _KeysetDetails(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/KeysetDetails')
-
-        def get(self, keyset_id: list, load_key_data: bool = None):
+    class _KeysetDetails(WebSdkEndpoint):
+        def get(self, keyset_id: str, load_key_data: bool = None):
             params = {
-                'KeysetId': keyset_id,
+                'KeysetId'   : keyset_id,
                 'LoadKeyData': load_key_data
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                pass
 
-                @property
-                @api_response_property()
-                def access(self):
-                    return self._from_json('Access')
+            # This cannot be inherited as that method is broken. Instead, manually update the fields.
+            Output.__fields__.update(ssh.KeySetData.__fields__)
 
-                @property
-                @api_response_property()
-                def algorithm(self):
-                    return self._from_json('Algorithm')
+            return generate_output(output_cls=Output, response=self._get(params=params))
 
-                @property
-                @api_response_property()
-                def fingerprint_md5(self):
-                    return self._from_json('FingerprintMD5')
-
-                @property
-                @api_response_property()
-                def fingerprint_sha256(self):
-                    return self._from_json('FingerprintSHA256')
-
-                @property
-                @api_response_property()
-                def keyset_id(self):
-                    return self._from_json('KeysetId')
-
-                @property
-                @api_response_property()
-                def last_rotation_date(self):
-                    return self._from_json('LastRotationDate')
-
-                @property
-                @api_response_property()
-                def last_used(self):
-                    return self._from_json('LastUsed')
-
-                @property
-                @api_response_property()
-                def length(self):
-                    return self._from_json('Length')
-
-                @property
-                @api_response_property()
-                def private_keys(self):
-                    return [SSH.KeyData(key) for key in self._from_json('PrivateKeys')] if 'PrivateKeys' in self.api_response.json() else []
-
-                @property
-                @api_response_property()
-                def process_status(self):
-                    return self._from_json('ProcessStatus')
-
-                @property
-                @api_response_property()
-                def public_keys(self):
-                    return [SSH.KeyData(key) for key in self._from_json('PublicKeys')] if 'PublicKeys' in self.api_response.json() else []
-
-                @property
-                @api_response_property()
-                def rotation_stage(self):
-                    return self._from_json('RotationStage')
-
-                @property
-                @api_response_property()
-                def type(self):
-                    return self._from_json('Type')
-
-                @property
-                @api_response_property()
-                def violation_status(self):
-                    return self._from_json('ViolationStatus')
-
-            return _Response(response=self._get(params=params))
-
-        def post(self, page_size: int, keyset_filter: list = None, load_key_data: bool = None, offset: int = None):
+        def post(self, page_size: int, keyset_filter: List[ssh.KeySetFilter] = None, load_key_data: bool = None,
+                 offset: int = None):
             body = {
                 'KeysetFilter': keyset_filter,
-                'LoadKeyData': load_key_data,
-                'Offset': offset,
-                'PageSize': page_size
+                'LoadKeyData' : load_key_data,
+                'Offset'      : offset,
+                'PageSize'    : page_size
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                data: List[ssh.KeySetData] = ApiField(default_factory=list, alias='Data')
 
-                @property
-                @api_response_property()
-                def data(self):
-                    return [SSH.KeySetData(key) for key in self._from_json('Data')]
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-            return _Response(response=self._post(data=body))
-
-    class _KeyUsage(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/KeyUsage')
-
-        def post(self, ssh_key_usage_filter: list, page_size: int = None, offset: int = None):
+    class _KeyUsage(WebSdkEndpoint):
+        def post(self, ssh_key_usage_filter: List[ssh.KeyUsageFilter], page_size: int = None, offset: int = None):
             body = {
                 'SshKeyUsageFilter': ssh_key_usage_filter,
-                'PageSize': page_size,
-                'Offset': offset
+                'PageSize'         : page_size,
+                'Offset'           : offset
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                data: List[ssh.KeyUsageData] = ApiField(default_factory=list, alias='Data')
 
-                @property
-                @api_response_property()
-                def data(self):
-                    return [SSH.KeyUsageData(key) for key in self._from_json('Data')]
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-            return _Response(response=self._post(data=body))
-
-    class _MoveKeysetsToPolicy(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/MoveKeysetsToPolicy')
-
-        def post(self, keyset_ids: list, policy_dn: str = None, policy_path: str = None):
+    class _MoveKeysetsToPolicy(WebSdkEndpoint):
+        def post(self, keyset_ids: List[str], policy_dn: str = None, policy_path: str = None):
             body = {
-                'KeysetIds': keyset_ids,
-                'PolicyDN': policy_dn,
+                'KeysetIds' : keyset_ids,
+                'PolicyDN'  : policy_dn,
                 'PolicyPath': policy_path
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                response: ssh.SshWebResponse = ApiField(alias='Response')
 
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json())
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-            return _Response(response=self._post(data=body))
-
-    class _RejectKeyOperation(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/RejectKeyOperation')
-
-        def post(self, key_id: str, comment: str):
+    class _RejectKeyOperation(WebSdkEndpoint):
+        def post(self, key_id: int, comment: str):
             body = {
-                'KeyId': key_id,
+                'KeyId'  : key_id,
                 'Comment': comment
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                response: ssh.SshWebResponse = ApiField(alias='Response')
 
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json())
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-            return _Response(response=self._post(data=body))
-
-    class _RemoveKey(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/RemoveKey')
-
-        def post(self, key_id: str):
+    class _RemoveKey(WebSdkEndpoint):
+        def post(self, key_id: int):
             body = {
                 'KeyId': key_id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                response: ssh.SshWebResponse = ApiField(alias='Response')
 
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json())
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-            return _Response(response=self._post(data=body))
-
-    class _RetryKeyOperation(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/RetryKeyOperation')
-
-        def post(self, key_id: str):
+    class _RetryKeyOperation(WebSdkEndpoint):
+        def post(self, key_id: int):
             body = {
                 'KeyId': key_id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                response: ssh.SshWebResponse = ApiField(alias='Response')
 
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json())
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-            return _Response(response=self._post(data=body))
-
-    class _RetryRotation(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/RetryRotation')
-
+    class _RetryRotation(WebSdkEndpoint):
         def post(self, keyset_id: str):
             body = {
                 'KeysetId': keyset_id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                response: ssh.SshWebResponse = ApiField(alias='Response')
 
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json())
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-            return _Response(response=self._post(data=body))
-
-    class _Rotate(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/Rotate')
-
+    class _Rotate(WebSdkEndpoint):
         def post(self, keyset_id: str, options: int = None, allow_skip_on_rotation: bool = None):
             body = {
-                'KeysetId': keyset_id,
+                'KeysetId'           : keyset_id,
                 'AllowSkipOnRotation': allow_skip_on_rotation,
-                'Options': options
+                'Options'            : options
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                response: ssh.SshWebResponse = ApiField(alias='Response')
 
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json())
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-            return _Response(response=self._post(data=body))
-
-    class _SetUnmatchedKeysetPassPhrase(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/SetUnmatchedKeysetPassPhrase')
-
+    class _SetUnmatchedKeysetPassPhrase(WebSdkEndpoint):
         def post(self, passphrase: str, unmatched_trust_id: str):
             body = {
-                'Passphrase': passphrase,
+                'Passphrase'      : passphrase,
                 'UnmatchedTrustId': unmatched_trust_id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                response: ssh.SshWebResponse = ApiField(alias='Response')
 
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json())
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-            return _Response(response=self._post(data=body))
-
-    class _SkipKeyRotation(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSH/SkipKeyRotation')
-
-        def post(self, key_id: str):
+    class _SkipKeyRotation(WebSdkEndpoint):
+        def post(self, key_id: int):
             body = {
                 'KeyId': key_id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                response: ssh.SshWebResponse = ApiField(alias='Response')
 
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSH.Response(self._from_json())
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-            return _Response(response=self._post(data=body))
-
-    class _TestDeviceConnection(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='SSH/TestDeviceConnection')
-
+    class _TestDeviceConnection(WebSdkEndpoint):
         def post(self, device_guids: List[str]):
             body = {
                 'deviceGuids': device_guids
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                connection_results: List[ssh.ConnectionResult] = ApiField(default_factory=list)
 
-                @property
-                @api_response_property()
-                def connection_results(self):
-                    return [SSH.ConnectionResult(result) for result in self._from_json()]
+            return generate_output(output_cls=Output, response=self._post(data=body), root_field='connection_results')
 
-            return _Response(response=self._post(data=body))
+    class _Widget(WebSdkEndpoint):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.CriticalAlerts = self._CriticalAlerts(api_obj=self._api_obj, url=f'{self._url}/CriticalAlerts')
+            self.PolicyViolations = self._PolicyViolations(api_obj=self._api_obj, url=f'{self._url}/PolicyViolations')
+            self.Stats = self._Stats(api_obj=self._api_obj, url=f'{self._url}/Stats')
 
-    class _Widget:
-        def __init__(self, api_obj):
-            self.CriticalAlerts = self._CriticalAlerts(api_obj=api_obj)
-            self.PolicyViolations = self._PolicyViolations(api_obj=api_obj)
-            self.Stats = self._Stats(api_obj=api_obj)
-
-        class _CriticalAlerts(API):
-            def __init__(self, api_obj):
-                super().__init__(api_obj=api_obj, url='/SSH/Widget/CriticalAlerts')
-
+        class _CriticalAlerts(WebSdkEndpoint):
             def get(self, min_allowed_key_length: int):
                 params = {
                     'minAllowedKeyLength': min_allowed_key_length
                 }
 
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    accessible_root_accounts: int = ApiField(alias='AccessibleRootAccounts')
+                    non_compliant_duplicate_private_keys: int = ApiField(alias='NonCompliantDuplicatePrivateKeys')
+                    non_root_orphans: int = ApiField(alias='NonRootOrphans')
+                    root_orphans: int = ApiField(alias='RootOrphans')
+                    shared_private_keys: int = ApiField(alias='SharedPrivateKeys')
+                    very_small_key: int = ApiField(alias='VerySmallKey')
 
-                    @property
-                    @api_response_property()
-                    def root_orphans(self) -> int:
-                        return self._from_json('RootOrphans')
+                return generate_output(output_cls=Output, response=self._get(params=params))
 
-                    @property
-                    @api_response_property()
-                    def non_root_orphans(self) -> int:
-                        return self._from_json('NonRootOrphans')
-
-                    @property
-                    @api_response_property()
-                    def accessible_root_accounts(self) -> int:
-                        return self._from_json('AccessibleRootAccounts')
-
-                    @property
-                    @api_response_property()
-                    def shared_private_keys(self) -> int:
-                        return self._from_json('SharedPrivateKeys')
-
-                    @property
-                    @api_response_property()
-                    def non_compliant_duplicate_private_keys(self) -> int:
-                        return self._from_json('NonCompliantDuplicatePrivateKeys')
-
-                    @property
-                    @api_response_property()
-                    def very_small_key(self) -> int:
-                        return self._from_json('VerySmallKey')
-
-                return _Response(response=self._get(params=params))
-
-        class _PolicyViolations(API):
-            def __init__(self, api_obj):
-                super().__init__(api_obj=api_obj, url='/SSH/Widget/PolicyViolations')
-
+        class _PolicyViolations(WebSdkEndpoint):
             def get(self):
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    duplicate_private_keys: List[str] = ApiField(alias='DuplicatePrivateKeys', default_factory=list)
+                    key_older_than_policy: str = ApiField(alias='KeyOlderThanPolicy')
+                    key_smaller_than_policy: str = ApiField(alias='KeySmallerThanPolicy')
+                    missing_options: List[str] = ApiField(alias='MissingOptions', default_factory=list)
+                    non_compliant_algorithm: str = ApiField(alias='NonCompliantAlgorithm')
+                    non_compliant_force_command: str = ApiField(alias='NonCompliantForceCommand')
+                    non_compliant_source_restriction: str = ApiField(alias='NonCompliantSourceRestriction')
+                    non_compliant_vendor_format: str = ApiField(alias='NonCompliantVendorFormat')
+                    root_access: str = ApiField(alias='RootAccess')
+                    shared_server_account: str = ApiField(alias='SharedServerAccount')
+                    vulnerable_protocol: str = ApiField(alias='VulnerableProtocol')
 
-                    @property
-                    @api_response_property()
-                    def non_compliant_force_command(self):
-                        return self._from_json('NonCompliantForceCommand')
+                return generate_output(output_cls=Output, response=self._get())
 
-                    @property
-                    @api_response_property()
-                    def non_compliant_source_restriction(self):
-                        return self._from_json('NonCompliantSourceRestriction')
-
-                    @property
-                    @api_response_property()
-                    def missing_options(self):
-                        return self._from_json('MissingOptions')
-
-                    @property
-                    @api_response_property()
-                    def non_compliant_algorithm(self):
-                        return self._from_json('NonCompliantAlgorithm')
-
-                    @property
-                    @api_response_property()
-                    def vulnerable_protocol(self):
-                        return self._from_json('VulnerableProtocol')
-
-                    @property
-                    @api_response_property()
-                    def non_compliant_vendor_format(self):
-                        return self._from_json('NonCompliantVendorFormat')
-
-                    @property
-                    @api_response_property()
-                    def key_older_than_policy(self):
-                        return self._from_json('KeyOlderThanPolicy')
-
-                    @property
-                    @api_response_property()
-                    def shared_server_account(self):
-                        return self._from_json('SharedServerAccount')
-
-                    @property
-                    @api_response_property()
-                    def key_smaller_than_policy(self):
-                        return self._from_json('KeySmallerThanPolicy')
-
-                    @property
-                    @api_response_property()
-                    def duplicate_private_keys(self):
-                        return self._from_json('DuplicatePrivateKeys')
-
-                    @property
-                    @api_response_property()
-                    def root_access(self):
-                        return self._from_json('RootAccess')
-
-                return _Response(response=self._get())
-
-        class _Stats(API):
-            def __init__(self, api_obj):
-                super().__init__(api_obj=api_obj, url='/SSH/Widget/Stats')
-
+        class _Stats(WebSdkEndpoint):
             def get(self, group_by: str):
                 params = {
                     'GroupBy': group_by
                 }
 
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    stats: Dict[str, Any] = ApiField()
 
-                    @property
-                    @api_response_property()
-                    def name_value_pairs(self) -> dict:
-                        return self._from_json()
-
-                return _Response(response=self._get(params=params))
+                return generate_output(output_cls=Output, response=self._get(params=params),
+                                       root_field='stats')

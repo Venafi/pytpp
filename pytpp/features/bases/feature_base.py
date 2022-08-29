@@ -4,14 +4,12 @@ import os
 import re
 from typing import TYPE_CHECKING
 from pytpp.features.definitions.exceptions import InvalidResultCode, ObjectDoesNotExist
-from pytpp.properties.response_objects.config import Config
-from pytpp.properties.response_objects.identity import Identity
-from pytpp.properties.response_objects.dataclasses.config import Object as ConfigObject
-from pytpp.properties.response_objects.dataclasses.identity import Identity
+from pytpp.api.websdk.models import config, identity as ident
 from pytpp.tools.logger import logger, features_logger
-from pytpp.properties.secret_store import Namespaces
+from pytpp.api.websdk.enums.secret_store import Namespaces
 from typing import List, Dict, Union
 from packaging.version import Version
+
 if TYPE_CHECKING:
     from pytpp.api.authenticate import Authenticate
 
@@ -25,6 +23,7 @@ def feature(name: str):
             level=logging.DEBUG,
             exclude='_.*'
         )(cls)
+
     return decorate
 
 
@@ -33,9 +32,9 @@ class FeatureBase:
         self._api = api
 
     def _config_create(self, name: str, parent_folder_dn: str, config_class: str, attributes: dict = None,
-                       get_if_already_exists: bool = True, keep_list_values: bool = False):
+                       get_if_already_exists: bool = True):
         if attributes:
-            attributes = self._name_value_list(attributes=attributes, keep_list_values=keep_list_values)
+            attributes = self._name_value_list(attributes=attributes)
 
         dn = f'{parent_folder_dn}\\{name}'
         response = self._api.websdk.Config.Create.post(
@@ -61,16 +60,16 @@ class FeatureBase:
             raise ValueError(
                 'Must supply either an Object DN or Object GUID, but neither was provided.'
             )
-        obj = Config.Object({})
-        if isinstance(object_dn, ConfigObject):
+        if isinstance(object_dn, config.Object):
             obj = object_dn
-        elif isinstance(object_guid, ConfigObject):
+        elif isinstance(object_guid, config.Object):
             obj = object_guid
         else:
             response = self._api.websdk.Config.IsValid.post(object_dn=object_dn, object_guid=object_guid)
             if response.result.code == 400:
                 if raise_error_if_not_exists:
                     raise ObjectDoesNotExist(f'"{object_dn or object_guid}" does not exist.')
+                obj = config.Object()
             else:
                 obj = response.object
         if valid_class_names and obj.type_name not in valid_class_names:
@@ -87,9 +86,9 @@ class FeatureBase:
             raise ValueError(
                 'Must supply either an prefixed_name or prefixed_universal, but neither was provided.'
             )
-        if isinstance(prefixed_name, Identity):
+        if isinstance(prefixed_name, ident.Identity):
             return prefixed_name
-        if isinstance(prefixed_universal, Identity):
+        if isinstance(prefixed_universal, ident.Identity):
             return prefixed_universal
 
         result = self._api.websdk.Identity.Validate.post(
@@ -101,7 +100,7 @@ class FeatureBase:
             target = prefixed_name or prefixed_universal
             raise ObjectDoesNotExist(f'Could not find identity "{target}".')
         else:
-            identity = Identity.Identity(response_object={})
+            identity = ident.Identity()
         return identity
 
     @staticmethod
@@ -121,9 +120,13 @@ class FeatureBase:
         """
         d = {}
         if prefixed_name:
-            d.update({'PrefixedName': prefixed_name})
+            d.update({
+                         'PrefixedName': prefixed_name
+                     })
         if prefixed_universal:
-            d.update({'PrefixedUniversal': prefixed_universal})
+            d.update({
+                         'PrefixedUniversal': prefixed_universal
+                     })
         return d
 
     @staticmethod
@@ -141,21 +144,21 @@ class FeatureBase:
         regex = '^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$'
         return isinstance(obj, str) and bool(re.match(pattern=regex, string=obj))
 
-    def _get_prefixed_name(self, identity: 'Union[Identity, str]'):
+    def _get_prefixed_name(self, identity: 'Union[ident.Identity, str]'):
         if hasattr(identity, 'prefixed_name'):
             return identity.prefixed_name
         if self._is_prefixed_universal(identity):
             return self._get_identity_object(prefixed_universal=identity).prefixed_name
         return identity
 
-    def _get_prefixed_universal(self, identity: 'Union[Identity, str]'):
+    def _get_prefixed_universal(self, identity: 'Union[ident.Identity, str]'):
         if hasattr(identity, 'prefixed_universal'):
             return identity.prefixed_universal
         if self._is_prefixed_universal(identity):
             return identity
         return self._get_identity_object(prefixed_name=identity).prefixed_universal
 
-    def _get_dn(self, obj: 'Union[Config.Object, str]', parent_dn: str = None):
+    def _get_dn(self, obj: 'Union[config.Object, str]', parent_dn: str = None):
         if hasattr(obj, 'dn'):
             return obj.dn
         if self._is_obj_guid(obj):
@@ -167,7 +170,7 @@ class FeatureBase:
         else:
             return obj
 
-    def _get_guid(self, obj: 'Union[Config.Object, str]', parent_dn: str = None):
+    def _get_guid(self, obj: 'Union[config.Object, str]', parent_dn: str = None):
         if hasattr(obj, 'guid'):
             return obj.guid
         if self._is_obj_guid(obj):
@@ -189,22 +192,24 @@ class FeatureBase:
     # noinspection ALL
     @staticmethod
     def _name_type_value(name: str, type: str, value):
-        return {'Name': str(name), 'Type': str(type), 'Value': str(value)}
+        return {
+            'Name': str(name),
+            'Type': str(type),
+            'Value': str(value)
+        }
 
     @staticmethod
-    def _name_value_list(attributes: Dict[str, List[str]], keep_list_values: bool = False):
+    def _name_value_list(attributes: Dict[str, List[str]]):
         nvl = []
-        for name, value in attributes.items():
-            if value is None:
+        for n, v in attributes.items():
+            if v is None:
                 continue
-            elif isinstance(value, list):
-                if keep_list_values is True:
-                    nvl.append({'Name': str(name), 'Value': value})
+            if not isinstance(v, list):
+                if isinstance(v, (tuple, set)):
+                    v = list(v)
                 else:
-                    for v in value:
-                        nvl.append({'Name': str(name), 'Value': str(v)})
-            elif not isinstance(value, dict):
-                nvl.append({'Name': str(name), 'Value': str(value)})
+                    v = [v]
+            nvl.append(config.NameAttribute(name=n, value=v))
         return nvl
 
     def _secret_store_delete(self, object_dn: str, namespace: str = Namespaces.config):

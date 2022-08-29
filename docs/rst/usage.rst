@@ -25,6 +25,9 @@ The API Layer
 
 The API layer is responsible for making API requests and serializing the response from TPP.
 
+Making API Calls
+****************
+
 .. rubric:: Calling API Methods
 
 The path of the URL for the WebSDK API is translated to Python by following this format:
@@ -73,6 +76,7 @@ The path of the URL for the WebSDK API is translated to Python by following this
     # In this case it is ".object".
     policy = response.object
     print(policy.dn)  # Print the Policy DN.
+    print(policy.json(by_alias=True))  # Print the Policy Config Object as JSON.
 
 Note that the response body returned by TPP is also serialized to a Python object. For example:
 
@@ -80,6 +84,139 @@ Note that the response body returned by TPP is also serialized to a Python objec
 
     Given: POST Config/IsValid -> {"Object": {"DN": "...", ...}}
     Then: Access the DN -> response.object.dn
+
+Using Models As Inputs
+**********************
+
+.. note::
+   Models enable you to create Python model objects that PyTPP knows how to serialize as JSON to send to the server. PyTPP
+   also usually knows how to deserialize the response from the server as these Python models. However, if we made a mistake in
+   defining the model you can still bypass the models by using dictionaries and the ``api_response`` from the output model.
+
+Every response from the server is converted into a model derived from *pydantic*'s BaseModel. Refer to the |Pydantic Docs|
+for details on using these models.
+
+All oututs, or responses from the server, are children of the same *RootOutputModel*, which handles validating the data
+deserialization and typing and defines the instance variable ``api_response``, which is the ``Response`` object returned by
+|Python Requests library|. All children classes are responsible for declaring the response variables and their models. A
+*model* is simply a JSON schema defined as a Python instance. For example,
+
+This...
+
+.. code-block::
+
+     {
+        "Object":{
+           "AbsoluteGUID":"{1aed731d-3db6-4f61-b186-9c05ea486df8} \
+              {981c0b88-bbf7-4a87-b5ee-b328dce41b75} \
+              {112adf57-07b7-41fe-9d3a-5f342e421c68}",
+           "DN":"\\VED\\Policy",
+           "GUID":"{112adf57-07b7-41fe-9d3a-5f342e421c68}",
+           "Id":3,
+           "Name":"Policy",
+           "Parent":"\\VED",
+           "Revision":1640,
+           "TypeName":"Policy"
+        }
+     }
+
+becomes this...
+
+.. code-block:: python
+
+    class Object(ObjectModel):
+       absolute_guid: str = ApiField(alias='AbsoluteGUID')
+       dn: str = ApiField(alias='DN')
+       guid: str = ApiField(alias='GUID')
+       config_id: Optional[int] = ApiField(alias='Id')
+       name: str = ApiField(alias='Name')
+       parent: str = ApiField(alias='Parent')
+       revision: Optional[int] = ApiField(alias='Revision')
+       type_name: str = ApiField(alias='TypeName')
+
+Each variable has an *alias* that matches the key of the given JSON schema. This is important for preserving the keys when
+reusing the schema, such as when submitting models in an API request to the server. For example:
+
+.. code-block:: python
+
+    """
+    Let's update a CodeSign project description and custom field attributes.
+    """
+    from pytpp import Authenticate, Attributes, models
+
+    api = Authenticate(...)
+
+    #### PREPARE THE PROJECT MODEL ####
+
+    # You can get the current project and modify the data...
+    project = api.websdk.Codesign.GetProject.post(dn=...).project
+    project.description = 'This is the cooles project ever!'
+    project.custom_field_attributes.items.append(
+        models.codesign.CustomFieldAttributes(field_name='ProjectString', values=["SomeImportanValue"])
+    )
+    # ---- OR ----
+    # directly create the project model...
+    project = models.codesign.Project(...)
+
+    # ---- OR ----
+    # directly create the project dictionary
+    project = {...}  # Remember to pass this value as **project if using a dictionary.
+
+    #### UPDATE TEH PROJECT ####
+    response = api.websdk.Codesign.UpdateProject.post(project=project)
+    response.assert_valid_response()
+
+Oops, I Didn't Get What I Expected!
+***********************************
+
+We try our best to ensure that PyTPP defines all of the API endpoints, payloads, and responses accurately. But we are human
+and may miss a return value or mistype a URL. Please let us know on our |Venafi GitHub page| if you do see an issue. Here are
+some tips on what to do if things aren't working out:
+
+.. note::
+   These are just examples of what could go wrong and are not describing known issues.
+
+**Wrong URL**
+
+If, for example, the ``POST Config/Create`` URL was incorrectly defined as ``https://server.com/vedsdk/Config/Creeaate``,
+just do this!
+
+.. code-block:: python
+
+   api.websdk.Config.Create._url = 'https://server.com/vedsdk/Config/Create'
+
+
+**Missing/Incorrect Output Value**
+
+If, for example, the "DN" key of object schema for the reponse of ``POST Config/Create`` was incorrectly defined as ``Dn``,
+just do this!
+
+.. code-block:: python
+
+   response = api.websdk.Config.Create.post(...)
+   try:
+      print(response.object.dn)  # This fails because the alias for dn should be "DN", not "Dn".
+   except:
+      if response.api_response.status_code == 200:
+         print(response.api_response.json()['DN'])
+      else:
+         print(f'Bad response. Got "{api_response.reason}" ({api_response.status_code})')
+
+**Missing/Incorrect Model Value**
+
+If, for example, the "PrefixedName" alias of the object schema model for an identity input was incorrectly defined as
+``preFixedName``, just do this!
+
+.. code-block:: python
+
+   identity = models.identity.Identity
+   try:
+      print(response.object.dn)  # This fails because the alias for dn should be "DN", not "Dn".
+   except:
+      if response.api_response.status_code == 200:
+         print(response.api_response.json()['DN'])
+      else:
+         print(f'Bad response. Got "{api_response.reason}" ({api_response.status_code})')
 
 The Features Layer
 ------------------
@@ -90,7 +227,7 @@ jobs and managing permissions.
 .. rubric:: API vs Features: Creating A Certificate
 .. code-block:: python
 
-    from pytpp import Authenticate, Features, Attributes, AttributeValues
+    from pytpp import Authenticate, Features, Attributes, AttributeValues, models
 
     api = Authenticate(...)
     features = Features(api)
@@ -100,34 +237,98 @@ jobs and managing permissions.
         object_dn=r'\VED\Policy\Certificates\my-site.com',
         class_name=Attributes.certificate,
         name_attribute_list=[
-            {"Name": Attributes.certificate.description, "Value": "Description Here."},
-            {"Name": Attributes.certificate.contact, "Value": ['local:{bc628602-36fc-4116-a0b4-2a3d5e92c776}']},
-            {"Name": Attributes.certificate.approver, "Value": ['local:{bc628602-36fc-4116-a0b4-2a3d5e92c776}']},
-            {"Name": Attributes.certificate.management_type, "Value": AttributeValues.Certificate.ManagementType.enrollment},
-            {"Name": Attributes.certificate.manual_csr, "Value": "1"},
-            {"Name": Attributes.certificate.generate_keypair_on_application, "Value": "0"},
-            {"Name": Attributes.certificate.pkcs10_hash_algorithm, "Value": AttributeValues.Certificate.HashAlgorithm.sha256},
-            {"Name": Attributes.certificate.x509_subject, "Value": "my-site.com"},
-            {"Name": Attributes.certificate.organization, "Value": "My Organization"},
-            {"Name": Attributes.certificate.organizational_unit, "Value": ["OU1", "OU2"]},
-            {"Name": Attributes.certificate.city, "Value": "Salt Lake City"},
-            {"Name": Attributes.certificate.state, "Value": "UT"},
-            {"Name": Attributes.certificate.country, "Value": "US"},
-            {"Name": Attributes.certificate.driver_name, "Value": 'appx509certificate'},
-            {"Name": Attributes.certificate.x509_subjectaltname_dns, "Value": "my-site.com"},
-            {"Name": Attributes.certificate.x509_subjectaltname_ipaddress, "Value": "10.10.10.10"},
-            {"Name": Attributes.certificate.key_algorithm, "Value": AttributeValues.Certificate.KeyAlgorithm.rsa},
-            {"Name": Attributes.certificate.key_bit_strength, "Value": 2048},
-            {"Name": Attributes.certificate.certificate_authority, "Value": r'\VED\Policy\Administration\CA\MyCA'},
-            {"Name": Attributes.certificate.disable_automatic_renewal, "Value": "0"},
-            {"Name": Attributes.certificate.renewal_window, "Value": 30}
+             models.config.NameAttribute(
+                 name=Attributes.certificate.description,
+                 value="Description Here."
+             ),
+             models.config.NameAttribute(
+                 name=Attributes.certificate.contact,
+                 value=['local:{bc628602-36fc-4116-a0b4-2a3d5e92c776}']
+             ),
+             models.config.NameAttribute(
+                 name=Attributes.certificate.approver,
+                 value=['local:{bc628602-36fc-4116-a0b4-2a3d5e92c776}']
+             ),
+             models.config.NameAttribute(
+                 name=Attributes.certificate.management_type,
+                 value=AttributeValues.Certificate.ManagementType.enrollment
+             ),
+             models.config.NameAttribute(
+                 name=Attributes.certificate.manual_csr,
+                 value="1"
+             ),
+             models.config.NameAttribute(
+                 name=Attributes.certificate.generate_keypair_on_application,
+                 value="0"
+             ),
+             models.config.NameAttribute(
+                 name=Attributes.certificate.pkcs10_hash_algorithm,
+                 value=AttributeValues.Certificate.HashAlgorithm.sha256
+             ),
+             models.config.NameAttribute(
+                 name=Attributes.certificate.x509_subject,
+                 value="my-site.com"
+             ),
+             models.config.NameAttribute(
+                 name=Attributes.certificate.organization,
+                 value="My Organization"
+             ),
+             models.config.NameAttribute(
+                 name=Attributes.certificate.organizational_unit,
+                 value=["OU1", "OU2"]
+             ),
+             models.config.NameAttribute(
+                 name=Attributes.certificate.city,
+                 value="Salt Lake City"
+             ),
+             models.config.NameAttribute(
+                 name=Attributes.certificate.state,
+                 value="UT"
+             ),
+             models.config.NameAttribute(
+                 name=Attributes.certificate.country,
+                 value="US"
+             ),
+             models.config.NameAttribute(
+                 name=Attributes.certificate.driver_name,
+                 value='appx509certificate'
+             ),
+             models.config.NameAttribute(
+                 name=Attributes.certificate.x509_subjectaltname_dns,
+                 value="my-site.com"
+             ),
+             models.config.NameAttribute(
+                 name=Attributes.certificate.x509_subjectaltname_ipaddress,
+                 value="10.10.10.10"
+             ),
+             models.config.NameAttribute(
+                 name=Attributes.certificate.key_algorithm,
+                 value=AttributeValues.Certificate.KeyAlgorithm.rsa
+             ),
+             models.config.NameAttribute(
+                 name=Attributes.certificate.key_bit_strength,
+                 value=2048
+             ),
+             models.config.NameAttribute(
+                 name=Attributes.certificate.certificate_authority,
+                 value=r'\VED\Policy\Administration\CA\MyCA'
+             ),
+             models.config.NameAttribute(
+                 name=Attributes.certificate.disable_automatic_renewal,
+                 value="0"
+             ),
+             models.config.NameAttribute(
+                 name=Attributes.certificate.renewal_window,
+                 value=3
+             ),
         ]
     )
     certificate = response.object
 
     # Using the Features layer
     features_certificate = features.certificate.create(
-        name='my-site.com', parent_folder=r'\VED\Policy\Certificates',
+        name='my-site.com',
+        parent_folder=r'\VED\Policy\Certificates',
         description="Description Here.",
         contacts=['local:user123'],
         approvers=['local:user123'],

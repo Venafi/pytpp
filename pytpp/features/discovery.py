@@ -1,8 +1,10 @@
-from typing import List, Dict, Union
-from pytpp.tools.vtypes import Config, Identity
 from pytpp.features.bases.feature_base import FeatureBase, feature
 from pytpp.features.definitions.exceptions import UnexpectedValue
 from pytpp.attributes.discovery import DiscoveryAttributes
+from typing import List, Dict, Union, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pytpp.api.websdk.models import config, identity as ident
 
 
 @feature('Network Discovery')
@@ -11,12 +13,12 @@ class NetworkDiscovery(FeatureBase):
         super().__init__(api=api)
         self._discovery_dn = r'\VED\Discovery'
 
-    def create(self, name: str, hosts: List[str], default_certificate_location: 'Union[Config.Object, str]',
+    def create(self, name: str, hosts: List[str], default_certificate_location: 'Union[config.Object, str]',
                attributes: dict = None, automatically_import: bool = False, blackout: Dict[str, List] = None,
-               contacts: 'List[Union[Identity, str]]' = None, days_of_week: List[str] = None, days_of_month: List[str] = None,
+               contacts: 'List[Union[ident.Identity, str]]' = None, days_of_week: List[str] = None, days_of_month: List[str] = None,
                days_of_year: List[str] = None, description: str = None,
-               exclusion_locations: 'Union[Config.Object, str]' = None, hour: int = None,
-               placement_rules: 'List[Union[Config.Object, str]]' = None,
+               exclusion_locations: 'Union[config.Object, str]' = None, hour: int = None,
+               placement_rules: 'List[Union[config.Object, str]]' = None,
                ports: List[Union[str, int]] = None, priority: int = None, reschedule: bool = True,
                resolve_host: bool = True, utc: str = '1', get_if_already_exists: bool = True):
         """
@@ -73,11 +75,11 @@ class NetworkDiscovery(FeatureBase):
             DiscoveryAttributes.automatically_import   : "1" if automatically_import else "0",
             DiscoveryAttributes.blackout               : blackout,
             DiscoveryAttributes.certificate_location_dn: self._get_dn(default_certificate_location)
-                                                         if default_certificate_location else None,
+            if default_certificate_location else None,
             DiscoveryAttributes.contact                : [self._get_prefixed_universal(c) for c in contacts] if contacts else None,
             DiscoveryAttributes.description            : description,
             DiscoveryAttributes.discovery_exclusion_dn : [self._get_dn(el) for el in exclusion_locations]
-                                                         if exclusion_locations else None,
+            if exclusion_locations else None,
             DiscoveryAttributes.placement_rule         : placement_rule_guids,
             DiscoveryAttributes.priority               : priority,
             DiscoveryAttributes.reschedule             : "1" if hour and reschedule else "0",
@@ -94,15 +96,10 @@ class NetworkDiscovery(FeatureBase):
             elif days_of_year:
                 attributes[DiscoveryAttributes.days_of_year] = days_of_year
 
-        return self._config_create(
-            name=name,
-            parent_folder_dn=self._discovery_dn,
-            config_class=DiscoveryAttributes.__config_class__,
-            attributes=attributes,
-            get_if_already_exists=get_if_already_exists
-        )
+        return self._config_create(name=name, parent_folder_dn=self._discovery_dn, config_class=DiscoveryAttributes.__config_class__, attributes=attributes,
+                                   get_if_already_exists=get_if_already_exists)
 
-    def delete(self, job: 'Union[Config.Object, str]'):
+    def delete(self, job: 'Union[config.Object, str]'):
         """
         Deletes the discovery job.
 
@@ -127,7 +124,7 @@ class NetworkDiscovery(FeatureBase):
             raise_error_if_not_exists=raise_error_if_not_exists
         )
 
-    def is_in_progress(self, job: 'Union[Config.Object, str]'):
+    def is_in_progress(self, job: 'Union[config.Object, str]'):
         """
         Args:
             job: :ref:`config_object` or :ref:`dn` of the discovery job.
@@ -147,7 +144,7 @@ class NetworkDiscovery(FeatureBase):
                 return status in in_progress_states
         return False
 
-    def schedule(self, job: 'Union[Config.Object, str]', hour: Union[str, int], days_of_week: List[Union[int, str]] = None,
+    def schedule(self, job: 'Union[config.Object, str]', hour: Union[str, int], days_of_week: List[Union[int, str]] = None,
                  days_of_month: List[Union[int, str]] = None, days_of_year: List[str] = None):
         """
         Schedules an existing job.
@@ -177,11 +174,11 @@ class NetworkDiscovery(FeatureBase):
 
         response = self._api.websdk.Config.Write.post(
             object_dn=job_dn,
-            attribute_data=self._name_value_list(attributes, keep_list_values=True)
+            attribute_data=self._name_value_list(attributes)
         )
         response.assert_valid_response()
 
-    def unschedule(self, job: 'Union[Config.Object, str]'):
+    def unschedule(self, job: 'Union[config.Object, str]'):
         """
         Removes a schedule from a job. This does not delete the job.
 
@@ -201,7 +198,7 @@ class NetworkDiscovery(FeatureBase):
                 attribute_name=attribute_name
             ).assert_valid_response()
 
-    def blackout_schedule(self, job: 'Union[Config.Object, str]', sunday: List[Union[str, int]] = None,
+    def blackout_schedule(self, job: 'Union[config.Object, str]', sunday: List[Union[str, int]] = None,
                           monday: List[Union[str, int]] = None, tuesday: List[Union[str, int]] = None,
                           wednesday: List[Union[str, int]] = None, thursday: List[Union[str, int]] = None,
                           friday: List[Union[str, int]] = None, saturday: List[Union[str, int]] = None):
@@ -229,11 +226,11 @@ class NetworkDiscovery(FeatureBase):
         }
         response = self._api.websdk.Config.Write.post(
             object_dn=job_dn,
-            attribute_data=self._name_value_list(attributes, keep_list_values=True)
+            attribute_data=self._name_value_list(attributes)
         )
         response.assert_valid_response()
 
-    def run_now(self, job: 'Union[Config.Object, str]', timeout: int = 60):
+    def run_now(self, job: 'Union[config.Object, str]', timeout: int = 60):
         """
         Runs a job despite any scheduling. This does not return until the job is processing,
         or has a *Processing* Attribute.
@@ -260,7 +257,7 @@ class NetworkDiscovery(FeatureBase):
             f'Expected the job "{job_dn}" to start progress, but it did not.'
         )
 
-    def cancel(self, job: 'Union[Config.Object, str]'):
+    def cancel(self, job: 'Union[config.Object, str]'):
         """
         Cancels a currently running job.
 
@@ -275,7 +272,7 @@ class NetworkDiscovery(FeatureBase):
         )
         response.assert_valid_response()
 
-    def pause(self, job: 'Union[Config.Object, str]'):
+    def pause(self, job: 'Union[config.Object, str]'):
         """
         Pauses a currently running job.
 
@@ -290,7 +287,7 @@ class NetworkDiscovery(FeatureBase):
         )
         response.assert_valid_response()
 
-    def resume(self, job: 'Union[Config.Object, str]'):
+    def resume(self, job: 'Union[config.Object, str]'):
         """
         Resumes a currently paused job.
 
@@ -305,7 +302,7 @@ class NetworkDiscovery(FeatureBase):
         )
         response.assert_valid_response()
 
-    def place_results(self, job: 'Union[Config.Object, str]'):
+    def place_results(self, job: 'Union[config.Object, str]'):
         """
         .. warning::
             This functionality has been deprecated in TPP 21.1 and will have no effect
@@ -340,7 +337,7 @@ class NetworkDiscovery(FeatureBase):
 
         return jobs.objects
 
-    def wait_for_job_to_finish(self, job: 'Union[Config.Object, str]', check_interval: int = 5, timeout: int = 300):
+    def wait_for_job_to_finish(self, job: 'Union[config.Object, str]', check_interval: int = 5, timeout: int = 300):
         """
         Waits for the  *Status* attribute to have a value other than *Pending Execution* and *Running*
         on the discovery job. An error is raised if the timeout is exceeded.

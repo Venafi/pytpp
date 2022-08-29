@@ -15,7 +15,7 @@ Creating And Deleting A Device
     from pytpp import Authenticate, Features, AttributeValues
 
     api = Authenticate(...)
-    features = Features(api=api)
+    features = Features(api)
 
     #### CREATE ####
     device = features.device.create(

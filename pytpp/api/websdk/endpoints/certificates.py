@@ -1,452 +1,243 @@
-from typing import List
-from pytpp.api.api_base import API, APIResponse, api_response_property
-from pytpp.properties.response_objects.certificate import Certificate
-from pytpp.tools.helpers.date_converter import from_date_string
+from datetime import datetime
+from typing import List, Union
+from pytpp.api.websdk.models import certificate
+from pytpp.api.api_base import ObjectModel, WebSdkEndpoint, WebSdkOutputModel, generate_output, ApiField
 
 
-class _Certificates(API):
+class _Certificates(WebSdkEndpoint):
     def __init__(self, api_obj):
         super().__init__(api_obj=api_obj, url='/Certificates')
-        self.Associate = self._Associate(api_obj=api_obj)
-        self.CheckPolicy = self._CheckPolicy(api_obj=api_obj)
-        self.Dissociate = self._Dissociate(api_obj=api_obj)
-        self.Import = self._Import(api_obj=api_obj)
-        self.Push = self._Push(api_obj=api_obj)
-        self.Renew = self._Renew(api_obj=api_obj)
-        self.Request = self._Request(api_obj=api_obj)
-        self.Reset = self._Reset(api_obj=api_obj)
-        self.Retrieve = self._Retrieve(api_obj=api_obj)
-        self.Retry = self._Retry(api_obj=api_obj)
-        self.Revoke = self._Revoke(api_obj=api_obj)
-        self.Validate = self._Validate(api_obj=api_obj)
+        self.Associate = self._Associate(api_obj=api_obj, url=f'{self._url}/Associate')
+        self.CheckPolicy = self._CheckPolicy(api_obj=api_obj, url=f'{self._url}/CheckPolicy')
+        self.Dissociate = self._Dissociate(api_obj=api_obj, url=f'{self._url}/Dissociate')
+        self.Import = self._Import(api_obj=api_obj, url=f'{self._url}/Import')
+        self.Push = self._Push(api_obj=api_obj, url=f'{self._url}/Push')
+        self.Renew = self._Renew(api_obj=api_obj, url=f'{self._url}/Renew')
+        self.Request = self._Request(api_obj=api_obj, url=f'{self._url}/Request')
+        self.Reset = self._Reset(api_obj=api_obj, url=f'{self._url}/Reset')
+        self.Retrieve = self._Retrieve(api_obj=api_obj, url=f'{self._url}/Retrieve')
+        self.Retry = self._Retry(api_obj=api_obj, url=f'{self._url}/Retry')
+        self.Revoke = self._Revoke(api_obj=api_obj, url=f'{self._url}/Revoke')
+        self.Validate = self._Validate(api_obj=api_obj, url=f'{self._url}/Validate')
 
     def Guid(self, guid):
-        return self._Guid(guid=guid, api_obj=self._api_obj)
+        return self._Guid(api_obj=self._api_obj, url=f'{self._url}/{guid}')
 
-    def get(self, limit: int = None, offset: int = None, optional_fields: list = None, filters: dict = None):
+    def get(self, limit: int = None, offset: int = None, optional_fields: List[str] = None,
+            filters: Union[dict, certificate.CertificateFilter] = None):
         params = {
-            'Limit': limit,
-            'Offset': offset,
+            'Limit'         : limit,
+            'Offset'        : offset,
             'OptionalFields': optional_fields
         }
-        params.update(filters or {})
+        if isinstance(filters, dict):
+            params.update(filters)
+        elif isinstance(filters, ObjectModel):
+            params.update(filters.dict(by_alias=True, exclude_none=True))
 
-        class _Response(APIResponse):
-            def __init__(self, response):
-                super().__init__(response=response)
+        class Output(WebSdkOutputModel):
+            links: List[certificate.Link] = ApiField(default_factory=list, alias='_links')
+            x_record_count: int = ApiField(alias='X-Record-Count')
+            certificates: List[certificate.Certificate] = ApiField(default_factory=list, alias='Certificates')
+            data_range: str = ApiField(alias='DataRange')
+            total_count: int = ApiField(alias='TotalCount')
 
-            @property
-            @api_response_property()
-            def links(self):
-                links = self._from_json(key='_links')
-                return [Certificate.Link(lnk) for lnk in links]
+        return generate_output(response=self._get(params=params), output_cls=Output)
 
-            @property
-            @api_response_property()
-            def x_record_count(self) -> int:
-                xrc = int(self.api_response.headers.get('X-Record-Count'))
-                return xrc
-
-            @property
-            @api_response_property()
-            def certificates(self):
-                certs = self._from_json(key='Certificates')
-                return [Certificate.Certificate(cert) for cert in certs]
-
-            @property
-            @api_response_property()
-            def data_range(self) -> str:
-                return self._from_json(key='DataRange')
-
-            @property
-            @api_response_property()
-            def total_count(self) -> int:
-                return self._from_json(key='TotalCount')
-
-        return _Response(response=self._get(params=params))
-
-    def head(self, filters: dict = None):
+    def head(self, filters: Union[dict, certificate.CertificateFilter] = None):
         params = filters
 
-        class _Response(APIResponse):
-            def __init__(self, response):
-                super().__init__(response=response)
-
+        class Output(WebSdkOutputModel):
             @property
-            @api_response_property()
-            def x_record_count(self) -> int:
+            def x_record_count(self):
                 xrc = int(self.api_response.headers.get('X-Record-Count'))
                 return xrc
 
-        return _Response(response=self._get(params=params))
+        return generate_output(response=self._get(params=params), output_cls=Output)
 
-    class _Associate(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Certificates/Associate')
-
-        def post(self, application_dn: str, certificate_dn: str, push_to_new: bool):
+    class _Associate(WebSdkEndpoint):
+        def post(self, application_dn: str, certificate_dn: str, push_to_new: bool = False):
             body = {
                 'CertificateDN': certificate_dn,
                 'ApplicationDN': application_dn,
-                'PushToNew': push_to_new
+                'PushToNew'    : push_to_new
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-            return _Response(response=self._post(data=body))
-
-    class _CheckPolicy(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Certificates/CheckPolicy')
-
+    class _CheckPolicy(WebSdkEndpoint):
         def post(self, policy_dn: str, pkcs10: str = None):
             body = {
                 'PolicyDN': policy_dn,
-                'PKSC10': pkcs10
+                'PKSC10'  : pkcs10
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                csr: certificate.CSR = ApiField(alias='CSR')
+                policy: certificate.Policy = ApiField(alias='Policy')
 
-                @property
-                @api_response_property()
-                def csr(self):
-                    return Certificate.CSR(self._from_json(key='CSR', error_key='Error'))
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def policy(self):
-                    return Certificate.Policy(self._from_json(key='Policy'))
-
-            return _Response(response=self._post(data=body))
-
-    class _Dissociate(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Certificates/Dissociate')
-
-        def post(self, certificate_dn: str, application_dn: list, delete_orphans: bool = False):
+    class _Dissociate(WebSdkEndpoint):
+        def post(self, certificate_dn: str, application_dn: List[str], delete_orphans: bool = False):
             body = {
                 'CertificateDN': certificate_dn,
                 'ApplicationDN': application_dn,
                 'DeleteOrphans': delete_orphans
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-            return _Response(response=self._post(data=body))
-
-    class _Guid(API):
-        def __init__(self, guid: str, api_obj):
-            self._cert_guid = guid
-            super().__init__(api_obj=api_obj, url='/Certificates/{guid}'.format(guid=self._cert_guid))
-            self.PreviousVersions = self._PreviousVersions(guid=self._cert_guid, api_obj=api_obj)
-            self.ValidationResults = self._ValidationResults(guid=self._cert_guid, api_obj=api_obj)
+    class _Guid(WebSdkEndpoint):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.PreviousVersions = self._PreviousVersions(api_obj=self._api_obj, url=f'{self._url}/PreviousVersions')
+            self.ValidationResults = self._ValidationResults(api_obj=self._api_obj, url=f'{self._url}/ValidationResults')
 
         def delete(self):
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._delete())
+            return generate_output(response=self._delete(), output_cls=Output)
 
         def get(self):
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                approver: List[str] = ApiField(default_factory=list, alias='Approver')
+                certificate_authority_dn: datetime = ApiField(alias='CertificateAuthorityDN')
+                certificate_details: certificate.CertificateDetails = ApiField(alias='CertificateDetails')
+                consumers: List[str] = ApiField(alias='Consumers', default_factory=list)
+                contact: List[str] = ApiField(default_factory=list, alias='Contact')
+                created_by: str = ApiField(alias='CreatedBy')
+                created_on: datetime = ApiField(alias='CreatedOn')
+                custom_fields: List[certificate.NameTypeValue] = ApiField(default_factory=list, alias='CustomFields')
+                disabled: bool = ApiField(alias='Disabled')
+                dn: str = ApiField(alias='DN')
+                guid: str = ApiField(alias='Guid')
+                management_type: str = ApiField(alias='ManagementType')
+                name: str = ApiField(alias='Name')
+                parent_dn: str = ApiField(alias='ParentDN')
+                processing_details: certificate.ProcessingDetails = ApiField(alias='ProcessingDetails')
+                renewal_details: certificate.RenewalDetails = ApiField(alias='RenewalDetails')
+                schema_class: str = ApiField(alias='SchemaClass')
+                success: str = ApiField(alias='Success')
+                validation_details: certificate.ValidationDetails = ApiField(alias='ValidationDetails')
 
-                @property
-                @api_response_property()
-                def approver(self) -> List[str]:
-                    return self._from_json(key='Approver')
-
-                @property
-                @api_response_property()
-                def certificate_details(self):
-                    return Certificate.CertificateDetails(self._from_json(key='CertificateDetails'))
-
-                @property
-                @api_response_property()
-                def contact(self) -> List[str]:
-                    return self._from_json(key='Contact')
-
-                @property
-                @api_response_property()
-                def created_on(self):
-                    return from_date_string(self._from_json(key='CreatedOn'))
-
-                @property
-                @api_response_property()
-                def custom_fields(self) -> List[dict]:
-                    return self._from_json(key='CustomFields')
-
-                @property
-                @api_response_property()
-                def dn(self) -> str:
-                    return self._from_json(key='DN')
-
-                @property
-                @api_response_property()
-                def guid(self) -> str:
-                    return self._from_json(key='Guid')
-
-                @property
-                @api_response_property()
-                def name(self) -> str:
-                    return self._from_json(key='Name')
-
-                @property
-                @api_response_property()
-                def parent_dn(self) -> str:
-                    return self._from_json(key='ParentDN')
-
-                @property
-                @api_response_property()
-                def processing_details(self):
-                    return Certificate.ProcessingDetails(self._from_json(key='ProcessingDetails'))
-
-                @property
-                @api_response_property()
-                def renewal_details(self):
-                    return Certificate.RenewalDetails(self._from_json(key='RenewalDetails'))
-
-                @property
-                @api_response_property()
-                def schema_class(self) -> str:
-                    return self._from_json(key='SchemaClass')
-
-                @property
-                @api_response_property()
-                def success(self) -> str:
-                    return self._from_json(key='Success')
-
-                @property
-                @api_response_property()
-                def validation_details(self):
-                    return Certificate.ValidationDetails(self._from_json(key='ValidationDetails'))
-
-            return _Response(response=self._get())
+            return generate_output(response=self._get(), output_cls=Output)
 
         def put(self, attribute_data: List[dict]):
             body = {
                 "AttributeData": attribute_data
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                success: str = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def success(self) -> str:
-                    return self._from_json(key='Success')
+            return generate_output(response=self._put(data=body), output_cls=Output)
 
-            return _Response(response=self._put(data=body))
-
-        class _PreviousVersions(API):
-            def __init__(self, guid: str, api_obj):
-                self._cert_guid = guid
-                super().__init__(
-                    api_obj=api_obj,
-                    url='/Certificates/{guid}/PreviousVersions'.format(guid=self._cert_guid)
-                )
-
+        class _PreviousVersions(WebSdkEndpoint):
             def get(self, exclude_expired: bool = False, exclude_revoked: bool = False):
                 params = {
                     'ExcludeExpired': exclude_expired,
                     'ExcludeRevoked': exclude_revoked
                 }
-                
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
 
-                    @property
-                    @api_response_property()
-                    def success(self) -> bool:
-                        return self._from_json(key='Success')
+                class Output(WebSdkOutputModel):
+                    success: str = ApiField(default='', alias='Success')
+                    previous_versions: List[certificate.PreviousVersions] = ApiField(
+                        default_factory=list, alias='PreviousVersions'
+                    )
 
-                    @property
-                    @api_response_property()
-                    def previous_versions(self):
-                        return [Certificate.PreviousVersions(version) for version in self._from_json(key='PreviousVersions')]
+                return generate_output(response=self._get(params=params), output_cls=Output)
 
-                return _Response(response=self._get(params=params))
-
-        class _ValidationResults(API):
-            def __init__(self, guid: str, api_obj):
-                self._cert_guid = guid
-                super().__init__(
-                    api_obj=api_obj,
-                    url='/Certificates/{guid}/ValidationResults'.format(guid=self._cert_guid)
-                )
-
+        class _ValidationResults(WebSdkEndpoint):
             def get(self):
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    file: List[certificate.File] = ApiField(default_factory=list, alias='File')
+                    ssl_tls: List[certificate.SslTls] = ApiField(default_factory=list, alias='SslTls')
 
-                    @property
-                    @api_response_property(return_on_204=list)
-                    def file(self):
-                        return [Certificate.File(f) for f in self._from_json(key='File')]
+                return generate_output(response=self._get(), output_cls=Output)
 
-                    @property
-                    @api_response_property(return_on_204=list)
-                    def ssl_tls(self):
-                        return [Certificate.SslTls(s) for s in self._from_json(key='SslTls')]
-
-                return _Response(response=self._get())
-
-    class _Import(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Certificates/Import')
-
-        def post(self, certificate_data: str, policy_dn: str, ca_specific_attributes: list = None, object_name: str = None,
+    class _Import(WebSdkEndpoint):
+        def post(self, certificate_data: str, policy_dn: str, ca_specific_attributes: List[certificate.NameValue] = None,
+                 object_name: str = None,
                  password: str = None, private_key_data: str = None, reconcile: bool = False):
             body = {
-                'CertificateData': certificate_data,
-                'PolicyDN': policy_dn,
+                'CertificateData'     : certificate_data,
+                'PolicyDN'            : policy_dn,
                 'CASpecificAttributes': ca_specific_attributes,
-                'ObjectName': object_name,
-                'Password': password,
-                'PrivateKeyData': private_key_data,
-                'Reconcile': reconcile
+                'ObjectName'          : object_name,
+                'Password'            : password,
+                'PrivateKeyData'      : private_key_data,
+                'Reconcile'           : reconcile
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                certificate_dn: str = ApiField(alias='CertificateDN')
+                certificate_vault_id: int = ApiField(alias='CertificateVaultID')
+                guid: str = ApiField(alias='Guid')
+                private_key_vault_id: int = ApiField(alias='PrivateKeyVaultID')
 
-                @property
-                @api_response_property()
-                def certificate_dn(self) -> str:
-                    return self._from_json(key='CertificateDN')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def certificate_vault_id(self) -> int:
-                    return self._from_json(key='CertificateVaultID')
-
-                @property
-                @api_response_property()
-                def guid(self) -> str:
-                    return self._from_json(key='Guid')
-
-                @property
-                @api_response_property()
-                def private_key_vault_id(self) -> int:
-                    return self._from_json(key='PrivateKeyVaultID')
-
-            return _Response(response=self._post(data=body))
-
-    class _Push(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Certificates/Push')
-
+    class _Push(WebSdkEndpoint):
         def post(self, certificate_dn: str, application_dn: List[str] = None, push_to_all: bool = False):
             body = {
                 'ApplicationDN': application_dn,
                 'CertificateDN': certificate_dn,
-                'PushToAll': push_to_all
+                'PushToAll'    : push_to_all
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-            return _Response(response=self._post(data=body))
-
-    class _Renew(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Certificates/Renew')
-
+    class _Renew(WebSdkEndpoint):
         # noinspection ALL
-        def post(self, certificate_dn: str, pkcs10: str = None, reenable: bool = False, format: str = None,
+        def post(self, certificate_dn: str, pkcs10: str = None, reenable: bool = False, format: certificate.CertificateFormat = None,
                  password: str = None, include_private_key: bool = None, include_chain: bool = None,
                  friendly_name: str = None, root_first_order: bool = None, keystore_password: str = None,
                  work_to_do_timeout: int = None):
             body = {
-                'CertificateDN': certificate_dn,
-                'PKCS10': pkcs10,
-                'Reenable': reenable,
-                'Format'  : format,
-                'Password': password,
+                'CertificateDN'    : certificate_dn,
+                'PKCS10'           : pkcs10,
+                'Reenable'         : reenable,
+                'Format'           : format,
+                'Password'         : password,
                 'IncludePrivateKey': include_private_key,
-                'IncludeChain': include_chain,
-                'FriendlyName': friendly_name,
-                'RootFirstOrder': root_first_order,
-                'KeystorePassword': keystore_password,
-                'WorkToDoTimeout': work_to_do_timeout
+                'IncludeChain'     : include_chain,
+                'FriendlyName'     : friendly_name,
+                'RootFirstOrder'   : root_first_order,
+                'KeystorePassword' : keystore_password,
+                'WorkToDoTimeout'  : work_to_do_timeout
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                certificate_data: str = ApiField(alias='CertificateData')
+                certificate_dn: str = ApiField(alias='CertificateDN')
+                filename: str = ApiField(alias='Filename')
+                format: certificate.CertificateFormat = ApiField(alias='Format')
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def certificate_data(self) -> str:
-                    return self._from_json(key='CertificateData')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def certificate_dn(self) -> str:
-                    return self._from_json(key='CertificateDN')
-
-                @property
-                @api_response_property()
-                def filename(self) -> str:
-                    return self._from_json(key='Filename')
-
-                @property
-                @api_response_property()
-                def format(self) -> str:
-                    return self._from_json(key='Format')
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _Request(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Certificates/Request')
-
+    class _Request(WebSdkEndpoint):
         def post(self, policy_dn: str, approvers: List[dict] = None, cadn: str = None,
                  ca_specific_attributes: List[dict] = None, certificate_type: str = None, city: str = None,
                  contacts: List[dict] = None, country: str = None, custom_fields: List[dict] = None, created_by: str = None,
                  devices: List[dict] = None, disable_automatic_renewal: bool = False, elliptic_curve: str = None,
-                 key_algorithm: str = None, key_bit_size: int = None, management_type: str = None, object_name: str = None,
+                 format: certificate.CertificateFormat = None, friendly_name: str = None, include_private_key: bool = False,
+                 include_chain: bool = None, key_algorithm: str = None, key_bit_size: int = None, keystore_password: str = None,
+                 management_type: str = None, password: str = None, object_name: str = None,
                  organization: str = None, organizational_unit: str = None, origin: str = None, pkcs10: str = None,
-                 reenable: bool = False, set_work_todo: bool = True, state: str = None, subject: str = None,
-                 subject_alt_names: List[dict] = None, work_to_do_timeout: int = None):
+                 reenable: bool = False, root_first_order: bool = None, set_work_todo: bool = True, state: str = None,
+                 subject: str = None, subject_alt_names: List[dict] = None, work_to_do_timeout: int = None):
             body = {
                 'Approvers'              : approvers,
                 'CADN'                   : cadn,
@@ -460,6 +251,11 @@ class _Certificates(API):
                 'Devices'                : devices,
                 'DisableAutomaticRenewal': disable_automatic_renewal,
                 'EllipticCurve'          : elliptic_curve,
+                'Format'                 : format,
+                'FriendlyName'           : friendly_name,
+                'IncludePrivateKey'      : include_private_key,
+                'IncludeChain'           : include_chain,
+                'KeystorePassword'       : keystore_password,
                 'KeyAlgorithm'           : key_algorithm,
                 'KeyBitSize'             : key_bit_size,
                 'ManagementType'         : management_type,
@@ -467,9 +263,11 @@ class _Certificates(API):
                 'Origin'                 : origin,
                 'Organization'           : organization,
                 'OrganizationalUnit'     : organizational_unit,
+                'Password'               : password,
                 'PKCS10'                 : pkcs10,
                 'PolicyDN'               : policy_dn,
                 'Reenable'               : reenable,
+                'RootFirstOrder'         : root_first_order,
                 'SetWorkToDo'            : set_work_todo,
                 'State'                  : state,
                 'Subject'                : subject,
@@ -477,286 +275,154 @@ class _Certificates(API):
                 'WorkToDoTimeout'        : work_to_do_timeout
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                certificate_data: str = ApiField(alias='CertificateData')
+                filename: str = ApiField(alias='Filename')
+                format: certificate.CertificateFormat = ApiField(alias='Format')
+                certificate_dn: str = ApiField(alias='CertificateDN')
+                guid: str = ApiField(alias='Guid')
 
-                @property
-                @api_response_property()
-                def certificate_data(self) -> str:
-                    return self._from_json(key='CertificateData')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def filename(self) -> str:
-                    return self._from_json(key='Filename')
-
-                @property
-                @api_response_property()
-                def format(self) -> str:
-                    return self._from_json(key='Format')
-
-                @property
-                @api_response_property()
-                def certificate_dn(self) -> str:
-                    return self._from_json(key='CertificateDN')
-
-                @property
-                @api_response_property()
-                def guid(self) -> str:
-                    return self._from_json(key='Guid')
-
-            return _Response(response=self._post(data=body))
-
-    class _Reset(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Certificates/Reset')
-
+    class _Reset(WebSdkEndpoint):
         def post(self, certificate_dn: str, restart: bool = False, work_to_do_timeout: int = None):
             body = {
-                'CertificateDN': certificate_dn,
-                'Restart': restart,
+                'CertificateDN'  : certificate_dn,
+                'Restart'        : restart,
                 'WorkToDoTimeout': work_to_do_timeout
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                private_key_mismatch_reset_completed: bool = ApiField(alias='PrivateKeyMismatchResetCompleted')
+                processing_reset_completed: bool = ApiField(alias='ProcessingResetCompleted')
+                restart_completed: bool = ApiField(alias='RestartCompleted')
+                revocation_reset_completed: bool = ApiField(alias='RevocationResetCompleted')
 
-                @property
-                @api_response_property()
-                def private_key_mismatch_reset_completed(self) -> bool:
-                    return self._from_json(key='PrivateKeyMismatchResetCompleted')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def processing_reset_completed(self) -> bool:
-                    return self._from_json(key='ProcessingResetCompleted')
-
-                @property
-                @api_response_property()
-                def restart_completed(self) -> bool:
-                    return self._from_json(key='RestartCompleted')
-
-                @property
-                @api_response_property()
-                def revocation_reset_completed(self) -> bool:
-                    return self._from_json(key='RevocationResetCompleted')
-
-            return _Response(response=self._post(data=body))
-
-    class _Retrieve(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Certificates/Retrieve')
-
+    class _Retrieve(WebSdkEndpoint):
         # noinspection ALL
-        def get(self, certificate_dn: str, format: str, friendly_name: str, include_chain: bool = False,
+        def get(self, certificate_dn: str, format: certificate.CertificateFormat, friendly_name: str, include_chain: bool = False,
                 include_private_key: bool = False, keystore_password: str = None, password: str = None,
                 root_first_order: bool = False, work_to_do_timeout: int = None):
             params = {
-                'CertificateDN': certificate_dn,
-                'Format': format,
-                'FriendlyName': friendly_name,
-                'IncludeChain': include_chain,
+                'CertificateDN'    : certificate_dn,
+                'Format'           : format,
+                'FriendlyName'     : friendly_name,
+                'IncludeChain'     : include_chain,
                 'IncludePrivateKey': include_private_key,
-                'KeystorePassword': keystore_password,
-                'Password': password,
-                'RootFirstOrder': root_first_order,
-                'WorkToDoTimeout': work_to_do_timeout
+                'KeystorePassword' : keystore_password,
+                'Password'         : password,
+                'RootFirstOrder'   : root_first_order,
+                'WorkToDoTimeout'  : work_to_do_timeout
             }
 
-            return APIResponse(response=self._get(params=params))
+            return generate_output(response=self._get(params=params), output_cls=WebSdkOutputModel)
 
-        # noinspection ALL
-        def post(self, certificate_dn: str, format: str, friendly_name: str, include_chain: bool = False,
+        def post(self, certificate_dn: str, format: certificate.CertificateFormat, friendly_name: str, include_chain: bool = False,
                  include_private_key: bool = False, keystore_password: str = None, password: str = None,
                  root_first_order: bool = False, work_to_do_timeout: int = None):
             body = {
-                'CertificateDN': certificate_dn,
-                'Format': format,
-                'FriendlyName': friendly_name,
-                'IncludeChain': include_chain,
+                'CertificateDN'    : certificate_dn,
+                'Format'           : format,
+                'FriendlyName'     : friendly_name,
+                'IncludeChain'     : include_chain,
                 'IncludePrivateKey': include_private_key,
-                'KeystorePassword': keystore_password,
-                'Password': password,
-                'RootFirstOrder': root_first_order,
-                'WorkToDoTimeout': work_to_do_timeout
+                'KeystorePassword' : keystore_password,
+                'Password'         : password,
+                'RootFirstOrder'   : root_first_order,
+                'WorkToDoTimeout'  : work_to_do_timeout
             }
-            
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
 
-                @property
-                @api_response_property()
-                def certificate_data(self) -> str:
-                    return self._from_json(key='CertificateData')
+            class Output(WebSdkOutputModel):
+                certificate_data: str = ApiField(alias='CertificateData')
+                filename: str = ApiField(alias='Filename')
+                format: certificate.CertificateFormat = ApiField(alias='Format')
 
-                @property
-                @api_response_property()
-                def filename(self) -> str:
-                    return self._from_json(key='Filename')
-
-                @property
-                @api_response_property()
-                def format(self) -> str:
-                    return self._from_json(key='Format')
-
-            return _Response(response=self._post(data=body))
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
         def VaultId(self, vault_id: int):
-            return self._VaultId(vault_id=vault_id, api_obj=self._api_obj)
+            return self._VaultId(api_obj=self._api_obj, url=f'{self._url}/{vault_id}')
 
-        class _VaultId(API):
-            def __init__(self, vault_id: int, api_obj):
-                super().__init__(api_obj=api_obj, url='/Certificates/Retrieve/{vault_id}'.format(vault_id=vault_id))
-                self._vault_id = vault_id
-
+        class _VaultId(WebSdkEndpoint):
             # noinspection ALL
-            def get(self, format: str, friendly_name: str, include_chain: bool = False,
+            def get(self, format: certificate.CertificateFormat, friendly_name: str, include_chain: bool = False,
                     include_private_key: bool = False, keystore_password: str = None, password: str = None,
                     root_first_order: bool = False):
                 params = {
-                    'Format': format,
-                    'FriendlyName': friendly_name,
-                    'IncludeChain': include_chain,
+                    'Format'           : format,
+                    'FriendlyName'     : friendly_name,
+                    'IncludeChain'     : include_chain,
                     'IncludePrivateKey': include_private_key,
-                    'KeystorePassword': keystore_password,
-                    'Password': password,
-                    'RootFirstOrder': root_first_order
+                    'KeystorePassword' : keystore_password,
+                    'Password'         : password,
+                    'RootFirstOrder'   : root_first_order
                 }
 
-                return APIResponse(response=self._get(params=params))
+                return generate_output(response=self._get(params=params), output_cls=WebSdkOutputModel)
 
             # noinspection ALL
-            def post(self, format: str, friendly_name: str, include_chain: bool = False,
+            def post(self, format: certificate.CertificateFormat, friendly_name: str, include_chain: bool = False,
                      include_private_key: bool = False, keystore_password: str = None, password: str = None,
                      root_first_order: bool = False):
                 body = {
-                    'Format': format,
-                    'FriendlyName': friendly_name,
-                    'IncludeChain': include_chain,
+                    'Format'           : format,
+                    'FriendlyName'     : friendly_name,
+                    'IncludeChain'     : include_chain,
                     'IncludePrivateKey': include_private_key,
-                    'KeystorePassword': keystore_password,
-                    'Password': password,
-                    'RootFirstOrder': root_first_order
+                    'KeystorePassword' : keystore_password,
+                    'Password'         : password,
+                    'RootFirstOrder'   : root_first_order
                 }
 
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    certificate_data: str = ApiField(alias='CertificateData')
+                    filename: str = ApiField(alias='Filename')
+                    format: certificate.CertificateFormat = ApiField(alias='Format')
 
-                    @property
-                    @api_response_property()
-                    def certificate_data(self) -> str:
-                        return self._from_json(key='CertificateData')
+                return generate_output(response=self._post(data=body), output_cls=Output)
 
-                    @property
-                    @api_response_property()
-                    def filename(self) -> str:
-                        return self._from_json(key='Filename')
-
-                    @property
-                    @api_response_property()
-                    def format(self) -> str:
-                        return self._from_json(key='Format')
-
-                return _Response(response=self._post(data=body))
-
-    class _Retry(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Certificates/Retry')
-
+    class _Retry(WebSdkEndpoint):
         def post(self, certificate_dn: str, work_to_do_timeout: int = None):
             body = {
-                'CertificateDN': certificate_dn,
+                'CertificateDN'  : certificate_dn,
                 'WorkToDoTimeout': work_to_do_timeout
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-            return _Response(response=self._post(data=body))
-
-    class _Revoke(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Certificates/Revoke')
-
-        def post(self, certificate_dn: str = None, thumbprint: str = None, reason: str = None, comments: str = None,
+    class _Revoke(WebSdkEndpoint):
+        def post(self, certificate_dn: str = None, thumbprint: str = None, reason: int = None, comments: str = None,
                  disable: bool = None, work_to_do_timeout: int = None):
             body = {
-                'CertificateDN': certificate_dn,
-                'Thumbprint': thumbprint,
-                'Reason': reason,
-                'Comments': comments,
-                'Disable': disable,
+                'CertificateDN'  : certificate_dn,
+                'Thumbprint'     : thumbprint,
+                'Reason'         : reason,
+                'Comments'       : comments,
+                'Disable'        : disable,
                 'WorkToDoTimeout': work_to_do_timeout
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                requested: bool = ApiField(alias='Requested')
+                success: bool = ApiField(alias='Success')
 
-                @property
-                @api_response_property()
-                def error(self) -> bool:
-                    return self._from_json(key='Error')
+            return generate_output(response=self._post(data=body), output_cls=Output)
 
-                @property
-                @api_response_property()
-                def requested(self) -> bool:
-                    return self._from_json(key='Requested')
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-            return _Response(response=self._post(data=body))
-
-    class _Validate(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Certificates/Validate')
-
+    class _Validate(WebSdkEndpoint):
         def post(self, certificate_dns: List[str] = None, certificate_guids: List[str] = None):
             body = {
-                'CertificateDNs': certificate_dns,
+                'CertificateDNs'  : certificate_dns,
                 'CertificateGUIDs': certificate_guids
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                success: bool = ApiField(alias='Success')
+                validated_certificate_dns: List[str] = ApiField(default_factory=list, alias='ValidatedCertificateDNs')
+                validated_certificate_guids: List[str] = ApiField(default_factory=list, alias='ValidatedCertificateGUIDs')
+                warnings: List[str] = ApiField(default_factory=list, alias='Warnings')
 
-                @property
-                @api_response_property()
-                def error(self) -> str:
-                    return self._from_json(key='Error')
-
-                @property
-                @api_response_property()
-                def success(self) -> bool:
-                    return self._from_json(key='Success')
-
-                @property
-                @api_response_property()
-                def validated_certificate_dns(self) -> List[str]:
-                    return self._from_json(key='ValidatedCertificateDNs')
-
-                @property
-                @api_response_property()
-                def validated_certificate_guids(self) -> List[str]:
-                    return self._from_json(key='ValidatedCertificateGUIDs')
-
-                @property
-                @api_response_property()
-                def warnings(self) -> List[str]:
-                    return self._from_json(key='Warnings')
-
-            return _Response(response=self._post(data=body))
+            return generate_output(response=self._post(data=body), output_cls=Output)

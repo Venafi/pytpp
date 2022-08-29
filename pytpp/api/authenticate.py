@@ -1,5 +1,5 @@
 from typing import Union
-from pytpp.properties.oauth import Scope
+from pytpp.api.websdk.enums.oauth import Scope
 from pytpp.api.websdk.websdk import WebSDK
 
 
@@ -7,6 +7,7 @@ class Authenticate:
     """
     Authenticates to TPP WebSDK.
     """
+
     def __init__(self, host: str, username: str = None, password: str = None, application_id: str = None,
                  scope: Union[Scope, str] = None, websdk_token: str = None, proxies: dict = None,
                  certificate_path: str = None, key_file_path: str = None, verify_ssl: bool = False,

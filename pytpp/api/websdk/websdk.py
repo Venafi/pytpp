@@ -1,7 +1,7 @@
 from typing import Optional, Union
 from packaging.version import Version, parse as parse_version
 from pytpp.api.session import Session
-from pytpp.properties.oauth import Scope
+from pytpp.api.websdk.enums.oauth import Scope
 from pytpp.api.websdk.endpoints.authorize import _Authorize
 from pytpp.api.websdk.endpoints.certificates import _Certificates
 from pytpp.api.websdk.endpoints.client import _Client
@@ -18,8 +18,10 @@ from pytpp.api.websdk.endpoints.log import _Log
 from pytpp.api.websdk.endpoints.metadata import _Metadata
 from pytpp.api.websdk.endpoints.permissions import _Permissions
 from pytpp.api.websdk.endpoints.pki import _PKI
+from pytpp.api.websdk.endpoints.platform import _Platform
 from pytpp.api.websdk.endpoints.preferences import _Preferences
 from pytpp.api.websdk.endpoints.processing_engines import _ProcessingEngines
+from pytpp.api.websdk.endpoints.recycle_bin import _RecycleBin
 from pytpp.api.websdk.endpoints.revoke import _Revoke
 from pytpp.api.websdk.endpoints.secret_store import _SecretStore
 from pytpp.api.websdk.endpoints.ssh import _SSH
@@ -30,7 +32,6 @@ from pytpp.api.websdk.endpoints.teams import _Teams
 from pytpp.api.websdk.endpoints.workflow import _Workflow
 from pytpp.api.websdk.endpoints.x509_certificate_store import _X509CertificateStore
 
-
 _TPP_VERSION: Optional[Version] = None
 
 
@@ -40,6 +41,7 @@ class WebSDK:
     currently supported. Re-authentication occurs automatically when the API Key
     becomes invalidated. When initialized, all endpoints are also initialized.
     """
+
     def __init__(self, host: str, username: str, password: str, token: str = None, application_id: str = None,
                  scope: Union[Scope, str] = None, refresh_token: str = None, proxies: dict = None,
                  certificate_path: str = None, key_file_path: str = None, verify_ssl: bool = False,
@@ -84,13 +86,17 @@ class WebSDK:
         self._read_timeout = read_timeout
 
         # This is used by the endpoints to avoid redundancy.
-        self._base_url = f'https://{host}/vedsdk'
+        self._scheme = 'https'
+        self._base_url = f'{self._scheme}://{host}'
+        self._app_url = f'{self._base_url}/vedsdk'
         # endregion Instance Variables
 
         # region Authentication
         # This is used by the endpoints to authorize the API writes.
         self._session = Session(
-            headers={'Content-Type': 'application/json'}, proxies=self._proxies,
+            headers={
+                'Content-Type': 'application/json'
+            }, proxies=self._proxies,
             certificate_path=certificate_path, key_file_path=key_file_path,
             verify_ssl=verify_ssl,
             connection_timeout=connection_timeout,
@@ -164,8 +170,10 @@ class WebSDK:
         self.Metadata = _Metadata(self)
         self.Permissions = _Permissions(self)
         self.PKI = _PKI(self)
+        self.Platform = _Platform(self)
         self.Preferences = _Preferences(self)
         self.ProcessingEngines = _ProcessingEngines(self)
+        self.RecycleBin = _RecycleBin(self)
         self.Revoke = _Revoke(self)
         self.SecretStore = _SecretStore(self)
         self.SSH = _SSH(self)

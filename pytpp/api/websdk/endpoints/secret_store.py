@@ -1,419 +1,228 @@
-from typing import List 
-from pytpp.api.api_base import API, APIResponse, api_response_property
-from pytpp.properties.response_objects.secret_store import SecretStore
+from typing import List
+from pytpp.api.websdk.models import secret_store
+from pytpp.api.api_base import WebSdkEndpoint, WebSdkOutputModel, generate_output, ApiField
 
 
-class _SecretStore:
+class _SecretStore(WebSdkEndpoint):
     def __init__(self, api_obj):
-        self.Add = self._Add(api_obj=api_obj)
-        self.Associate = self._Associate(api_obj=api_obj)
-        self.Dissociate = self._Dissociate(api_obj=api_obj)
-        self.EncryptionKeysInUse = self._EncryptionKeysInUse(api_obj=api_obj)
-        self.Lookup = self._Lookup(api_obj=api_obj)
-        self.LookupAllAssociationsbyVaultid = self._LookupAllAssociationsbyVaultid(api_obj=api_obj)
-        self.LookupByAssociation = self._LookupByAssociation(api_obj=api_obj)
-        self.LookupAssociationbyVaultID = self._LookupAssociationbyVaultID(api_obj=api_obj)
-        self.LookupByOwner = self._LookupByOwner(api_obj=api_obj)
-        self.LookupByVaultType = self._LookupByVaultType(api_obj=api_obj)
-        self.Mutate = self._Mutate(api_obj=api_obj)
-        self.OrphanLookup = self._OrphanLookup(api_obj=api_obj)
-        self.OwnerAdd = self._OwnerAdd(api_obj=api_obj)
-        self.OwnerDelete = self._OwnerDelete(api_obj=api_obj)
-        self.OwnerLookup = self._OwnerLookup(api_obj=api_obj)
-        self.Retrieve = self._Retrieve(api_obj=api_obj)
+        super().__init__(api_obj=api_obj, url='/SecretStore')
+        self.Add = self._Add(api_obj=self._api_obj, url=f'{self._url}/Add')
+        self.Associate = self._Associate(api_obj=self._api_obj, url=f'{self._url}/Associate')
+        self.Dissociate = self._Dissociate(api_obj=self._api_obj, url=f'{self._url}/Dissociate')
+        self.EncryptionKeysInUse = self._EncryptionKeysInUse(api_obj=self._api_obj, url=f'{self._url}/EncryptionKeysInUse')
+        self.Lookup = self._Lookup(api_obj=self._api_obj, url=f'{self._url}/Lookup')
+        self.LookupAllAssociationsbyVaultid = self._LookupAllAssociationsbyVaultid(api_obj=self._api_obj, url=f'{self._url}/LookupAllAssociationsbyVaultid')
+        self.LookupByAssociation = self._LookupByAssociation(api_obj=self._api_obj, url=f'{self._url}/LookupByAssociation')
+        self.LookupAssociationbyVaultID = self._LookupAssociationbyVaultID(api_obj=self._api_obj, url=f'{self._url}/LookupAssociationbyVaultID')
+        self.LookupByOwner = self._LookupByOwner(api_obj=self._api_obj, url=f'{self._url}/LookupByOwner')
+        self.LookupByVaultType = self._LookupByVaultType(api_obj=self._api_obj, url=f'{self._url}/LookupByVaultType')
+        self.Mutate = self._Mutate(api_obj=self._api_obj, url=f'{self._url}/Mutate')
+        self.OrphanLookup = self._OrphanLookup(api_obj=self._api_obj, url=f'{self._url}/OrphanLookup')
+        self.OwnerAdd = self._OwnerAdd(api_obj=self._api_obj, url=f'{self._url}/OwnerAdd')
+        self.OwnerDelete = self._OwnerDelete(api_obj=self._api_obj, url=f'{self._url}/OwnerDelete')
+        self.OwnerLookup = self._OwnerLookup(api_obj=self._api_obj, url=f'{self._url}/OwnerLookup')
+        self.Retrieve = self._Retrieve(api_obj=self._api_obj, url=f'{self._url}/Retrieve')
 
-    class _Add(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SecretStore/Add')
-
+    class _Add(WebSdkEndpoint):
         def post(self, base_64_data: str, keyname: str, namespace: str, owner: str, vault_type: int):
             body = {
                 'Base64Data': base_64_data,
-                'Keyname': keyname,
-                'Namespace': namespace,
-                'Owner': owner,
-                'VaultType': vault_type
+                'Keyname'   : keyname,
+                'Namespace' : namespace,
+                'Owner'     : owner,
+                'VaultType' : vault_type
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: secret_store.Result = ApiField(alias='Result', converter=lambda x: secret_store.Result(code=x))
+                vault_id: int = ApiField(alias='VaultID')
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return SecretStore.Result(self._from_json(key='Result'))
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-                @property
-                @api_response_property()
-                def vault_id(self) -> int:
-                    return self._from_json(key='VaultID')
-
-            return _Response(response=self._post(data=body))
-
-    class _Associate(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SecretStore/Associate')
-
+    class _Associate(WebSdkEndpoint):
         def post(self, name: str, vault_id: int, date_value: str = None, int_value: int = None, string_value: str = None):
             body = {
-                'Name': name,
-                'VaultID': vault_id,
-                'DateValue': date_value,
-                'IntValue': int_value,
+                'Name'       : name,
+                'VaultID'    : vault_id,
+                'DateValue'  : date_value,
+                'IntValue'   : int_value,
                 'StringValue': string_value
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: secret_store.Result = ApiField(alias='Result', converter=lambda x: secret_store.Result(code=x))
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return SecretStore.Result(self._from_json(key='Result'))
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-            return _Response(response=self._post(data=body))
-
-    class _Dissociate(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SecretStore/Dissociate')
-
+    class _Dissociate(WebSdkEndpoint):
         def post(self, vault_id: int, int_value: int = None, name: str = None, string_value: str = None, date_value: int = None):
             body = {
-                'VaultID': vault_id,
-                'IntValue': int_value,
-                'Name': name,
+                'VaultID'    : vault_id,
+                'IntValue'   : int_value,
+                'Name'       : name,
                 'StringValue': string_value,
-                'DateValue': date_value
+                'DateValue'  : date_value
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: secret_store.Result = ApiField(alias='Result', converter=lambda x: secret_store.Result(code=x))
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return SecretStore.Result(self._from_json(key='Result'))
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-            return _Response(response=self._post(data=body))
-
-    class _EncryptionKeysInUse(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SecretStore/EncryptionKeysInUse')
-
+    class _EncryptionKeysInUse(WebSdkEndpoint):
         def get(self):
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                encryption_keys: List[str] = ApiField(default_factory=list, alias='EncryptionKeys')
+                result: secret_store.Result = ApiField(alias='Result', converter=lambda x: secret_store.Result(code=x))
 
-                @property
-                @api_response_property()
-                def encryption_keys(self) -> List[str]:
-                    return self._from_json(key='EncryptionKeys')
+            return generate_output(output_cls=Output, response=self._get())
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return SecretStore.Result(self._from_json(key='Result'))
-
-            return _Response(response=self._get())
-
-    class _Lookup(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SecretStore/Lookup')
-
+    class _Lookup(WebSdkEndpoint):
         def get(self):
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: secret_store.Result = ApiField(alias='Result', converter=lambda x: secret_store.Result(code=x))
+                vault_ids: List[int] = ApiField(default_factory=list, alias='VaultIDs')
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return SecretStore.Result(self._from_json(key='Result'))
+            return generate_output(output_cls=Output, response=self._get())
 
-                @property
-                @api_response_property()
-                def vault_ids(self) -> List[int]:
-                    return self._from_json(key='VaultIDs')
-
-            return _Response(response=self._get())
-
-    class _LookupAllAssociationsbyVaultid(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SecretStore/LookupAllAssociationsbyVaultid')
-
+    class _LookupAllAssociationsbyVaultid(WebSdkEndpoint):
         def post(self, vault_id: int):
             body = {
                 'VaultID': vault_id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: secret_store.Result = ApiField(alias='Result', converter=lambda x: secret_store.Result(code=x))
+                typed_name_values: List[secret_store.TypedNameValues] = ApiField(default_factory=list, alias='TypedNameValues')
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return SecretStore.Result(self._from_json(key='Result'))
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-                @property
-                @api_response_property()
-                def typed_name_values(self):
-                    return [SecretStore.TypedNameValues(tnv) for tnv in self._from_json('TypedNameValues')]
-
-            return _Response(response=self._post(data=body))
-
-    class _LookupByAssociation(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SecretStore/LookupByAssociation')
-
+    class _LookupByAssociation(WebSdkEndpoint):
         def post(self, name: str, int_value: int = None, string_value: str = None, date_value: int = None):
             body = {
-                'Name': name,
-                'IntValue': int_value,
+                'Name'       : name,
+                'IntValue'   : int_value,
                 'StringValue': string_value,
-                'DateValue': date_value
+                'DateValue'  : date_value
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: secret_store.Result = ApiField(alias='Result', converter=lambda x: secret_store.Result(code=x))
+                vault_ids: List[int] = ApiField(default_factory=list, alias='VaultIDs')
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return SecretStore.Result(self._from_json(key='Result'))
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-                @property
-                @api_response_property()
-                def vault_ids(self) -> List[int]:
-                    return self._from_json(key='VaultIDs')
-
-            return _Response(response=self._post(data=body))
-
-    class _LookupAssociationbyVaultID(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SecretStore/LookupAssociationbyVaultID')
-
+    class _LookupAssociationbyVaultID(WebSdkEndpoint):
         def post(self, vault_id: int, name: str = None):
             body = {
                 'VaultID': vault_id,
-                'Name': name
+                'Name'   : name
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: secret_store.Result = ApiField(alias='Result', converter=lambda x: secret_store.Result(code=x))
+                value: str = ApiField(alias='Value')
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return SecretStore.Result(self._from_json(key='Result'))
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-                @property
-                @api_response_property()
-                def value(self) -> str:
-                    return self._from_json(key='Value')
-
-            return _Response(response=self._post(data=body))
-
-    class _LookupByOwner(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SecretStore/LookupByOwner')
-
+    class _LookupByOwner(WebSdkEndpoint):
         def post(self, namespace: str, owner: str, vault_type: str = None):
             body = {
                 'Namespace': namespace,
-                'Owner': owner,
+                'Owner'    : owner,
                 'VaultType': vault_type
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: secret_store.Result = ApiField(alias='Result', converter=lambda x: secret_store.Result(code=x))
+                vault_ids: List[int] = ApiField(default_factory=list, alias='VaultIDs')
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return SecretStore.Result(self._from_json(key='Result'))
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-                @property
-                @api_response_property()
-                def vault_ids(self) -> List[int]:
-                    return self._from_json(key='VaultIDs')
-
-            return _Response(response=self._post(data=body))
-
-    class _LookupByVaultType(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SecretStore/LookupByVaultType')
-
+    class _LookupByVaultType(WebSdkEndpoint):
         def post(self, vault_type: int):
             body = {
                 'VaultType': vault_type
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: secret_store.Result = ApiField(alias='Result', converter=lambda x: secret_store.Result(code=x))
+                vault_ids: List[int] = ApiField(default_factory=list, alias='VaultIDs')
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return SecretStore.Result(self._from_json(key='Result'))
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-                @property
-                @api_response_property()
-                def vault_ids(self) -> List[int]:
-                    return self._from_json(key='VaultIDs')
-
-            return _Response(response=self._post(data=body))
-
-    class _Mutate(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SecretStore/Mutate')
-
+    class _Mutate(WebSdkEndpoint):
         def post(self, vault_id: int, vault_type: int):
             body = {
-                'VaultID': vault_id,
+                'VaultID'  : vault_id,
                 'VaultType': vault_type
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: secret_store.Result = ApiField(alias='Result', converter=lambda x: secret_store.Result(code=x))
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return SecretStore.Result(self._from_json(key='Result'))
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-            return _Response(response=self._post(data=body))
-
-    class _OrphanLookup(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SecretStore/OrphanLookup')
-
+    class _OrphanLookup(WebSdkEndpoint):
         def post(self, vault_type: int):
             body = {
                 'VaultType': vault_type
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: secret_store.Result = ApiField(alias='Result', converter=lambda x: secret_store.Result(code=x))
+                vault_ids: List[int] = ApiField(default_factory=list, alias='VaultIDs')
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return SecretStore.Result(self._from_json(key='Result'))
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-                @property
-                @api_response_property()
-                def vault_ids(self) -> List[int]:
-                    return self._from_json(key='VaultIDs')
-
-            return _Response(response=self._post(data=body))
-
-    class _OwnerAdd(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SecretStore/OwnerAdd')
-
+    class _OwnerAdd(WebSdkEndpoint):
         def post(self, namespace: str, owner: str, vault_id: int):
             body = {
                 'Namespace': namespace,
-                'Owner': owner,
-                'VaultId': vault_id
+                'Owner'    : owner,
+                'VaultId'  : vault_id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: secret_store.Result = ApiField(alias='Result', converter=lambda x: secret_store.Result(code=x))
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return SecretStore.Result(self._from_json(key='Result'))
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-            return _Response(response=self._post(data=body))
-
-    class _OwnerDelete(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SecretStore/OwnerDelete')
-
+    class _OwnerDelete(WebSdkEndpoint):
         def post(self, namespace: str, owner: str, vault_id: int = None):
             body = {
                 'Namespace': namespace,
-                'Owner': owner,
-                'VaultId': vault_id
+                'Owner'    : owner,
+                'VaultId'  : vault_id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: secret_store.Result = ApiField(alias='Result', converter=lambda x: secret_store.Result(code=x))
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return SecretStore.Result(self._from_json(key='Result'))
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-            return _Response(response=self._post(data=body))
-
-    class _OwnerLookup(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SecretStore/OwnerLookup')
-
+    class _OwnerLookup(WebSdkEndpoint):
         def post(self, namespace: str, vault_id: int):
             body = {
                 'Namespace': namespace,
-                'VaultID': vault_id
+                'VaultID'  : vault_id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: secret_store.Result = ApiField(alias='Result', converter=lambda x: secret_store.Result(code=x))
+                owners: List[str] = ApiField(default_factory=list, alias='Owners')
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return SecretStore.Result(self._from_json(key='Result'))
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-                @property
-                @api_response_property()
-                def owners(self) -> List[str]:
-                    return self._from_json(key='Owners')
-
-            return _Response(response=self._post(data=body))
-
-    class _Retrieve(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SecretStore/Retrieve')
-
+    class _Retrieve(WebSdkEndpoint):
         def post(self, vault_id: int):
             body = {
                 'VaultID': vault_id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                base_64_data: str = ApiField(alias='Base64Data')
+                result: secret_store.Result = ApiField(alias='Result', converter=lambda x: secret_store.Result(code=x))
+                vault_type: str = ApiField(alias='VaultType')
 
-                @property
-                @api_response_property()
-                def base_64_data(self) -> str:
-                    return self._from_json(key='Base64Data')
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return SecretStore.Result(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def vault_type(self) -> str:
-                    return self._from_json(key='VaultType')
-
-            return _Response(response=self._post(data=body))
+            return generate_output(output_cls=Output, response=self._post(data=body))

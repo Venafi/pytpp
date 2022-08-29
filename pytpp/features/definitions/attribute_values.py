@@ -1,4 +1,4 @@
-from pytpp.properties.config import (
+from pytpp.api.websdk.enums.config import (
     ApplicationAttributeValues, ClientGroupsAttributeValues, CertificateAttributeValues, CertificateAuthorityAttributeValues,
     DeviceAttributeValues, DiscoveryAttributeValues, CustomFieldAttributeValues, IdentityAttributeValues, WorkflowAttributeValues,
     PlacementRulesAttributeValues, ClientWorkAttributeValues, JumpServerAttributeValues

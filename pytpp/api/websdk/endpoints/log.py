@@ -1,110 +1,73 @@
-from pytpp.api.api_base import API, APIResponse, api_response_property
-from pytpp.properties.response_objects.log import Log
+from typing import List
+from pytpp.api.websdk.models import log
+from pytpp.api.api_base import WebSdkEndpoint, WebSdkOutputModel, generate_output, ApiField
 
 
-class _Log(API):
+class _Log(WebSdkEndpoint):
     def __init__(self, api_obj):
         super().__init__(api_obj=api_obj, url='/Log')
-        self.LogSchema = self._LogSchema(api_obj=api_obj)
+        self.LogSchema = self._LogSchema(api_obj=api_obj, url=f'{self._url}/LogSchema')
 
     def get(self, component: str = None, from_time: str = None, grouping: int = None, id: int = None,
             limit: int = None, offset: int = None, order: str = None, severity: str = None, text1: str = None,
             text2: str = None, to_time: str = None, value1: str = None, value2: str = None):
         params = {
             'Component': component,
-            'FromTime': from_time,
-            'Grouping': grouping,
-            'Id': id,
-            'Limit': limit,
-            'Offset': offset,
-            'Order': order,
-            'Severity': severity,
-            'Text1': text1,
-            'Text2': text2,
-            'ToTime': to_time,
-            'Value1': value1,
-            'Value2': value2
+            'FromTime' : from_time,
+            'Grouping' : grouping,
+            'Id'       : id,
+            'Limit'    : limit,
+            'Offset'   : offset,
+            'Order'    : order,
+            'Severity' : severity,
+            'Text1'    : text1,
+            'Text2'    : text2,
+            'ToTime'   : to_time,
+            'Value1'   : value1,
+            'Value2'   : value2
         }
-        
-        class _Response(APIResponse):
-            def __init__(self, response):
-                super().__init__(response=response)
 
-            @property
-            @api_response_property()
-            def log_events(self):
-                return [Log.LogEvent(log) for log in self._from_json('LogEvents')]
+        class Output(WebSdkOutputModel):
+            log_events: List[log.LogEvent] = ApiField(default_factory=list, alias='LogEvents')
 
-        return _Response(response=self._get(params=params))
+        return generate_output(output_cls=Output, response=self._get(params=params))
 
     def post(self, component: str, id: int, grouping: int = None, severity: int = None, source_ip: str = None,
              text1: str = None, text2: str = None, value1: str = None, value2: str = None):
         body = {
             'Component': component,
-            'ID': id,
-            'Grouping': grouping,
-            'Severity': severity,
-            'SourceIp': source_ip,
-            'Text1': text1,
-            'Text2': text2,
-            'Value1': value1,
-            'Value2': value2
+            'ID'       : id,
+            'Grouping' : grouping,
+            'Severity' : severity,
+            'SourceIp' : source_ip,
+            'Text1'    : text1,
+            'Text2'    : text2,
+            'Value1'   : value1,
+            'Value2'   : value2
         }
 
-        class _Response(APIResponse):
-            def __init__(self, response):
-                super().__init__(response=response)
+        class Output(WebSdkOutputModel):
+            log_result: int = ApiField(alias='LogResult')
 
-            @property
-            @api_response_property()
-            def log_result(self) -> int:
-                return self._from_json('LogResult')
-
-        return _Response(response=self._post(data=body))
+        return generate_output(output_cls=Output, response=self._post(data=body))
 
     def Guid(self, guid: str):
-        return self._Guid(guid=guid, api_obj=self._api_obj)
+        return self._Guid(api_obj=self._api_obj, url=f'{self._url}/{guid}')
 
-    class _Guid(API):
-        def __init__(self, guid: str, api_obj):
-            super().__init__(api_obj=api_obj, url=f'/Log/{guid}')
-
+    class _Guid(WebSdkEndpoint):
         def get(self):
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                log_events: List[log.LogEvent] = ApiField(default_factory=list, alias='LogEvents')
 
-                @property
-                @api_response_property()
-                def log_events(self):
-                    return [Log.LogEvent(log) for log in self._from_json('LogEvents')]
+            return generate_output(output_cls=Output, response=self._get())
 
-            return _Response(response=self._get())
-
-    class _LogSchema(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='Log/LogSchema')
-
+    class _LogSchema(WebSdkEndpoint):
         def get(self):
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                log_event_application_definitions: List[log.LogEventApplicationDefinition] = ApiField(
+                    alias='LogEventApplicationDefinitions'
+                )
+                log_event_definitions: List[log.LogEventDefinition] = ApiField(alias='LogEventDefinitions', default_factory=list)
+                log_result: int = ApiField(alias='LogResult')
 
-                @property
-                @api_response_property()
-                def log_event_application_definitions(self):
-                    return [Log.LogEventApplicationDefinition(lead) for lead in
-                            self._from_json(key='LogEventApplicationDefinitions')]
-
-                @property
-                @api_response_property()
-                def log_event_definitions(self):
-                    return [Log.LogEventDefinition(led) for led in
-                            self._from_json(key='LogEventDefinitions')]
-
-                @property
-                @api_response_property()
-                def log_result(self) -> int:
-                    return self._from_json(key='LogResult')
-
-            return _Response(response=self._get())
+            return generate_output(output_cls=Output, response=self._get())

@@ -1,41 +1,36 @@
-from pytpp.api.api_base import API, APIResponse, api_response_property
-from pytpp.properties.response_objects.preferences import Preferences
+from typing import List
+from pytpp.api.websdk.models import preferences as prefs
+from pytpp.api.api_base import WebSdkEndpoint, WebSdkOutputModel, generate_output, ApiField
 
 
-class _Preferences(API):
+class _Preferences(WebSdkEndpoint):
     def __init__(self, api_obj):
         super().__init__(api_obj=api_obj, url='/Preferences')
 
-    def get(self, category: str = None, name: str = None, product: str = None):
+    def get(self, category: str = None, name: str = None, product: prefs.ProductType = None):
         params = {
             'Category': category,
-            'Name': name,
-            'Product': product
+            'Name'    : name,
+            'Product' : product
         }
 
-        class _Response(APIResponse):
-            def __init__(self, response):
-                super().__init__(response=response)
+        class Output(WebSdkOutputModel):
+            preferences: List[prefs.Preference] = ApiField(alias='Preferences', default_factory=list)
 
-            @property
-            @api_response_property()
-            def preferences(self):
-                return [Preferences.Preference(p) for p in self._from_json(key='Preferences')]
+        return generate_output(output_cls=Output, response=self._get(params=params))
 
-        return _Response(response=self._get(params=params))
-
-    def post(self, preferences: dict):
+    def post(self, preferences: List[prefs.Preference]):
         body = {
             'Preferences': preferences
         }
 
-        return APIResponse(response=self._post(data=body))
+        return generate_output(output_cls=WebSdkOutputModel, response=self._post(data=body))
 
-    def delete(self, category: str = None, name: str = None, product: str = None):
+    def delete(self, category: str = None, name: str = None, product: prefs.ProductType = None):
         params = {
             'Category': category,
-            'Name': name,
-            'Product': product
+            'Name'    : name,
+            'Product' : product
         }
 
-        return APIResponse(response=self._delete(params=params))
+        return generate_output(output_cls=WebSdkOutputModel, response=self._delete(params=params))

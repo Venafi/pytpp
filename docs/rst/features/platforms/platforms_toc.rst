@@ -14,10 +14,12 @@ Platforms
     certificate_revocation
     cloud_instance_monitor
     discovery_manager
+    key_manager
     monitor
     onboard_discovery_manager
     platforms
     reporting
+    ssh_certificate_manager
     ssh_manager
     trustnet_manager
     validation_manager

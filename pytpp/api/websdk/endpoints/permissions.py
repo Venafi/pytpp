@@ -1,90 +1,53 @@
 from typing import List
-from pytpp.api.api_base import API, APIResponse, api_response_property
-from pytpp.properties.response_objects.permissions import Permissions
+from pytpp.api.websdk.models import permissions
+from pytpp.api.api_base import WebSdkEndpoint, WebSdkOutputModel, generate_output, ApiField
 
 
-class _Permissions:
+class _Permissions(WebSdkEndpoint):
     def __init__(self, api_obj):
-        self.Object = self._Object(api_obj=api_obj)
-        self.Refresh = self._Refresh(api_obj=api_obj)
+        super().__init__(api_obj=api_obj, url='/Permissions')
+        self.Object = self._Object(api_obj=self._api_obj, url=f'{self._url}/Object')
+        self.Refresh = self._Refresh(api_obj=self._api_obj, url=f'{self._url}/Refresh')
 
-    class _Object:
-        def __init__(self, api_obj):
-            self._api_obj = api_obj
-
+    class _Object(WebSdkEndpoint):
         def Guid(self, guid):
-            return self._Guid(guid=guid, api_obj=self._api_obj)
+            return self._Guid(api_obj=self._api_obj, url=f'{self._url}/{guid}')
 
-        class _Guid(API):
-            def __init__(self, guid: str, api_obj):
-                super().__init__(api_obj=api_obj, url=f'/Permissions/Object/{guid}')
-                self._guid = guid
-
+        class _Guid(WebSdkEndpoint):
             def get(self):
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    principals: List[str] = ApiField(default_factory=list)
 
-                    @property
-                    @api_response_property()
-                    def principals(self) -> List[str]:
-                        return self._from_json()
-
-                return _Response(response=self._get())
+                return generate_output(output_cls=Output, response=self._get(), root_field='principals')
 
             def Ptype(self, ptype='Local'):
-                return self._Ptype(guid=self._guid, ptype=ptype, api_obj=self._api_obj)
+                return self._Ptype(api_obj=self._api_obj, url=f'{self._url}/{ptype}')
 
-            class _Ptype:
-                def __init__(self, guid: str, ptype: str, api_obj):
-                    self._guid = guid
-                    self._ptype = ptype
-                    self._api_obj = api_obj
-
+            class _Ptype(WebSdkEndpoint):
                 def Pname(self, pname):
-                    return self._Pname(guid=self._guid, ptype=self._ptype, pname=pname, api_obj=self._api_obj)
+                    return self._Pname(api_obj=self._api_obj, url=f'{self._url}/{pname}')
 
                 def Principal(self, uuid: str):
-                    return self._Principal(guid=self._guid, ptype=self._ptype, uuid=uuid, api_obj=self._api_obj)
+                    return self._Principal(api_obj=self._api_obj, url=f'{self._url}/{uuid}')
 
-                class _Pname:
-                    def __init__(self, guid: str, ptype: str, pname: str, api_obj):
-                        self._guid = guid
-                        self._ptype = ptype
-                        self._pname = pname
-                        self._api_obj = api_obj
-
+                class _Pname(WebSdkEndpoint):
                     def Principal(self, principal: str):
-                        return self._Principal(guid=self._guid, ptype=self._ptype, pname=self._pname,
-                                               principal=principal, api_obj=self._api_obj)
+                        return self._Principal(api_obj=self._api_obj, url=f'{self._url}/{principal}')
 
-                    class _Principal(API):
-                        def __init__(self, guid: str, ptype: str, pname: str, principal: str, api_obj):
-                            super().__init__(
-                                api_obj=api_obj,
-                                url=f'/Permissions/Object/{guid}/{ptype}/{pname}/{principal}'
-                            )
-                            self.Effective = self._Effective(guid=guid, ptype=ptype, pname=pname, principal=principal, api_obj=api_obj)
+                    class _Principal(WebSdkEndpoint):
+                        def __init__(self, *args, **kwargs):
+                            super().__init__(*args, **kwargs)
+                            self.Effective = self._Effective(api_obj=self._api_obj, url=f'{self._url}/Effective')
 
                         def delete(self):
-                            return APIResponse(response=self._delete())
+                            return generate_output(output_cls=WebSdkOutputModel, response=self._delete())
 
                         def get(self):
-                            class _Response(APIResponse):
-                                def __init__(self, response):
-                                    super().__init__(response=response)
+                            class Output(WebSdkOutputModel):
+                                explicit_permissions: permissions.Permissions = ApiField(alias='ExplicitPermissions')
+                                implicit_permissions: permissions.Permissions = ApiField(alias='ImplicitPermissions')
 
-                                @property
-                                @api_response_property()
-                                def explicit_permissions(self):
-                                    return Permissions.Permissions(self._from_json(key='ExplicitPermissions'))
-
-                                @property
-                                @api_response_property()
-                                def implicit_permissions(self):
-                                    return Permissions.Permissions(self._from_json(key='ImplicitPermissions'))
-
-                            return _Response(response=self._get())
+                            return generate_output(output_cls=Output, response=self._get())
 
                         def post(self, is_associate_allowed: bool = None, is_create_allowed: bool = None, is_delete_allowed: bool = None,
                                  is_manage_permissions_allowed: bool = None, is_policy_write_allowed: bool = None,
@@ -106,7 +69,7 @@ class _Permissions:
                                 'IsWriteAllowed'            : is_write_allowed
                             }
 
-                            return APIResponse(response=self._post(data=body))
+                            return generate_output(output_cls=WebSdkOutputModel, response=self._post(data=body))
 
                         def put(self, is_associate_allowed: bool = None, is_create_allowed: bool = None, is_delete_allowed: bool = None,
                                 is_manage_permissions_allowed: bool = None, is_policy_write_allowed: bool = None,
@@ -128,54 +91,29 @@ class _Permissions:
                                 'IsWriteAllowed'            : is_write_allowed
                             }
 
-                            return APIResponse(response=self._put(data=body))
+                            return generate_output(output_cls=WebSdkOutputModel, response=self._put(data=body))
 
-                        class _Effective(API):
-                            def __init__(self, guid: str, ptype: str, pname: str, principal: str, api_obj):
-                                super().__init__(
-                                    api_obj=api_obj,
-                                    url=f'/Permissions/Object/{guid}/{ptype}/{pname}/{principal}/Effective'
-                                )
-
+                        class _Effective(WebSdkEndpoint):
                             def get(self):
-                                class _Response(APIResponse):
-                                    def __init__(self, response):
-                                        super().__init__(response=response)
+                                class Output(WebSdkOutputModel):
+                                    effective_permissions: permissions.Permissions = ApiField(alias='EffectivePermissions')
 
-                                    @property
-                                    @api_response_property()
-                                    def effective_permissions(self):
-                                        return Permissions.Permissions(self._from_json('EffectivePermissions'))
+                                return generate_output(output_cls=Output, response=self._get())
 
-                                return _Response(response=self._get())
-
-                class _Principal(API):
-                    def __init__(self, guid: str, ptype: str, uuid: str, api_obj):
-                        super().__init__(
-                            api_obj=api_obj,
-                            url=f'/Permissions/Object/{guid}/{ptype}/{uuid}'
-                        )
-                        self.Effective = self._Effective(guid=guid, uuid=uuid, api_obj=api_obj)
+                class _Principal(WebSdkEndpoint):
+                    def __init__(self, *args, **kwargs):
+                        super().__init__(*args, **kwargs)
+                        self.Effective = self._Effective(api_obj=self._api_obj, url=f'{self._url}/Effective')
 
                     def delete(self):
-                        return APIResponse(response=self._delete())
+                        return generate_output(output_cls=WebSdkOutputModel, response=self._delete())
 
                     def get(self):
-                        class _Response(APIResponse):
-                            def __init__(self, response):
-                                super().__init__(response=response)
+                        class Output(WebSdkOutputModel):
+                            explicit_permissions: permissions.Permissions = ApiField(alias='ExplicitPermissions')
+                            implicit_permissions: permissions.Permissions = ApiField(alias='ImplicitPermissions')
 
-                            @property
-                            @api_response_property()
-                            def explicit_permissions(self):
-                                return Permissions.Permissions(self._from_json('ExplicitPermissions'))
-
-                            @property
-                            @api_response_property()
-                            def implicit_permissions(self):
-                                return Permissions.Permissions(self._from_json('ImplicitPermissions'))
-
-                        return _Response(response=self._get())
+                        return generate_output(output_cls=Output, response=self._get())
 
                     def post(self, is_associate_allowed: bool = None, is_create_allowed: bool = None, is_delete_allowed: bool = None,
                              is_manage_permissions_allowed: bool = None, is_policy_write_allowed: bool = None,
@@ -197,7 +135,7 @@ class _Permissions:
                             'IsWriteAllowed'            : is_write_allowed
                         }
 
-                        return APIResponse(response=self._post(data=body))
+                        return generate_output(output_cls=WebSdkOutputModel, response=self._post(data=body))
 
                     def put(self, is_associate_allowed: bool = None, is_create_allowed: bool = None, is_delete_allowed: bool = None,
                             is_manage_permissions_allowed: bool = None, is_policy_write_allowed: bool = None,
@@ -219,39 +157,18 @@ class _Permissions:
                             'IsWriteAllowed'            : is_write_allowed
                         }
 
-                        return APIResponse(response=self._put(data=body))
+                        return generate_output(output_cls=WebSdkOutputModel, response=self._put(data=body))
 
-                    class _Effective(API):
-                        def __init__(self, guid: str, uuid: str, api_obj):
-                            super().__init__(
-                                api_obj=api_obj,
-                                url=f'/Permissions/Object/{guid}/Local/{uuid}/Effective'
-                            )
-
+                    class _Effective(WebSdkEndpoint):
                         def get(self):
-                            class _Response(APIResponse):
-                                def __init__(self, response):
-                                    super().__init__(response=response)
+                            class Output(WebSdkOutputModel):
+                                effective_permissions: permissions.Permissions = ApiField(alias='EffectivePermissions')
 
-                                @property
-                                @api_response_property()
-                                def effective_permissions(self):
-                                    return Permissions.Permissions(self._from_json('EffectivePermissions'))
+                            return generate_output(output_cls=Output, response=self._get())
 
-                            return _Response(response=self._get())
-
-    class _Refresh(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Permissions/Refresh')
-
+    class _Refresh(WebSdkEndpoint):
         def get(self):
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: int = ApiField(alias='Result')
 
-                @property
-                @api_response_property()
-                def result(self) -> int:
-                    return self._from_json('Result')
-
-            return _Response(response=self._get())
+            return generate_output(output_cls=Output, response=self._get())

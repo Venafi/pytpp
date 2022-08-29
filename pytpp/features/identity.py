@@ -1,11 +1,12 @@
 from pytpp.attributes.user import UserAttributes
-from pytpp.properties.config import IdentityAttributeValues
+from pytpp.api.websdk.enums.config import IdentityAttributeValues
 from pytpp.features.bases.feature_base import FeatureBase, feature
 from pytpp.features.definitions.exceptions import UnexpectedValue
 from pytpp.features.definitions.classes import Classes
 from typing import List, Union, TYPE_CHECKING
+
 if TYPE_CHECKING:
-    from pytpp.tools.vtypes import Identity
+    from pytpp.api.websdk.models import identity as ident
 
 
 class _IdentityBase(FeatureBase):
@@ -64,7 +65,7 @@ class _IdentityBase(FeatureBase):
             raise_error_if_not_exists=raise_error_if_not_exists
         )
 
-    def get_memberships(self, identity: 'Union[Identity.Identity, str]'):
+    def get_memberships(self, identity: 'Union[ident.Identity, str]'):
         """
         Args:
             identity: :ref:`identity_object` or :ref:`prefixed_name` of the identity.
@@ -83,7 +84,7 @@ class _IdentityBase(FeatureBase):
 
         return memberships
 
-    def read_attribute(self, identity: 'Union[Identity.Identity, str]', attribute_name: str):
+    def read_attribute(self, identity: 'Union[ident.Identity, str]', attribute_name: str):
         """
         Args:
             identity: :ref:`identity_object` or :ref:`prefixed_name` of the identity.
@@ -122,16 +123,10 @@ class User(_IdentityBase):
         """
         attributes = {
             UserAttributes.internet_email_address: email_address,
-            UserAttributes.given_name: first_name,
-            UserAttributes.surname: last_name
+            UserAttributes.given_name            : first_name,
+            UserAttributes.surname               : last_name
         }
-        user = self._config_create(
-            name=name,
-            parent_folder_dn=self._identity_dn,
-            config_class=Classes.user,
-            attributes=attributes,
-            get_if_already_exists=get_if_already_exists
-        )
+        user = self._config_create(name=name, parent_folder_dn=self._identity_dn, config_class=Classes.user, attributes=attributes, get_if_already_exists=get_if_already_exists)
         user = self.set_password(user=f'local:{user.name}', new_password=password)
 
         if add_to_everyone_group:
@@ -142,7 +137,7 @@ class User(_IdentityBase):
             response.assert_valid_response()
         return user
 
-    def delete(self, user: 'Union[Identity.Identity, str]'):
+    def delete(self, user: 'Union[ident.Identity, str]'):
         """
         Deletes the user from the Local Identity Provider. The user is removed from all local groups.
 
@@ -179,7 +174,7 @@ class User(_IdentityBase):
             is_user=True
         )
 
-    def set_password(self, user: 'Union[Identity.Identity, str]', new_password: str, old_password: str = None):
+    def set_password(self, user: 'Union[ident.Identity, str]', new_password: str, old_password: str = None):
         """
         Sets the ``new_password`` for a local user. If the user did not have a previous password, then
         the ``old_password`` is not required.
@@ -206,7 +201,7 @@ class Group(_IdentityBase):
     def __init__(self, api):
         super().__init__(api=api)
 
-    def add_members(self, group: 'Union[Identity.Identity, str]', members: 'List[Union[Identity.Identity, str]]'):
+    def add_members(self, group: 'Union[ident.Identity, str]', members: 'List[Union[ident.Identity, str]]'):
         """
         Args:
             group: :ref:`identity_object` or :ref:`prefixed_name` of the group.
@@ -234,7 +229,7 @@ class Group(_IdentityBase):
 
         return result.members
 
-    def create(self, name: str, members: 'List[Union[Identity, Identity, str]]' = None, get_if_already_exists: bool = True):
+    def create(self, name: str, members: 'List[Union[ident.Identity, ident.Identity, str]]' = None, get_if_already_exists: bool = True):
         """
         Args:
             name: Name of the user. The *local:* prefix is not required.
@@ -268,7 +263,7 @@ class Group(_IdentityBase):
         group = result.identity
         return group
 
-    def delete(self, group: 'Union[Identity.Identity, str]'):
+    def delete(self, group: 'Union[ident.Identity, str]'):
         """
         Deletes a group, but not its members. All group permissions and privileges are deleted.
 
@@ -301,7 +296,7 @@ class Group(_IdentityBase):
             is_user=False
         )
 
-    def get_members(self, group: 'Union[Identity.Identity, str]', resolve_nested: bool = False):
+    def get_members(self, group: 'Union[ident.Identity, str]', resolve_nested: bool = False):
         """
         Args:
             group: :ref:`identity_object` or :ref:`prefixed_name` of the group.
@@ -318,7 +313,7 @@ class Group(_IdentityBase):
 
         return result.identities
 
-    def remove_members(self, group: 'Union[Identity.Identity, str]', members: 'List[Union[Identity.Identity, str]]'):
+    def remove_members(self, group: 'Union[ident.Identity, str]', members: 'List[Union[ident.Identity, str]]'):
         """
         Removes members from a local group.
 
@@ -343,7 +338,7 @@ class Group(_IdentityBase):
 
         return result.members
 
-    def rename(self, group: 'Union[Identity.Identity, str]', new_group_name: str):
+    def rename(self, group: 'Union[ident.Identity, str]', new_group_name: str):
         """
         Renames a local group. The *local:* prefix is not required.
 

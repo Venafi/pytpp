@@ -1,7 +1,9 @@
-from typing import Union
-from pytpp.tools.vtypes import Config, Identity
 from pytpp.features.bases.feature_base import FeatureBase, feature
-from pytpp.properties.response_objects.permissions import Permissions as PermResponseObj
+from pytpp.api.websdk.models import permissions
+from typing import Union, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pytpp.api.websdk.models import identity as ident, config
 
 
 @feature('Permissions')
@@ -9,14 +11,14 @@ class Permissions(FeatureBase):
     def __init__(self, api):
         super().__init__(api=api)
 
-    def _get_obj_and_identity(self, obj: 'Union[Config.Object, str]', identity: 'Union[Identity.Identity, str]'):
+    def _get_obj_and_identity(self, obj: 'Union[config.Object, str]', identity: 'Union[ident.Identity, str]'):
         if isinstance(obj, str):
             obj = self._get_config_object(obj)
         if isinstance(identity, str):
             identity = self._get_identity_object(identity)
         return obj, identity
 
-    def delete(self, obj: 'Union[Config.Object, str]', identity: 'Union[Identity.Identity, str]'):
+    def delete(self, obj: 'Union[config.Object, str]', identity: 'Union[ident.Identity, str]'):
         """
         Deletes all explicit permissions granted to a user or group on the ``obj``. All implicit permissions,
         i.e. those that are inherited from group memberships and parent folders, are unaffected.
@@ -32,14 +34,14 @@ class Permissions(FeatureBase):
 
         if '+' in identity.prefix:
             ptype, pname = identity.prefix.split('+', 1)
-            api = self._api.websdk.Permissions.Object.Guid(obj.guid).Ptype(ptype).Pname(pname).Principal(identity.universal)
+            endpoint = self._api.websdk.Permissions.Object.Guid(obj.guid).Ptype(ptype).Pname(pname).Principal(identity.universal)
         else:
-            api = self._api.websdk.Permissions.Object.Guid(obj.guid).Ptype().Principal(identity.universal)
+            endpoint = self._api.websdk.Permissions.Object.Guid(obj.guid).Ptype().Principal(identity.universal)
 
-        result = api.delete()
+        result = endpoint.delete()
         result.assert_valid_response()
 
-    def get_effective(self, obj: 'Union[Config.Object, str]', identity: 'Union[Identity.Identity, str]'):
+    def get_effective(self, obj: 'Union[config.Object, str]', identity: 'Union[ident.Identity, str]'):
         """
         Returns the *effective* permissions of a user or group on the ``obj``. Effective permissions are the
         permissions that are take effect when the user authenticates to TPP. All Master Admin, implicit, and
@@ -50,19 +52,19 @@ class Permissions(FeatureBase):
             identity: :ref:`identity_object` or :ref:`prefixed_name` of the user or group.
 
         Returns:
-            :py:class:`~.dataclasses.permissions.Permissions`: Effective permissions granted to the ``identity``.
+            :py:class:`~.models.permissions.Permissions`: Effective permissions granted to the ``identity``.
         """
         obj, identity = self._get_obj_and_identity(obj=obj, identity=identity)
         if '+' in identity.prefix:
             ptype, pname = identity.prefix.split('+', 1)
-            api = self._api.websdk.Permissions.Object.Guid(obj.guid).Ptype(ptype).Pname(pname).Principal(identity.universal)
+            endpoint = self._api.websdk.Permissions.Object.Guid(obj.guid).Ptype(ptype).Pname(pname).Principal(identity.universal)
         else:
-            api = self._api.websdk.Permissions.Object.Guid(obj.guid).Ptype().Principal(identity.universal)
+            endpoint = self._api.websdk.Permissions.Object.Guid(obj.guid).Ptype().Principal(identity.universal)
 
-        result = api.Effective.get()
-        return result.effective_permissions if result.is_valid_response() else PermResponseObj.Permissions({})
+        result = endpoint.Effective.get()
+        return result.effective_permissions if result.is_valid_response() else permissions.Permissions()
 
-    def get_explicit(self, obj: 'Union[Config.Object, str]', identity: 'Union[Identity.Identity, str]'):
+    def get_explicit(self, obj: 'Union[config.Object, str]', identity: 'Union[ident.Identity, str]'):
         """
         Returns the `explicit` permissions of a user or group on the ``obj``. Explicit permissions are the
         permissions that are `explicitly` granted to a user or group on a particular object. A user or group may
@@ -75,19 +77,19 @@ class Permissions(FeatureBase):
             identity: :ref:`identity_object` or :ref:`prefixed_name` of the user or group.
 
         Returns:
-            :py:class:`~.dataclasses.permissions.Permissions`: Explicit permissions granted to the ``identity``.
+            :py:class:`~.models.permissions.Permissions`: Explicit permissions granted to the ``identity``.
         """
         obj, identity = self._get_obj_and_identity(obj=obj, identity=identity)
         if '+' in identity.prefix:
             ptype, pname = identity.prefix.split('+', 1)
-            api = self._api.websdk.Permissions.Object.Guid(obj.guid).Ptype(ptype).Pname(pname).Principal(identity.universal)
+            endpoint = self._api.websdk.Permissions.Object.Guid(obj.guid).Ptype(ptype).Pname(pname).Principal(identity.universal)
         else:
-            api = self._api.websdk.Permissions.Object.Guid(obj.guid).Ptype().Principal(identity.universal)
+            endpoint = self._api.websdk.Permissions.Object.Guid(obj.guid).Ptype().Principal(identity.universal)
 
-        result = api.get()
-        return result.explicit_permissions if result.is_valid_response() else PermResponseObj.Permissions({})
+        result = endpoint.get()
+        return result.explicit_permissions if result.is_valid_response() else permissions.Permissions()
 
-    def get_implicit(self, obj: 'Union[Config.Object, str]', identity: 'Union[Identity.Identity, str]'):
+    def get_implicit(self, obj: 'Union[config.Object, str]', identity: 'Union[ident.Identity, str]'):
         """
         Returns the `implicit` permissions of a user or group on the ``obj``. Implicit permissions are permissions
         inherited from other folders and group memberships. To get explicit permissions, use :meth:`get_explicit`.
@@ -97,19 +99,19 @@ class Permissions(FeatureBase):
             identity: :ref:`identity_object` or :ref:`prefixed_name` of the user or group.
 
         Returns:
-            :py:class:`~.dataclasses.permissions.Permissions`: Implicit permissions granted to the ``identity``.
+            :py:class:`~.models.permissions.Permissions`: Implicit permissions granted to the ``identity``.
         """
         obj, identity = self._get_obj_and_identity(obj=obj, identity=identity)
         if '+' in identity.prefix:
             ptype, pname = identity.prefix.split('+', 1)
-            api = self._api.websdk.Permissions.Object.Guid(obj.guid).Ptype(ptype).Pname(pname).Principal(identity.universal)
+            endpoint = self._api.websdk.Permissions.Object.Guid(obj.guid).Ptype(ptype).Pname(pname).Principal(identity.universal)
         else:
-            api = self._api.websdk.Permissions.Object.Guid(obj.guid).Ptype().Principal(identity.universal)
+            endpoint = self._api.websdk.Permissions.Object.Guid(obj.guid).Ptype().Principal(identity.universal)
 
-        result = api.get()
-        return result.implicit_permissions if result.is_valid_response() else PermResponseObj.Permissions({})
+        result = endpoint.get()
+        return result.implicit_permissions if result.is_valid_response() else permissions.Permissions()
 
-    def list_identities(self, obj: 'Union[Config.Object, str]'):
+    def list_identities(self, obj: 'Union[config.Object, str]'):
         """
         Returns a list of Identity objects that have `explicit` permissions to the object. Explicit permissions are the
         permissions that are `explicitly` granted to a user or group on a particular object. A user or group may
@@ -126,13 +128,15 @@ class Permissions(FeatureBase):
         principals = self._api.websdk.Permissions.Object.Guid(obj.guid).get().principals
 
         principals = [
-            self._api.websdk.Identity.Validate.post(identity={'PrefixedUniversal': principal}).identity
+            self._api.websdk.Identity.Validate.post(identity={
+                'PrefixedUniversal': principal
+            }).identity
             for principal in principals
         ]
 
         return principals
 
-    def update(self, obj: 'Union[Config.Object, str]', identity: 'Union[Identity.Identity, str]', is_associate_allowed: bool = None,
+    def update(self, obj: 'Union[config.Object, str]', identity: 'Union[ident.Identity, str]', is_associate_allowed: bool = None,
                is_create_allowed: bool = None, is_delete_allowed: bool = None, is_manage_permissions_allowed: bool = None,
                is_policy_write_allowed: bool = None, is_private_key_read_allowed: bool = None, is_private_key_write_allowed: bool = None,
                is_read_allowed: bool = None, is_rename_allowed: bool = None, is_revoke_allowed: bool = None, is_view_allowed: bool = None,
@@ -165,16 +169,16 @@ class Permissions(FeatureBase):
         obj, identity = self._get_obj_and_identity(obj=obj, identity=identity)
         if '+' in identity.prefix:
             ptype, pname = identity.prefix.split('+', 1)
-            api = self._api.websdk.Permissions.Object.Guid(obj.guid).Ptype(ptype).Pname(pname).Principal(identity.universal)
+            endpoint = self._api.websdk.Permissions.Object.Guid(obj.guid).Ptype(ptype).Pname(pname).Principal(identity.universal)
         else:
-            api = self._api.websdk.Permissions.Object.Guid(obj.guid).Ptype().Principal(identity.universal)
+            endpoint = self._api.websdk.Permissions.Object.Guid(obj.guid).Ptype().Principal(identity.universal)
 
         current_permissions = self.get_explicit(obj=obj, identity=identity)
 
         if bool([y for x, y in current_permissions.__dict__.items() if not x.startswith('_') and y is not None]):
-            method = api.put
+            method = endpoint.put
         else:
-            method = api.post
+            method = endpoint.post
 
         new_permissions = {
             k: v if v is not None else getattr(current_permissions, k) for k, v in dict(

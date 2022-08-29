@@ -11,7 +11,7 @@ from pytpp.features.client_work import (
 from pytpp.features.certificate import Certificate
 from pytpp.features.device import Device, JumpServer
 from pytpp.features.application import (
-    Adaptable as AdapatbleApplication, AmazonAWS, Apache, AzureKeyVault, Basic, BlueCoatSSLVA, CAPI, CitrixNetScaler,
+    Adaptable as AdaptableApplication, AmazonAWS, Apache, AzureKeyVault, Basic, BlueCoatSSLVA, CAPI, CitrixNetScaler,
     ConnectDirect, F5AuthenticationBundle, F5LTMAdvanced, GoogleCloudLoadBalancer, IBMDataPower, IBMGSK, ImpervaMX, JKS,
     OracleIPlanet, PaloAltoNetworkFW, PEM, PKCS11, PKCS12, RiverbedSteelHead, TealeafPCA, VAMnShield,
     PKCS11ApplicationGroup, ApacheApplicationGroup
@@ -61,8 +61,8 @@ class _Application:
         self._vamnshield = None
 
     @property
-    def adaptable(self) -> AdapatbleApplication:
-        self._adaptable = self._adaptable or AdapatbleApplication(self._api)
+    def adaptable(self) -> AdaptableApplication:
+        self._adaptable = self._adaptable or AdaptableApplication(self._api)
         return self._adaptable
 
     @property

@@ -1,111 +1,68 @@
 from typing import List
-from pytpp.api.api_base import API, APIResponse, api_response_property
-from pytpp.properties.response_objects.processing_engines import ProcessingEngines
+from pytpp.api.websdk.models import processing_engines
+from pytpp.api.api_base import WebSdkEndpoint, WebSdkOutputModel, generate_output, ApiField
 
 
-class _ProcessingEngines(API):
+class _ProcessingEngines(WebSdkEndpoint):
     def __init__(self, api_obj):
         super().__init__(api_obj=api_obj, url='/ProcessingEngines')
-
-        self.Engine = self._Engine(api_obj=api_obj)
-        self.Folder = self._Folder(api_obj=api_obj)
+        self.Engine = self._Engine(api_obj=api_obj, url=f'{self._url}/Engine')
+        self.Folder = self._Folder(api_obj=api_obj, url=f'{self._url}/Folder')
 
     def get(self):
-        class _Response(APIResponse):
-            def __init__(self, response):
-                super().__init__(response=response)
+        class Output(WebSdkOutputModel):
+            engines: List[processing_engines.Engine] = ApiField(alias='Engines', default_factory=list)
 
-            @property
-            @api_response_property()
-            def engines(self):
-                return [ProcessingEngines.Engine(engine) for engine in self._from_json('Engines')]
+        return generate_output(output_cls=Output, response=self._get())
 
-        return _Response(response=self._get())
-
-    class _Engine:
-        def __init__(self, api_obj):
-            self._api_obj = api_obj
-
+    class _Engine(WebSdkEndpoint):
         def Guid(self, guid: str):
-            return self._Guid(guid=guid, api_obj=self._api_obj)
+            return self._Guid(api_obj=self._api_obj, url=f'{self._url}/{guid}')
 
-        class _Guid(API):
-            def __init__(self, guid: str, api_obj):
-                super().__init__(api_obj=api_obj, url=f'/ProcessingEngines/Engine/{guid}')
-
+        class _Guid(WebSdkEndpoint):
             def get(self):
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    links: processing_engines.Link = ApiField(alias='_links')
+                    folders: List[processing_engines.Folder] = ApiField(alias='Folders', default_factory=list)
 
-                    @property
-                    @api_response_property(return_on_204=list)
-                    def folders(self):
-                        return [ProcessingEngines.Folder(folder) for folder in self._from_json('Folders')][0]
+                return generate_output(output_cls=Output, response=self._get())
 
-                return _Response(response=self._get())
-
-            def post(self, folder_guids: list):
+            def post(self, folder_guids: List[str]):
                 body = {
                     'FolderGuids': folder_guids
                 }
 
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    added_count: int = ApiField(alias='AddedCount')
+                    errors: List[str] = ApiField(alias='Errors', default_factory=list)
 
-                    @property
-                    @api_response_property(return_on_204=str)
-                    def added_count(self) -> int:
-                        return self._from_json('AddedCount')
+                return generate_output(output_cls=Output, response=self._post(data=body))
 
-                    @property
-                    @api_response_property(return_on_204=list)
-                    def errors(self) -> List[str]:
-                        return self._from_json('Errors')
-
-                return _Response(response=self._post(data=body))
-
-    class _Folder:
-        def __init__(self, api_obj):
-            self._api_obj = api_obj
-
+    class _Folder(WebSdkEndpoint):
         def Guid(self, guid: str):
-            return self._Guid(guid=guid, api_obj=self._api_obj)
+            return self._Guid(api_obj=self._api_obj, url=f'{self._url}/{guid}')
 
-        class _Guid(API):
-            def __init__(self, guid: str, api_obj):
-                super().__init__(api_obj=api_obj, url=f'/ProcessingEngines/Folder/{guid}')
-                self._folder_guid = guid
-
+        class _Guid(WebSdkEndpoint):
             def delete(self):
-                return APIResponse(response=self._delete())
+                return generate_output(output_cls=WebSdkOutputModel, response=self._delete())
 
             def get(self):
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    links: processing_engines.Link = ApiField(alias='_links')
+                    engines: List[processing_engines.Engine] = ApiField(alias='Engines', default_factory=list)
 
-                    @property
-                    @api_response_property(return_on_204=list)
-                    def engines(self):
-                        return [ProcessingEngines.Engine(engine) for engine in self._from_json('Engines')]
+                return generate_output(output_cls=Output, response=self._get())
 
-                return _Response(response=self._get())
-
-            def put(self, engine_guids: list):
+            def put(self, engine_guids: List[str]):
                 body = {
                     'EngineGuids': engine_guids
                 }
 
-                return APIResponse(response=self._put(data=body))
+                return generate_output(output_cls=WebSdkOutputModel, response=self._put(data=body))
 
             def EngineGuid(self, guid):
-                return self._EngineGuid(guid=self._folder_guid, engine_guid=guid, api_obj=self._api_obj)
+                return self._EngineGuid(api_obj=self._api_obj, url=f'{self._url}/{guid}')
 
-            class _EngineGuid(API):
-                def __init__(self, guid: str, engine_guid: str, api_obj):
-                    super().__init__(api_obj=api_obj, url=f'/ProcessingEngines/Folder/{guid}/{engine_guid}')
-
+            class _EngineGuid(WebSdkEndpoint):
                 def delete(self):
-                    return APIResponse(response=self._delete())
+                    return generate_output(output_cls=WebSdkOutputModel, response=self._delete())

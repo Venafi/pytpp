@@ -1,8 +1,10 @@
 from dataclasses import dataclass
-from typing import List, Union
 from pytpp.features.bases.feature_base import FeatureBase, feature
 from pytpp.features.definitions.exceptions import InvalidResultCode, InvalidFormat
-from pytpp.tools.vtypes import Config
+from typing import List, Union, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pytpp.api.websdk.models import config
 
 
 @dataclass
@@ -16,7 +18,7 @@ class Objects(FeatureBase):
     def __init__(self, api):
         super().__init__(api=api)
 
-    def clear(self, obj: 'Union[Config.Object, str]', attributes: Union[dict, List[str]]):
+    def clear(self, obj: 'Union[config.Object, str]', attributes: Union[dict, List[str]]):
         """
         Clears attributes from an object.
         
@@ -68,7 +70,7 @@ class Objects(FeatureBase):
         result = self._api.websdk.Config.IsValid.post(object_dn=dn)
         return result.is_valid_response() and result.result.code == 1
 
-    def find_policy(self, obj: 'Union[Config.Object, str]', class_name: str, attribute_name: str):
+    def find_policy(self, obj: 'Union[config.Object, str]', class_name: str, attribute_name: str):
         """
         Find the folder that defines the policy attribute of the ``class_name`` on a given object.
 
@@ -109,7 +111,7 @@ class Objects(FeatureBase):
         Args:
             object_dn: :ref:`dn` of the object.
             object_guid: GUID of the object.
-            raise_error_if_not_exists: If ``True`` raise an exception if the obejct doesn't exist.
+            raise_error_if_not_exists: If ``True`` raise an exception if the object doesn't exist.
 
         Returns:
             :ref:`config_object` of the object.
@@ -120,7 +122,7 @@ class Objects(FeatureBase):
             raise_error_if_not_exists=raise_error_if_not_exists
         )
 
-    def read(self, obj: 'Union[Config.Object, str]', attribute_name: str, include_policy_values: bool = False, timeout: int = 10):
+    def read(self, obj: 'Union[config.Object, str]', attribute_name: str, include_policy_values: bool = False, timeout: int = 10):
         """
         Args:
             obj: :ref:`config_object` or :ref:`dn` of the object.
@@ -152,13 +154,13 @@ class Objects(FeatureBase):
         raise TimeoutError(f'Could not read {attribute_name} on {obj_dn} because it did not exist '
                            f'after {timeout} seconds.')
 
-    def read_all(self, obj: 'Union[Config.Object, str]'):
+    def read_all(self, obj: 'Union[config.Object, str]'):
         """
         Args:
             obj: :ref:`config_object` or :ref:`dn` of the object.
 
         Returns:
-            List of :class:`~.dataclasses.config.NameValues` where the
+            List of :class:`~.models.config.NameValues` where the
 
             * name is the attribute name.
             * values is the list of attribute values.
@@ -172,7 +174,7 @@ class Objects(FeatureBase):
 
         return resp.name_values
 
-    def rename(self, obj: 'Union[Config.Object, str]', new_object_dn: str):
+    def rename(self, obj: 'Union[config.Object, str]', new_object_dn: str):
         """
         .. note::
             This method can be used to rename objects and move their location.
@@ -193,7 +195,7 @@ class Objects(FeatureBase):
 
         return self.get(object_dn=new_object_dn, raise_error_if_not_exists=True)
 
-    def update(self, obj: 'Union[Config.Object, str]', attributes: dict):
+    def update(self, obj: 'Union[config.Object, str]', attributes: dict):
         """
         Updates attributes on an object. If the attribute is locked TPP will simply ignore the request.
 
@@ -213,7 +215,7 @@ class Objects(FeatureBase):
             if result.code != 1:
                 raise InvalidResultCode(code=result.code, code_description=result.config_result)
 
-    def wait_for(self, obj: 'Union[Config.Object, str]', attribute_name: str, attribute_value: str, include_policy_values: bool = False,
+    def wait_for(self, obj: 'Union[config.Object, str]', attribute_name: str, attribute_value: str, include_policy_values: bool = False,
                  timeout: int = 10):
         """
         Waits for the ``attribute_name`` to have the ``attribute_value`` on the object within the timeout period. A
@@ -252,7 +254,7 @@ class Objects(FeatureBase):
             f'Got {attr.values} instead.'
         )
 
-    def write(self, obj: 'Union[Config.Object, str]', attributes: dict):
+    def write(self, obj: 'Union[config.Object, str]', attributes: dict):
         """
         Writes new attributes on an object. If the attribute is locked TPP will simply ignore the request.
 
@@ -266,13 +268,13 @@ class Objects(FeatureBase):
 
         result = self._api.websdk.Config.Write.post(
             object_dn=obj_dn,
-            attribute_data=self._name_value_list(attributes, keep_list_values=True)
+            attribute_data=self._name_value_list(attributes)
         ).result
 
         if result.code != 1:
             raise InvalidResultCode(code=result.code, code_description=result.config_result)
 
-    def _read(self, obj: 'Union[Config.Object, str]', attribute_name: str, include_policy_values: bool):
+    def _read(self, obj: 'Union[config.Object, str]', attribute_name: str, include_policy_values: bool):
         obj_dn = self._get_dn(obj)
         if include_policy_values is True:
             resp = self._api.websdk.Config.ReadEffectivePolicy.post(

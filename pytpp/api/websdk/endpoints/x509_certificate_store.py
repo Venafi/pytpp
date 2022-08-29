@@ -1,163 +1,87 @@
 from typing import List
-from pytpp.api.api_base import API, APIResponse, api_response_property
-from pytpp.properties.response_objects.secret_store import SecretStore
+from pytpp.api.websdk.models import secret_store, certificate as cert
+from pytpp.api.api_base import WebSdkEndpoint, WebSdkOutputModel, generate_output, ApiField
 
 
-class _X509CertificateStore:
+class _X509CertificateStore(WebSdkEndpoint):
     def __init__(self, api_obj):
-        self.Add = self._Add(api_obj=api_obj)
-        self.Lookup = self._Lookup(api_obj=api_obj)
-        self.LookupExpiring = self._LookupExpiring(api_obj=api_obj)
-        self.Remove = self._Remove(api_obj=api_obj)
-        self.Retrieve = self._Retrieve(api_obj=api_obj)
+        super().__init__(api_obj=api_obj, url='/X509CertificateStore')
+        self.Add = self._Add(api_obj=self._api_obj, url=f'{self._url}/Add')
+        self.Lookup = self._Lookup(api_obj=self._api_obj, url=f'{self._url}/Lookup')
+        self.LookupExpiring = self._LookupExpiring(api_obj=self._api_obj, url=f'{self._url}/LookupExpiring')
+        self.Remove = self._Remove(api_obj=self._api_obj, url=f'{self._url}/Remove')
+        self.Retrieve = self._Retrieve(api_obj=self._api_obj, url=f'{self._url}/Retrieve')
 
-    class _Add(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/X509CertificateStore/Add')
-
-        def post(self, owner_dn: str, certificate_collection_strings: list = None, certificate_string: str = None,
-                 protection_key: str = None, typed_name_values: list = None):
+    class _Add(WebSdkEndpoint):
+        def post(self, owner_dn: str, certificate_collection_strings: List[str] = None, certificate_string: str = None,
+                 protection_key: str = None, typed_name_values: List[cert.NameTypeValue] = None):
             body = {
                 'CertificateCollectionStrings': certificate_collection_strings,
-                'CertificateString': certificate_string,
-                'OwnerDN': owner_dn,
-                'ProtectionKey': protection_key,
-                'TypedNameValues': typed_name_values
+                'CertificateString'           : certificate_string,
+                'OwnerDN'                     : owner_dn,
+                'ProtectionKey'               : protection_key,
+                'TypedNameValues'             : typed_name_values
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                leaf_existed: bool = ApiField(alias='LeafExisted')
+                result: secret_store.Result = ApiField(alias='Result', converter=lambda x: secret_store.Result(code=x))
+                vault_id: int = ApiField(alias='VaultId')
 
-                @property
-                @api_response_property()
-                def leaf_existed(self) -> bool:
-                    return self._from_json(key='LeafExisted')
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return SecretStore.Result(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def vault_id(self) -> int:
-                    return self._from_json(key='VaultId')
-
-            return _Response(response=self._post(data=body))
-
-    class _Lookup(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/X509CertificateStore/Lookup')
-
+    class _Lookup(WebSdkEndpoint):
         def post(self, certificate_string: str = None, name: str = None, owner_dn: str = None, value: str = None):
             body = {
                 'CertificateString': certificate_string,
-                'Name': name,
-                'OwnerDN': owner_dn,
-                'Value': value
+                'Name'             : name,
+                'OwnerDN'          : owner_dn,
+                'Value'            : value
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: secret_store.Result = ApiField(alias='Result', converter=lambda x: secret_store.Result(code=x))
+                vault_id: int = ApiField(alias='VaultId')
+                vault_ids: List[int] = ApiField(alias='VaultIds', default_factory=list)
+                certificate_collection_strings: List[str] = ApiField(alias='CertificateCollectionStrings', default_factory=list)
 
-                @property
-                @api_response_property()
-                def vault_id(self) -> int:
-                    return self._from_json(key='VaultId')
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-                @property
-                @api_response_property()
-                def vault_ids(self) -> List[int]:
-                    return self._from_json(key='VaultIds')
-
-                @property
-                @api_response_property()
-                def certificate_collection_strings(self) -> List[str]:
-                    return self._from_json(key='CertificateCollectionStrings')
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return SecretStore.Result(self._from_json(key='Result'))
-
-            return _Response(response=self._post(data=body))
-
-    class _LookupExpiring(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/X509CertificateStore/LookupExpiring')
-
+    class _LookupExpiring(WebSdkEndpoint):
         def post(self, days_to_expiration: int, owner_dn: str):
             body = {
                 'DaysToExpiration': days_to_expiration,
-                'OwnerDN': owner_dn
+                'OwnerDN'         : owner_dn
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                vault_ids: List[int] = ApiField(alias='VaultIds', default_factory=list)
+                result: secret_store.Result = ApiField(alias='Result', converter=lambda x: secret_store.Result(code=x))
 
-                @property
-                @api_response_property()
-                def vault_ids(self) -> List[int]:
-                    return self._from_json(key='VaultIds')
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return SecretStore.Result(self._from_json(key='Result'))
-
-            return _Response(response=self._post(data=body))
-
-    class _Remove(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/X509CertificateStore/Remove')
-
+    class _Remove(WebSdkEndpoint):
         def post(self, owner_dn: str, certificate: str = None, vault_id: int = None):
             body = {
                 'Certificate': certificate,
-                'OwnerDN': owner_dn,
-                'VaultId': vault_id
+                'OwnerDN'    : owner_dn,
+                'VaultId'    : vault_id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                result: secret_store.Result = ApiField(alias='Result', converter=lambda x: secret_store.Result(code=x))
 
-                @property
-                @api_response_property()
-                def result(self):
-                    return SecretStore.Result(self._from_json(key='Result'))
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-            return _Response(response=self._post(data=body))
-
-    class _Retrieve(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/X509CertificateStore/Retrieve')
-
+    class _Retrieve(WebSdkEndpoint):
         def post(self, vault_id: int):
             body = {
                 'VaultId': vault_id
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                certificate_string: str = ApiField(alias='CertificateString')
+                typed_name_values: List[secret_store.TypedNameValues] = ApiField(alias='TypedNameValues', default_factory=list)
+                result: secret_store.Result = ApiField(alias='Result', converter=lambda x: secret_store.Result(code=x))
 
-                @property
-                @api_response_property()
-                def certificate_string(self) -> str:
-                    return self._from_json(key='CertificateString')
-
-                @property
-                @api_response_property()
-                def result(self):
-                    return SecretStore.Result(self._from_json(key='Result'))
-
-                @property
-                @api_response_property()
-                def typed_name_values(self):
-                    return SecretStore.TypedNameValues(self._from_json(key='TypedNameValues'))
-
-            return _Response(response=self._post(data=body))
+            return generate_output(output_cls=Output, response=self._post(data=body))

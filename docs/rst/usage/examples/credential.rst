@@ -21,7 +21,7 @@ Creating & Deleting A Credential
     from pytpp import Authenticate, Features
 
     api = Authenticate(...)
-    features = Features(api=api)
+    features = Features(api)
 
     #### CREATE ####
     credential = features.credential.username_password.create(
@@ -58,7 +58,7 @@ Creating A Google Credential
     from pytpp import Authenticate, Features
 
     api = Authenticate(...)
-    features = Features(api=api)
+    features = Features(api)
 
     with open('google_credential.json', 'r') as f:
         json_content = f.read()

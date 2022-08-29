@@ -1,24 +1,23 @@
+from datetime import datetime
 from typing import List
-from pytpp.api.api_base import API, APIResponse, api_response_property
-from pytpp.properties.response_objects.ssh_certificates import SSHCertificate
-from pytpp.tools.helpers.date_converter import from_date_string
+from pytpp.api.websdk.models import ssh_certificates
+from pytpp.api.api_base import WebSdkEndpoint, WebSdkOutputModel, generate_output, ApiField
 
 
-class _SSHCertificates:
+class _SSHCertificates(WebSdkEndpoint):
     def __init__(self, api_obj):
-        self.CAKeyPair = self._CAKeyPair(api_obj=api_obj)
-        self.Request = self._Request(api_obj=api_obj)
-        self.Retrieve = self._Retrieve(api_obj=api_obj)
-        self.Template = self._Template(api_obj=api_obj)
+        super().__init__(api_obj=api_obj, url='/SSHCertificates')
+        self.CAKeyPair = self._CAKeyPair(api_obj=self._api_obj, url=f'{self._url}/CAKeyPair')
+        self.Request = self._Request(api_obj=self._api_obj, url=f'{self._url}/Request')
+        self.Retrieve = self._Retrieve(api_obj=self._api_obj, url=f'{self._url}/Retrieve')
+        self.Template = self._Template(api_obj=self._api_obj, url=f'{self._url}/Template')
 
-    class _CAKeyPair:
-        def __init__(self, api_obj):
-            self.Create = self._Create(api_obj=api_obj)
+    class _CAKeyPair(WebSdkEndpoint):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.Create = self._Create(api_obj=self._api_obj, url=f'{self._url}/Create')
 
-        class _Create(API):
-            def __init__(self, api_obj):
-                super().__init__(api_obj=api_obj, url='SSHCertificates/CAKeyPair/Create')
-
+        class _Create(WebSdkEndpoint):
             def post(self, name: str, parent_dn: str = None, key_algorithm: str = None,
                      key_storage: str = None, private_key_data: str = None,
                      private_key_passphrase: str = None):
@@ -31,216 +30,89 @@ class _SSHCertificates:
                     'PrivateKeyPassphrase': private_key_passphrase
                 }
 
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    created_on: datetime = ApiField(alias='CreatedOn')
+                    dn: str = ApiField(alias='DN')
+                    fingerprint_sha_256: str = ApiField(alias='FingerprintSHA256')
+                    guid: str = ApiField(alias='Guid')
+                    key_algorithm: str = ApiField(alias='KeyAlgorithm')
+                    key_storage: str = ApiField(alias='KeyStorage')
+                    name: str = ApiField(alias='Name')
+                    processing_details: ssh_certificates.ProcessingDetails = ApiField(alias='ProcessingDetails')
+                    public_key_data: str = ApiField(alias='PublicKeyData')
+                    response: ssh_certificates.Output = ApiField(alias='Response')
 
-                    @property
-                    @api_response_property()
-                    def created_on(self):
-                        return from_date_string(self._from_json(key='CreatedOn'))
+                return generate_output(output_cls=Output, response=self._post(data=body))
 
-                    @property
-                    @api_response_property()
-                    def dn(self) -> str:
-                        return self._from_json(key='DN')
-
-                    @property
-                    @api_response_property()
-                    def fingerprint_sha_256(self) -> str:
-                        return self._from_json(key='FingerprintSHA256')
-
-                    @property
-                    @api_response_property()
-                    def guid(self) -> str:
-                        return self._from_json(key='Guid')
-
-                    @property
-                    @api_response_property()
-                    def key_algorithm(self) -> str:
-                        return self._from_json(key='KeyAlgorithm')
-
-                    @property
-                    @api_response_property()
-                    def key_storage(self) -> str:
-                        return self._from_json(key='KeyStorage')
-
-                    @property
-                    @api_response_property()
-                    def name(self) -> str:
-                        return self._from_json(key='Name')
-
-                    @property
-                    @api_response_property()
-                    def processing_details(self):
-                        return SSHCertificate.ProcessingDetails(self._from_json(key='ProcessingDetails'))
-
-                    @property
-                    @api_response_property()
-                    def public_key_data(self) -> str:
-                        return self._from_json(key='PublicKeyData')
-
-                    @property
-                    @api_response_property()
-                    def response(self):
-                        return SSHCertificate.Response(self._from_json(key='Response'))
-
-                return _Response(response=self._post(data=body))
-
-    class _Request(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSHCertificates/Request')
-
-        def post(self,
-                 ca_dn: str,
-                 key_id: str,
-                 destination_address: str = None,
-                 extensions: str = None,
-                 force_command: str = None,
-                 object_name: str = None,
-                 origin: str = None,
-                 policy_dn: str = None,
-                 principals: List[str] = None,
-                 public_key_data: str = None,
-                 source_addresses: List[str] = None,
-                 validity_period: str = None,
-                 include_certificate_details: bool = False,
-                 include_private_key_data: bool = False,
-                 private_key_passphrase: str = None,
-                 processing_timeout: int = None
-                 ):
+    class _Request(WebSdkEndpoint):
+        def post(self, ca_dn: str, key_id: str, destination_address: str = None, extensions: str = None, force_command: str = None,
+                 object_name: str = None, origin: str = None, policy_dn: str = None, principals: List[str] = None,
+                 public_key_data: str = None, source_addresses: List[str] = None, validity_period: str = None,
+                 include_certificate_details: bool = False, include_private_key_data: bool = False,
+                 private_key_passphrase: str = None, processing_timeout: int = None):
             body = {
-                'CADN'              : ca_dn,
-                'KeyId'             : key_id,
-                'DestinationAddress': destination_address,
-                'Extensions'        : extensions,
-                'ForceCommand'      : force_command,
-                'ObjectName'        : object_name,
-                'Origin'            : origin,
-                'PolicyDN'          : policy_dn,
-                'Principals'        : principals,
-                'PublicKeyData'     : public_key_data,
-                'SourceAddresses'   : source_addresses,
-                'ValidityPeriod'    : validity_period,
+                'CADN'                     : ca_dn,
+                'KeyId'                    : key_id,
+                'DestinationAddress'       : destination_address,
+                'Extensions'               : extensions,
+                'ForceCommand'             : force_command,
+                'ObjectName'               : object_name,
+                'Origin'                   : origin,
+                'PolicyDN'                 : policy_dn,
+                'Principals'               : principals,
+                'PublicKeyData'            : public_key_data,
+                'SourceAddresses'          : source_addresses,
+                'ValidityPeriod'           : validity_period,
                 'IncludeCertificateDetails': include_certificate_details,
-                'IncludePrivateKeyData': include_private_key_data,
-                'PrivateKeyPassphrase': private_key_passphrase,
-                'ProcessingTimeout': processing_timeout
+                'IncludePrivateKeyData'    : include_private_key_data,
+                'PrivateKeyPassphrase'     : private_key_passphrase,
+                'ProcessingTimeout'        : processing_timeout
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                dn: str = ApiField(alias='Dn')
+                guid: str = ApiField(alias='Guid')
+                processing_details: ssh_certificates.ProcessingDetails = ApiField(alias='ProcessingDetails')
+                response: ssh_certificates.Output = ApiField(alias='Response')
 
-                @property
-                @api_response_property()
-                def ssh_certificate_dn(self) -> str:
-                    return self._from_json('DN')
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-                @property
-                @api_response_property()
-                def ssh_certificate_guid(self) -> str:
-                    return self._from_json('Guid')
-
-                @property
-                @api_response_property()
-                def response(self) -> SSHCertificate.Response:
-                    return SSHCertificate.Response(self._from_json('Response'))
-
-                @property
-                @api_response_property()
-                def processing_details(self) -> SSHCertificate.ProcessingDetails:
-                    return SSHCertificate.ProcessingDetails(self._from_json('ProcessingDetails'))
-
-            return _Response(response=self._post(data=body))
-
-    class _Retrieve(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSHCertificates/Retrieve')
-
-        def post(self, certificate_dn: str = None,
-                 certificate_guid: str = None,
-                 include_certificate_details: bool = None,
-                 include_private_key_data: bool = None,
-                 private_key_passphrase: str = None):
+    class _Retrieve(WebSdkEndpoint):
+        def post(self, dn: str = None, guid: str = None, include_certificate_details: bool = None,
+                 include_private_key_data: bool = None, private_key_passphrase: str = None):
             body = {
-                'DN'                       : certificate_dn,
-                'Guid'                     : certificate_guid,
+                'DN'                       : dn,
+                'Guid'                     : guid,
                 'IncludeCertificateDetails': include_certificate_details,
                 'IncludePrivateKeyData'    : include_private_key_data,
                 'PrivateKeyPassphrase'     : private_key_passphrase
             }
 
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                ca_dn: str = ApiField(alias='CADN')
+                ca_guid: str = ApiField(alias='CAGuid')
+                certificate_data: str = ApiField(alias='CertificateData')
+                certificate_details: ssh_certificates.CertificateDetails = ApiField(alias='CertificateDetails')
+                dn: str = ApiField(alias='DN')
+                guid: str = ApiField(alias='Guid')
+                key_id: str = ApiField(alias='KeyID')
+                private_key_data: str = ApiField(alias='PrivateKeyData')
+                processing_details: ssh_certificates.ProcessingDetails = ApiField(alias='ProcessingDetails')
+                public_key_data: str = ApiField(alias='PublicKeyData')
+                request_details: ssh_certificates.RequestDetails = ApiField(alias='RequestDetails')
+                response: ssh_certificates.Output = ApiField(alias='Response')
 
-                @property
-                @api_response_property()
-                def ca_dn(self) -> str:
-                    return self._from_json('CADN')
+            return generate_output(output_cls=Output, response=self._post(data=body))
 
-                @property
-                @api_response_property()
-                def ca_guid(self) -> str:
-                    return self._from_json('CAGuid')
+    class _Template(WebSdkEndpoint):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.Retrieve = self._Retrieve(api_obj=self._api_obj, url=f'{self._url}/Retrieve')
 
-                @property
-                @api_response_property()
-                def certificate_data(self) -> str:
-                    return self._from_json('CertificateData')
-
-                @property
-                @api_response_property()
-                def certificate_details(self) -> SSHCertificate.CertificateDetails:
-                    return SSHCertificate.CertificateDetails(self._from_json('CertificateDetails'))
-
-                @property
-                @api_response_property()
-                def guid(self) -> str:
-                    return self._from_json('Guid')
-
-                @property
-                @api_response_property()
-                def key_id(self) -> str:
-                    return self._from_json('KeyID')
-
-                @property
-                @api_response_property()
-                def private_key_data(self) -> str:
-                    return self._from_json('PrivateKeyData')
-
-                @property
-                @api_response_property()
-                def processing_details(self) -> SSHCertificate.ProcessingDetails:
-                    return SSHCertificate.ProcessingDetails(self._from_json('ProcessingDetails'))
-
-                @property
-                @api_response_property()
-                def public_key_data(self) -> str:
-                    return self._from_json('PublicKeyData')
-
-                @property
-                @api_response_property()
-                def request_details(self) -> SSHCertificate.RequestDetails:
-                    return SSHCertificate.RequestDetails(self._from_json('RequestDetails'))
-
-                @property
-                @api_response_property()
-                def response(self):
-                    return SSHCertificate.Response(self._from_json('Response'))
-
-            return _Response(response=self._post(data=body))
-
-    class _Template(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/SSHCertificates/Template')
-            self.Retrieve = self._Retrieve(api_obj=api_obj)
-
-        class _Retrieve(API):
-            def __init__(self, api_obj):
-                super().__init__(api_obj=api_obj, url='/SSHCertificates/Template/Retrieve')
-                self.PublicKeyData = self._PublicKeyData(api_obj=api_obj)
+        class _Retrieve(WebSdkEndpoint):
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+                self.PublicKeyData = self._PublicKeyData(api_obj=self._api_obj, url=f'{self._url}/PublicKeyData')
 
             def post(self, template_dn: str = None, template_guid: str = None, include_ca_keypair_details: bool = None):
                 body = {
@@ -249,83 +121,30 @@ class _SSHCertificates:
                     'IncludeCAKeyPairDetails': include_ca_keypair_details
                 }
 
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    access_control: ssh_certificates.AccessControl = ApiField(alias='AccessControl')
+                    api_client: ssh_certificates.APIClient = ApiField(alias='APIClient')
+                    ca_keypair_guid: str = ApiField(alias='CAKeyPairGuid')
+                    ca_keypair_dn: str = ApiField(alias='CAKeyPairDN')
+                    ca_keypair: ssh_certificates.CAKeyPair = ApiField(alias='CAKeyPair')
+                    certificate: ssh_certificates.Certificate = ApiField(alias='Certificate')
+                    contacts: List[str] = ApiField(default_factory=list, alias='Contacts')
+                    created_on: datetime = ApiField(alias='CreatedOn')
+                    dn: str = ApiField(alias='DN')
+                    guid: str = ApiField(alias='Guid')
+                    name: str = ApiField(alias='Name')
+                    response: ssh_certificates.Output = ApiField(alias='Response')
 
-                    @property
-                    @api_response_property()
-                    def access_control(self) -> dict:
-                        return self._from_json('AccessControl')
+                return generate_output(output_cls=Output, response=self._post(data=body))
 
-                    @property
-                    @api_response_property()
-                    def api_client(self) -> SSHCertificate.APIClient:
-                        return SSHCertificate.APIClient(self._from_json('APIClient'))
-
-                    @property
-                    @api_response_property()
-                    def ca_keypair_guid(self) -> str:
-                        return self._from_json('CAKeyPairGuid')
-
-                    @property
-                    @api_response_property()
-                    def ca_keypair_dn(self) -> str:
-                        return self._from_json('CAKeyPairDN')
-
-                    @property
-                    @api_response_property()
-                    def ca_keypair(self) -> SSHCertificate.CAKeyPair:
-                        return SSHCertificate.CAKeyPair(self._from_json('CAKeyPair'))
-
-                    @property
-                    @api_response_property()
-                    def certificate(self) -> SSHCertificate.Certificate:
-                        return SSHCertificate.Certificate(self._from_json('Certificate'))
-
-                    @property
-                    @api_response_property()
-                    def contacts(self) -> List[str]:
-                        return self._from_json('Contacts')
-
-                    @property
-                    @api_response_property()
-                    def created_on(self) -> str:
-                        return self._from_json('CreatedOn')
-
-                    @property
-                    @api_response_property()
-                    def guid(self) -> str:
-                        return self._from_json('Guid')
-
-                    @property
-                    @api_response_property()
-                    def name(self) -> str:
-                        return self._from_json('Name')
-
-                    @property
-                    @api_response_property()
-                    def response(self):
-                        return SSHCertificate.Response(self._from_json('Response'))
-
-                return _Response(response=self._post(data=body))
-
-            class _PublicKeyData(API):
-                def __init__(self, api_obj):
-                    super().__init__(api_obj=api_obj, url='SSHCertificates/Template/Retrieve/PublicKeyData')
-
+            class _PublicKeyData(WebSdkEndpoint):
                 def get(self, template_dn: str = None, template_guid: str = None):
                     params = {
                         'DN'  : template_dn,
                         'Guid': template_guid,
                     }
 
-                    class _Response(APIResponse):
-                        def __init__(self, response):
-                            super().__init__(response=response)
+                    class Output(WebSdkOutputModel):
+                        response: ssh_certificates.Output = ApiField(alias='Response')
 
-                        @property
-                        def response(self) -> str:
-                            return self.response
-
-                    return _Response(response=self._get(params=params))
+                    return generate_output(output_cls=Output, response=self._get(params=params))

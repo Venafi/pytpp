@@ -1,77 +1,62 @@
-from pytpp.api.api_base import API, APIResponse, api_response_property
-from pytpp.properties.response_objects.flow import Flow
-from pytpp.properties.response_objects.codesign import CodeSign
+from pytpp.api.websdk.models import codesign, flow
+from pytpp.api.api_base import WebSdkEndpoint, WebSdkOutputModel, generate_output, ApiField
 from typing import List
 
 
-class _Flow:
+class _Flow(WebSdkEndpoint):
     def __init__(self, api_obj):
-        self.Actions = self._Actions(api_obj=api_obj)
-        self.Tickets = self._Tickets(api_obj=api_obj)
+        super().__init__(api_obj=api_obj, url='/Flow')
+        self.Actions = self._Actions(api_obj=api_obj, url=f'{self._url}/Actions')
+        self.Tickets = self._Tickets(api_obj=api_obj, url=f'{self._url}/Tickets')
 
-    class _Actions:
-        def __init__(self, api_obj):
-            self.CodeSign = self._CodeSign(api_obj=api_obj)
+    class _Actions(WebSdkEndpoint):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.CodeSign = self._CodeSign(api_obj=self._api_obj, url=f'{self._url}/CodeSign')
 
-        class _CodeSign:
-            def __init__(self, api_obj):
-                self.PreQualify = self._PreQualify(api_obj=api_obj)
+        class _CodeSign(WebSdkEndpoint):
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+                self.PreQualify = self._PreQualify(api_obj=self._api_obj, url=f'{self._url}/PreQualify')
 
-            class _PreQualify:
-                def __init__(self, api_obj):
-                    self.Create = self._Create(api_obj=api_obj)
+            class _PreQualify(WebSdkEndpoint):
+                def __init__(self, *args, **kwargs):
+                    super().__init__(*args, **kwargs)
+                    self.Create = self._Create(api_obj=self._api_obj, url=f'{self._url}/Create')
 
-                class _Create(API):
-                    def __init__(self, api_obj):
-                        super().__init__(api_obj=api_obj, url='Flow/Actions/CodeSign/PreQualify/Create')
-
+                class _Create(WebSdkEndpoint):
                     def post(self, comment: str, data: str, dn: str, user: str, hours: int = None,
                              single_use: bool = None):
                         body = {
-                            'Comment': comment,
-                            'Data': data,
-                            'Dn': dn,
-                            'Hours': hours,
+                            'Comment'  : comment,
+                            'Data'     : data,
+                            'Dn'       : dn,
+                            'Hours'    : hours,
                             'SingleUse': single_use,
-                            'User': user
+                            'User'     : user
                         }
 
-                        class _Response(APIResponse):
-                            def __init__(self, response):
-                                super().__init__(response=response)
+                        class Output(WebSdkOutputModel):
+                            result: codesign.ResultCode = ApiField(
+                                alias='Result', converter=lambda x: codesign.ResultCode(code=x)
+                            )
+                            success: bool = ApiField(alias='Success')
 
-                            @property
-                            @api_response_property()
-                            def error(self) -> str:
-                                return self._from_json(key='Error')
+                        return generate_output(output_cls=Output, response=self._post(data=body))
 
-                            @property
-                            @api_response_property()
-                            def result(self):
-                                return CodeSign.ResultCode(self._from_json(key='Result'))
+    class _Tickets(WebSdkEndpoint):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.Approve = self._Approve(api_obj=self._api_obj, url=f'{self._url}/Approve')
+            self.Count = self._Count(api_obj=self._api_obj, url=f'{self._url}/Count')
+            self.CountApproved = self._CountApproved(api_obj=self._api_obj, url=f'{self._url}/CountApproved')
+            self.Enumerate = self._Enumerate(api_obj=self._api_obj, url=f'{self._url}/Enumerate')
+            self.EnumerateApproved = self._EnumerateApproved(api_obj=self._api_obj, url=f'{self._url}/EnumerateApproved')
+            self.Load = self._Load(api_obj=self._api_obj, url=f'{self._url}/Load')
+            self.Reject = self._Reject(api_obj=self._api_obj, url=f'{self._url}/Reject')
+            self.Update = self._Update(api_obj=self._api_obj, url=f'{self._url}/Update')
 
-                            @property
-                            @api_response_property()
-                            def success(self) -> bool:
-                                return self._from_json(key='Success')
-
-                        return _Response(response=self._post(data=body))
-
-    class _Tickets:
-        def __init__(self, api_obj):
-            self.Approve = self._Approve(api_obj=api_obj)
-            self.Count = self._Count(api_obj=api_obj)
-            self.CountApproved = self._CountApproved(api_obj=api_obj)
-            self.Enumerate = self._Enumerate(api_obj=api_obj)
-            self.EnumerateApproved = self._EnumerateApproved(api_obj=api_obj)
-            self.Load = self._Load(api_obj=api_obj)
-            self.Reject = self._Reject(api_obj=api_obj)
-            self.Update = self._Update(api_obj=api_obj)
-
-        class _Approve(API):
-            def __init__(self, api_obj):
-                super().__init__(api_obj=api_obj, url='/Flow/Tickets/Approve')
-
+        class _Approve(WebSdkEndpoint):
             def post(self, ticket_id: int = None, ticket_ids: List[int] = None, expires: str = None,
                      comment: str = None, not_before: str = None, use_count: int = None):
                 body = {
@@ -83,78 +68,31 @@ class _Flow:
                     'useCount' : use_count
                 }
 
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    result: flow.Result = ApiField(alias='Result', converter=lambda x: flow.Result(code=x))
+                    message: str = ApiField(alias='Message')
 
-                    @property
-                    @api_response_property()
-                    def result(self):
-                        return Flow.Result(self._from_json(key='Result'))
+                return generate_output(output_cls=Output, response=self._post(data=body))
 
-                    @property
-                    @api_response_property()
-                    def message(self) -> str:
-                        return self._from_json(key='Message')
-
-                return _Response(response=self._post(data=body))
-
-        class _Count(API):
-            def __init__(self, api_obj):
-                super().__init__(api_obj=api_obj, url='/Flow/Tickets/Count')
-
+        class _Count(WebSdkEndpoint):
             def post(self):
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    count: int = ApiField(alias='Count')
+                    message: str = ApiField(alias='Message')
+                    result: flow.Result = ApiField(alias='Result', converter=lambda x: flow.Result(code=x))
 
-                    @property
-                    @api_response_property()
-                    def count(self) -> int:
-                        return self._from_json(key='Count')
+                return generate_output(output_cls=Output, response=self._post(data={}))
 
-                    @property
-                    @api_response_property()
-                    def message(self) -> str:
-                        return self._from_json(key='Message')
-
-                    @property
-                    @api_response_property()
-                    def result(self):
-                        return Flow.Result(self._from_json(key='Result'))
-
-                return _Response(response=self._post(data={}))
-
-        class _CountApproved(API):
-            def __init__(self, api_obj):
-                super().__init__(api_obj=api_obj, url='/Flow/Tickets/CountApproved')
-
+        class _CountApproved(WebSdkEndpoint):
             def post(self):
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    count: int = ApiField(alias='Count')
+                    message: str = ApiField(alias='Message')
+                    result: flow.Result = ApiField(alias='Result', converter=lambda x: flow.Result(code=x))
 
-                    @property
-                    @api_response_property()
-                    def count(self) -> int:
-                        return self._from_json(key='Count')
+                return generate_output(output_cls=Output, response=self._post(data={}))
 
-                    @property
-                    @api_response_property()
-                    def message(self) -> str:
-                        return self._from_json(key='Message')
-
-                    @property
-                    @api_response_property()
-                    def result(self):
-                        return Flow.Result(self._from_json(key='Result'))
-
-                return _Response(response=self._post(data={}))
-
-        class _Enumerate(API):
-            def __init__(self, api_obj):
-                super().__init__(api_obj=api_obj, url='/Flow/Tickets/Enumerate')
-
+        class _Enumerate(WebSdkEndpoint):
             def post(self, product_code: int = None, ticket_page_size: int = None, ticket_page_number: int = None):
                 body = {
                     'ProductCode'     : product_code,
@@ -162,31 +100,14 @@ class _Flow:
                     'TicketPageNumber': ticket_page_number
                 }
 
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    result: flow.Result = ApiField(alias='Result', converter=lambda x: flow.Result(code=x))
+                    message: str = ApiField(alias='Message')
+                    tickets: List[flow.Ticket] = ApiField(alias='Tickets', default_factory=list)
 
-                    @property
-                    @api_response_property()
-                    def result(self):
-                        return Flow.Result(self._from_json(key='Result'))
+                return generate_output(output_cls=Output, response=self._post(data=body))
 
-                    @property
-                    @api_response_property()
-                    def message(self) -> str:
-                        return self._from_json(key='Message')
-
-                    @property
-                    @api_response_property()
-                    def tickets(self):
-                        return [Flow.Ticket(ticket) for ticket in self._from_json(key='Tickets')]
-
-                return _Response(response=self._post(data=body))
-
-        class _EnumerateApproved(API):
-            def __init__(self, api_obj):
-                super().__init__(api_obj=api_obj, url='/Flow/Tickets/EnumerateApproved')
-
+        class _EnumerateApproved(WebSdkEndpoint):
             def post(self, product_code: int = None, ticket_page_size: int = None, ticket_page_number: int = None):
                 body = {
                     'ProductCode'     : product_code,
@@ -194,62 +115,28 @@ class _Flow:
                     'TicketPageNumber': ticket_page_number
                 }
 
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    result: flow.Result = ApiField(alias='Result', converter=lambda x: flow.Result(code=x))
+                    message: str = ApiField(alias='Message')
+                    tickets: List[flow.Ticket] = ApiField(alias='Tickets', default_factory=list)
 
-                    @property
-                    @api_response_property()
-                    def result(self):
-                        return Flow.Result(self._from_json(key='Result'))
+                return generate_output(output_cls=Output, response=self._post(data=body))
 
-                    @property
-                    @api_response_property()
-                    def message(self) -> str:
-                        return self._from_json(key='Message')
-
-                    @property
-                    @api_response_property()
-                    def tickets(self):
-                        return [Flow.Ticket(ticket) for ticket in self._from_json(key='Tickets')]
-
-                return _Response(response=self._post(data=body))
-
-        class _Load(API):
-            def __init__(self, api_obj):
-                super().__init__(api_obj=api_obj, url='/Flow/Tickets/Load')
-
+        class _Load(WebSdkEndpoint):
             def post(self, ticket_id: int = None, ticket_ids: List[int] = None):
                 body = {
                     'TicketId' : ticket_id,
                     'TicketIds': ticket_ids
                 }
 
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    result: flow.Result = ApiField(alias='Result', converter=lambda x: flow.Result(code=x))
+                    message: str = ApiField(alias='Message')
+                    tickets: List[flow.Ticket] = ApiField(alias='Tickets', default_factory=list)
 
-                    @property
-                    @api_response_property()
-                    def result(self):
-                        return Flow.Result(self._from_json(key='Result'))
+                return generate_output(output_cls=Output, response=self._post(data=body))
 
-                    @property
-                    @api_response_property()
-                    def message(self) -> str:
-                        return self._from_json(key='Message')
-
-                    @property
-                    @api_response_property()
-                    def tickets(self):
-                        return [Flow.Ticket(ticket) for ticket in self._from_json(key='Tickets')]
-
-                return _Response(response=self._post(data=body))
-
-        class _Reject(API):
-            def __init__(self, api_obj):
-                super().__init__(api_obj=api_obj, url='/Flow/Tickets/Reject')
-
+        class _Reject(WebSdkEndpoint):
             def post(self, comment: str, rejection_level: int, ticket_id: int = None,
                      ticket_ids: List[int] = None):
                 body = {
@@ -259,31 +146,14 @@ class _Flow:
                     'TicketIds'     : ticket_ids
                 }
 
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    invalid_ticket_ids: List[int] = ApiField(default_factory=list, alias='InvalidTicketIds')
+                    message: str = ApiField(alias='Message')
+                    result: flow.Result = ApiField(alias='Result', converter=lambda x: flow.Result(code=x))
 
-                    @property
-                    @api_response_property()
-                    def invalid_ticket_ids(self) -> List[int]:
-                        return self._from_json(key='InvalidTicketIds')
+                return generate_output(output_cls=Output, response=self._post(data=body))
 
-                    @property
-                    @api_response_property()
-                    def message(self) -> str:
-                        return self._from_json(key='Message')
-
-                    @property
-                    @api_response_property()
-                    def result(self):
-                        return Flow.Result(self._from_json(key='Result'))
-
-                return _Response(response=self._post(data=body))
-
-        class _Update(API):
-            def __init__(self, api_obj):
-                super().__init__(api_obj=api_obj, url='/Flow/Tickets/Update')
-
+        class _Update(WebSdkEndpoint):
             def post(self, ticket_id: int = None, ticket_ids: List[int] = None, expires: str = None,
                      comment: str = None, not_before: str = None, use_count: int = None):
                 body = {
@@ -295,18 +165,8 @@ class _Flow:
                     'useCount' : use_count
                 }
 
-                class _Response(APIResponse):
-                    def __init__(self, response):
-                        super().__init__(response=response)
+                class Output(WebSdkOutputModel):
+                    result: flow.Result = ApiField(alias='Result', converter=lambda x: flow.Result(code=x))
+                    message: str = ApiField(alias='Message')
 
-                    @property
-                    @api_response_property()
-                    def result(self):
-                        return Flow.Result(self._from_json(key='Result'))
-
-                    @property
-                    @api_response_property()
-                    def message(self) -> str:
-                        return self._from_json(key='Message')
-
-                return _Response(response=self._post(data=body))
+                return generate_output(output_cls=Output, response=self._post(data=body))

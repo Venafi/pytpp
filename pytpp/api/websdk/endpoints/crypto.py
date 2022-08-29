@@ -1,40 +1,22 @@
 from typing import List
-from pytpp.api.api_base import API, APIResponse, api_response_property
+from pytpp.api.api_base import WebSdkEndpoint, WebSdkOutputModel, generate_output, ApiField
 
 
 class _Crypto:
     def __init__(self, api_obj):
-        self.AvailableKeys = self._AvailableKeys(api_obj=api_obj)
-        self.DefaultKey = self._DefaultKey(api_obj=api_obj)
+        self.AvailableKeys = self._AvailableKeys(api_obj=api_obj, url='/Crypto/AvailableKeys')
+        self.DefaultKey = self._DefaultKey(api_obj=api_obj, url='/Crypto/DefaultKey')
 
-    class _AvailableKeys(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Crypto/AvailableKeys')
-
+    class _AvailableKeys(WebSdkEndpoint):
         def get(self):
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                keynames: List[str] = ApiField(alias='Keynames', default_factory=list)
 
-                @property
-                @api_response_property()
-                def keynames(self) -> List[str]:
-                    return self._from_json('Keynames')
+            return generate_output(response=self._get(), output_cls=Output)
 
-            return _Response(response=self._get())
-
-    class _DefaultKey(API):
-        def __init__(self, api_obj):
-            super().__init__(api_obj=api_obj, url='/Crypto/DefaultKey')
-
+    class _DefaultKey(WebSdkEndpoint):
         def get(self):
-            class _Response(APIResponse):
-                def __init__(self, response):
-                    super().__init__(response=response)
+            class Output(WebSdkOutputModel):
+                default_key: str = ApiField(alias='DefaultKey')
 
-                @property
-                @api_response_property()
-                def default_key(self) -> str:
-                    return self._from_json('DefaultKey')
-
-            return _Response(response=self._get())
+            return generate_output(response=self._get(), output_cls=Output)

@@ -4,15 +4,16 @@ from pytpp.features.definitions.classes import Classes
 from pytpp.attributes.device import DeviceAttributes
 from pytpp.attributes.jump_server import JumpServerAttributes
 from typing import Union, List, TYPE_CHECKING
+
 if TYPE_CHECKING:
-    from pytpp.tools.vtypes import Config, Identity
+    from pytpp.api.websdk.models import config, identity as ident
 
 
 class _DeviceBase(FeatureBase):
     def __init__(self, api):
         super().__init__(api=api)
 
-    def delete(self, device: 'Union[Config.Object, str]'):
+    def delete(self, device: 'Union[config.Object, str]'):
         """
         Deletes the device object specified.
 
@@ -28,11 +29,11 @@ class Device(_DeviceBase):
     def __init__(self, api):
         super().__init__(api=api)
 
-    def create(self, name: str, parent_folder: 'Union[Config.Object, str]', description: 'str' = None,
-               contacts: 'List[Union[Identity.Identity, str]]' = None, address: 'str' = None, agent_provisioning_mode: 'bool' = None,
-               concurrent_connection_limit: 'int' = None, device_credential: 'Union[Config.Object, str]' = None,
-               temp_directory: 'str' = None, os_type: 'str' = None, jump_server: 'Union[Config.Object, str]' = None,
-               use_sudo: 'bool' = None, sudo_credential: 'Union[Config.Object, str]' = None, enforce_host_key: 'bool' = None,
+    def create(self, name: str, parent_folder: 'Union[config.Object, str]', description: 'str' = None,
+               contacts: 'List[Union[ident.Identity, str]]' = None, address: 'str' = None, agent_provisioning_mode: 'bool' = None,
+               concurrent_connection_limit: 'int' = None, device_credential: 'Union[config.Object, str]' = None,
+               temp_directory: 'str' = None, os_type: 'str' = None, jump_server: 'Union[config.Object, str]' = None,
+               use_sudo: 'bool' = None, sudo_credential: 'Union[config.Object, str]' = None, enforce_host_key: 'bool' = None,
                attributes: dict = None, get_if_already_exists: bool = True):
         """
         Args:
@@ -45,7 +46,7 @@ class Device(_DeviceBase):
             concurrent_connection_limit: Concurrent connection limit to this device.
             device_credential: :ref:`config_object` or :ref:`dn` of the device credential.
             temp_directory: Temp directory.
-            os_type: Operating Sytem type.
+            os_type: Operating System type.
             jump_server: :ref:`config_object` or :ref:`dn` of the jump server.
             use_sudo: Use sudo.
             sudo_credential: :ref:`config_object` or :ref:`dn` of the sudo user credential.
@@ -57,29 +58,31 @@ class Device(_DeviceBase):
             :ref:`config_object` of the device object.
         """
         dev_attrs = {
-            DeviceAttributes.description: description,
-            DeviceAttributes.contact: [self._get_prefixed_universal(c) for c in contacts] if contacts else None,
-            DeviceAttributes.host: address,
-            DeviceAttributes.connection_method: {True: "Agent"}.get(agent_provisioning_mode),
+            DeviceAttributes.description                : description,
+            DeviceAttributes.contact                    : [self._get_prefixed_universal(c) for c in contacts] if contacts else None,
+            DeviceAttributes.host                       : address,
+            DeviceAttributes.connection_method          : {
+                True: "Agent"
+            }.get(agent_provisioning_mode),
             DeviceAttributes.concurrent_connection_limit: concurrent_connection_limit,
-            DeviceAttributes.credential: self._get_dn(device_credential) if device_credential else None,
-            DeviceAttributes.temp_directory: temp_directory,
-            DeviceAttributes.remote_server_type: os_type,
-            DeviceAttributes.jump_server_dn: self._get_dn(jump_server) if jump_server else None,
-            DeviceAttributes.global_sudo: {True: "1", False: "0"}.get(use_sudo),
-            DeviceAttributes.secondary_credential: self._get_dn(sudo_credential) if sudo_credential else None,
-            DeviceAttributes.enforce_known_host: {True: "1", False: "0"}.get(enforce_host_key)
+            DeviceAttributes.credential                 : self._get_dn(device_credential) if device_credential else None,
+            DeviceAttributes.temp_directory             : temp_directory,
+            DeviceAttributes.remote_server_type         : os_type,
+            DeviceAttributes.jump_server_dn             : self._get_dn(jump_server) if jump_server else None,
+            DeviceAttributes.global_sudo                : {
+                True : "1",
+                False: "0"
+            }.get(use_sudo),
+            DeviceAttributes.secondary_credential       : self._get_dn(sudo_credential) if sudo_credential else None,
+            DeviceAttributes.enforce_known_host         : {
+                True : "1",
+                False: "0"
+            }.get(enforce_host_key)
         }
         if attributes:
             dev_attrs.update(attributes)
 
-        return self._config_create(
-            name=name,
-            parent_folder_dn=self._get_dn(parent_folder),
-            config_class=Classes.device,
-            attributes=dev_attrs,
-            get_if_already_exists=get_if_already_exists
-        )
+        return self._config_create(name=name, parent_folder_dn=self._get_dn(parent_folder), config_class=Classes.device, attributes=dev_attrs, get_if_already_exists=get_if_already_exists)
 
     def get(self, device_dn: str, raise_error_if_not_exists: bool = True):
         """
@@ -95,7 +98,7 @@ class Device(_DeviceBase):
             raise_error_if_not_exists=raise_error_if_not_exists
         )
 
-    def scan_for_ssh_keys(self, device: 'Union[Config.Object, str]'):
+    def scan_for_ssh_keys(self, device: 'Union[config.Object, str]'):
         """
         Submits Agentless discovery work for the given device.
 
@@ -105,8 +108,10 @@ class Device(_DeviceBase):
         dn = self._get_dn(device)
         result = self._api.websdk.Config.Write.post(
             object_dn=dn,
-            attribute_data=[{"Name": "Agentless Discovery To Do",
-                            "Value": "1"}]
+            attribute_data=[{
+                                "Name" : "Agentless Discovery To Do",
+                                "Value": "1"
+                            }]
         ).result
 
         if result.code != 1:
@@ -118,11 +123,11 @@ class JumpServer(_DeviceBase):
     def __init__(self, api):
         super().__init__(api=api)
 
-    def create(self, name: str, parent_folder: 'Union[Config.Object, str]', description: 'str' = None,
-               contacts: 'List[Union[Identity.Identity, str]]' = None, address: 'str' = None, port: 'int' = None,
-               concurrent_connection_limit: 'int' = None, device_credential: 'Union[Config.Object, str]' = None,
+    def create(self, name: str, parent_folder: 'Union[config.Object, str]', description: 'str' = None,
+               contacts: 'List[Union[ident.Identity, str]]' = None, address: 'str' = None, port: 'int' = None,
+               concurrent_connection_limit: 'int' = None, device_credential: 'Union[config.Object, str]' = None,
                temp_directory: 'str' = None, os_type: 'str' = None, ssh_version: 'str' = None, ssh_syntax: 'str' = None,
-               use_sudo: 'bool' = None, sudo_credential: 'Union[Config.Object, str]' = None,
+               use_sudo: 'bool' = None, sudo_credential: 'Union[config.Object, str]' = None,
                enforce_host_key: 'bool' = None, attributes: dict = None, get_if_already_exists: bool = True):
         """
         Args:
@@ -135,7 +140,7 @@ class JumpServer(_DeviceBase):
             concurrent_connection_limit: Concurrent connection limit to this device.
             device_credential: :ref:`config_object` or :ref:`dn` of the device credential.
             temp_directory: Temp directory.
-            os_type: Operating Sytem type.
+            os_type: Operating System type.
             ssh_version: SSH version.
             ssh_syntax: SSH syntax.
             use_sudo: Use sudo.
@@ -158,20 +163,20 @@ class JumpServer(_DeviceBase):
             JumpServerAttributes.remote_server_type         : os_type,
             JumpServerAttributes.ssh_version                : ssh_version,
             JumpServerAttributes.ssh_connection_string      : ssh_syntax,
-            JumpServerAttributes.global_sudo                : {True: "1", False: "0"}.get(use_sudo),
+            JumpServerAttributes.global_sudo                : {
+                True : "1",
+                False: "0"
+            }.get(use_sudo),
             JumpServerAttributes.secondary_credential       : self._get_dn(sudo_credential) if sudo_credential else None,
-            JumpServerAttributes.enforce_known_host         : {True: "1", False: "0"}.get(enforce_host_key)
+            JumpServerAttributes.enforce_known_host         : {
+                True : "1",
+                False: "0"
+            }.get(enforce_host_key)
         }
         if attributes:
             dev_attrs.update(attributes)
 
-        return self._config_create(
-            name=name,
-            parent_folder_dn=self._get_dn(parent_folder),
-            config_class=Classes.jump_server,
-            attributes=dev_attrs,
-            get_if_already_exists=get_if_already_exists
-        )
+        return self._config_create(name=name, parent_folder_dn=self._get_dn(parent_folder), config_class=Classes.jump_server, attributes=dev_attrs, get_if_already_exists=get_if_already_exists)
 
     def get(self, device_dn: str, raise_error_if_not_exists: bool = True):
         """
@@ -187,7 +192,7 @@ class JumpServer(_DeviceBase):
             raise_error_if_not_exists=raise_error_if_not_exists
         )
 
-    def scan_for_ssh_keys(self, device: 'Union[Config.Object, str]'):
+    def scan_for_ssh_keys(self, device: 'Union[config.Object, str]'):
         """
         Submits Agentless discovery work for the given device.
 
@@ -198,9 +203,9 @@ class JumpServer(_DeviceBase):
         result = self._api.websdk.Config.Write.post(
             object_dn=dn,
             attribute_data=[{
-                                "Name" : "Agentless Discovery To Do",
-                                "Value": "1"
-                            }]
+                "Name" : "Agentless Discovery To Do",
+                "Value": "1"
+            }]
         ).result
 
         if result.code != 1:

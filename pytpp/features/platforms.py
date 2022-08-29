@@ -33,7 +33,7 @@ class _PlatformComponentBase(FeatureBase):
         for engine_name in engine_names:
             response = self._api.websdk.Config.Write.post(
                 object_dn=self._module_dn(engine_name=engine_name),
-                attribute_data=self._name_value_list(attributes, keep_list_values=True)
+                attribute_data=self._name_value_list(attributes)
             )
             response.assert_valid_response()
 
