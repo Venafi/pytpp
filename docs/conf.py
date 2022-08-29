@@ -19,11 +19,10 @@ version = __version__
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    # 'sphinx.ext.autodoc',
+    'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
     'sphinx.ext.inheritance_diagram',
     'sphinx_rtd_dark_mode',
-    'sphinx-pydantic',
     'sphinxcontrib.autodoc_pydantic'
 ]
 
@@ -73,11 +72,11 @@ autodoc_typehints = 'description'
 napoleon_use_ivar = True
 napoleon_attr_annotations = True
 autodoc_unqualified_typehints = True
+
 autodoc_pydantic_model_show_json = False
 autodoc_pydantic_settings_show_json = False
 autodoc_pydantic_validator_list_fields = False
 autodoc_pydantic_field_list_validators = False
-
 autodoc_pydantic_model_show_field_summary = False
 autodoc_pydantic_model_show_validator_members = False
 autodoc_pydantic_model_show_config_summary = False
