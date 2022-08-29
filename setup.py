@@ -31,6 +31,7 @@ DOC_REQUIREMENTS = [
     'sphinxcontrib-napoleon~=0.7',
     'sphinx-rtd-theme~=1.0.0',
     'sphinx-rtd-dark-mode~=1.2.4',
+    'autodoc-pydantic>=1.7.2'
 ]
 
 if __name__ == '__main__':
