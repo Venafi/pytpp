@@ -139,7 +139,7 @@ class AdaptableWorkflow(_WorkflowBase):
             object_dn=workflow.dn,
             attribute_name=AdaptableWorkflowAttributes.powershell_script,
             value=powershell_script_name
-        ).assert_valid_response()
+        )
 
         vault_id = self._api.websdk.SecretStore.Add.post(
             base_64_data=self._calculate_hash(powershell_script_content),
@@ -153,7 +153,7 @@ class AdaptableWorkflow(_WorkflowBase):
             object_dn=workflow.dn,
             attribute_name=AdaptableWorkflowAttributes.powershell_script_hash_vault_id,
             values=[vault_id]
-        ).assert_valid_response()
+        )
 
         return workflow
 
@@ -194,12 +194,11 @@ class ReasonCode(FeatureBase):
             * **name** *(str)* - Name of the result code.
             * **description** *(str)* - Purpose of the result code.
         """
-        result = self._api.websdk.Config.AddValue.post(
+        self._api.websdk.Config.AddValue.post(
             object_dn=self._workflow_dn,
             attribute_name=WorkflowTicketAttributes.approval_reason,
             value=f'{code},{name},{description}'
         )
-        result.assert_valid_response()
 
         return RC(name=name, code=code, description=description)
 
@@ -224,12 +223,11 @@ class ReasonCode(FeatureBase):
         search_string = f'{code},{name}' if name else f'{code}'
         for rc in result_codes:
             if search_string in rc:
-                result = self._api.websdk.Config.RemoveDnValue.post(
+                self._api.websdk.Config.RemoveDnValue.post(
                     object_dn=self._workflow_dn,
                     attribute_name=WorkflowTicketAttributes.approval_reason,
                     value=rc
                 )
-                result.assert_valid_response()
 
 
 @feature('Standard Workflow')

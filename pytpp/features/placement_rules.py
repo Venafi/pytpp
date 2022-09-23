@@ -232,8 +232,7 @@ class PlacementRules(FeatureBase):
             rule: :ref:`config_object` or name of the placement rule.
         """
         rule_dn = self._get_dn(rule, parent_dn=self._layout_rules_dn)
-        response = self._config_delete(object_dn=rule_dn)
-        response.assert_valid_response()
+        self._config_delete(object_dn=rule_dn)
 
     def update(self, rule: 'Union[config.Object, str]', conditions: List[str] = None, device_location: str = None,
                certificate_location: str = None, rule_type: str = 'X509 Certificate'):
@@ -287,14 +286,13 @@ class PlacementRules(FeatureBase):
             certificate_location=new_certificate_dn,
             rule_type=rule_type
         )
-        response = self._api.websdk.Config.WriteDn.post(
+        self._api.websdk.Config.WriteDn.post(
             object_dn=rule_dn,
             attribute_name=LayoutRuleBaseAttributes.rule,
             values=[
                 rule_attr
             ]
         )
-        response.assert_valid_response()
 
     def get(self, name: str, raise_error_if_not_exists: bool = True):
         """

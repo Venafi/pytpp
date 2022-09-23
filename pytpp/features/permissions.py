@@ -1,3 +1,4 @@
+from pytpp.api.api_base import InvalidResponseError
 from pytpp.features.bases.feature_base import FeatureBase, feature
 from pytpp.api.websdk.models import permissions
 from typing import Union, TYPE_CHECKING
@@ -38,8 +39,7 @@ class Permissions(FeatureBase):
         else:
             endpoint = self._api.websdk.Permissions.Object.Guid(obj.guid).Ptype().Principal(identity.universal)
 
-        result = endpoint.delete()
-        result.assert_valid_response()
+        endpoint.delete()
 
     def get_effective(self, obj: 'Union[config.Object, str]', identity: 'Union[ident.Identity, str]'):
         """
@@ -61,8 +61,11 @@ class Permissions(FeatureBase):
         else:
             endpoint = self._api.websdk.Permissions.Object.Guid(obj.guid).Ptype().Principal(identity.universal)
 
-        result = endpoint.Effective.get()
-        return result.effective_permissions if result.is_valid_response() else permissions.Permissions()
+        try:
+            result = endpoint.Effective.get()
+            return result.effective_permissions
+        except InvalidResponseError:
+            return permissions.Permissions()
 
     def get_explicit(self, obj: 'Union[config.Object, str]', identity: 'Union[ident.Identity, str]'):
         """
@@ -86,8 +89,11 @@ class Permissions(FeatureBase):
         else:
             endpoint = self._api.websdk.Permissions.Object.Guid(obj.guid).Ptype().Principal(identity.universal)
 
-        result = endpoint.get()
-        return result.explicit_permissions if result.is_valid_response() else permissions.Permissions()
+        try:
+            result = endpoint.get()
+            return result.explicit_permissions
+        except InvalidResponseError:
+            return permissions.Permissions()
 
     def get_implicit(self, obj: 'Union[config.Object, str]', identity: 'Union[ident.Identity, str]'):
         """
@@ -108,8 +114,11 @@ class Permissions(FeatureBase):
         else:
             endpoint = self._api.websdk.Permissions.Object.Guid(obj.guid).Ptype().Principal(identity.universal)
 
-        result = endpoint.get()
-        return result.implicit_permissions if result.is_valid_response() else permissions.Permissions()
+        try:
+            result = endpoint.get()
+            return result.implicit_permissions
+        except InvalidResponseError:
+            return permissions.Permissions()
 
     def list_identities(self, obj: 'Union[config.Object, str]'):
         """
@@ -197,5 +206,4 @@ class Permissions(FeatureBase):
             ).items()
         }
 
-        result = method(**new_permissions)
-        result.assert_valid_response()
+        method(**new_permissions)

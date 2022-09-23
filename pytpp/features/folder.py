@@ -24,13 +24,11 @@ class Folder(FeatureBase):
         """
         folder_dn = self._get_dn(folder)
         workflow_dn = self._get_dn(workflow)
-        result = self._api.websdk.Config.AddValue.post(
+        self._api.websdk.Config.AddValue.post(
             object_dn=folder_dn,
             attribute_name=PolicyAttributes.workflow,
             value=workflow_dn
         )
-
-        result.assert_valid_response()
 
     def block_workflow(self, folder: 'Union[config.Object, str]', workflow: 'Union[config.Object, str]'):
         """
@@ -43,13 +41,12 @@ class Folder(FeatureBase):
         """
         folder_dn = self._get_dn(folder)
         workflow_dn = self._get_dn(workflow)
-        result = self._api.websdk.Config.AddValue.post(
+        self._api.websdk.Config.AddValue.post(
             object_dn=folder_dn,
             attribute_name=PolicyAttributes.workflow_block,
             value=workflow_dn
         )
 
-        result.assert_valid_response()
 
     def clear_policy(self, folder: 'Union[config.Object, str]', class_name: str, attributes: Union[dict, List[str]]):
         """
@@ -250,8 +247,7 @@ class Folder(FeatureBase):
         if append_engines:
             current_engines = self._api.websdk.ProcessingEngines.Folder.Guid(folder_guid).get().engines
             engine_guids.extend([engine.engine_guid for engine in current_engines])
-        result = self._api.websdk.ProcessingEngines.Folder.Guid(folder_guid).put(engine_guids=engine_guids)
-        result.assert_valid_response()
+        self._api.websdk.ProcessingEngines.Folder.Guid(folder_guid).put(engine_guids=engine_guids)
 
     def read_policy(self, folder: 'Union[config.Object, str]', class_name: str, attribute_name: str):
         """
@@ -291,13 +287,11 @@ class Folder(FeatureBase):
         """
         folder_dn = self._get_dn(folder)
         workflow_dn = self._get_dn(workflow)
-        result = self._api.websdk.Config.RemoveDnValue.post(
+        self._api.websdk.Config.RemoveDnValue.post(
             object_dn=folder_dn,
             attribute_name=PolicyAttributes.workflow,
             value=workflow_dn
         )
-
-        result.assert_valid_response()
 
     def remove_blocked_workflow(self, folder: 'Union[config.Object, str]', workflow: 'Union[config.Object, str]'):
         """
@@ -309,13 +303,11 @@ class Folder(FeatureBase):
         """
         folder_dn = self._get_dn(folder)
         workflow_dn = self._get_dn(workflow)
-        result = self._api.websdk.Config.RemoveDnValue.post(
+        self._api.websdk.Config.RemoveDnValue.post(
             object_dn=folder_dn,
             attribute_name=PolicyAttributes.workflow_block,
             value=workflow_dn
         )
-
-        result.assert_valid_response()
 
     def write_policy(self, folder: 'Union[config.Object, str]', class_name: str, attributes: dict, locked: bool):
         """

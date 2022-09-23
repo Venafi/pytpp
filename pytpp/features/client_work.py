@@ -168,11 +168,10 @@ class AgentConnectivity(_ClientWorkBase):
             raise InvalidFormat(
                 "Error in Schedule: must supply at one of (daily, hourly, days_of_week, days_of_month)")
 
-        response = self._api.websdk.Config.Write.post(
+        self._api.websdk.Config.Write.post(
             object_dn=work_dn,
             attribute_data=self._name_value_list(attributes)
         )
-        response.assert_valid_response()
 
     def create(self, name: str, server_url: str = "", proxy_url: str = "", proxy_credentials: 'Union[config.Object, str]' = None,
                log_threshold: str = ClientWorkAttributeValues.AgentConnectivity.LogThreshold.info,
@@ -227,7 +226,7 @@ class AgentConnectivity(_ClientWorkBase):
             self._api.websdk.Config.ClearAttribute.post(
                 object_dn=work_dn,
                 attribute_name=attribute_name
-            ).assert_valid_response()
+            )
 
 
 @feature('Agent Upgrade')
@@ -380,11 +379,10 @@ class CertificateDiscovery(_ClientWorkBase):
             raise InvalidFormat(
                 "Error in Schedule: must supply at one of (daily, hourly, days_of_week, days_of_month)")
 
-        response = self._api.websdk.Config.Write.post(
+        self._api.websdk.Config.Write.post(
             object_dn=work_dn,
             attribute_data=self._name_value_list(attributes)
         )
-        response.assert_valid_response()
 
     def create(self,
                name: str, certificate_location: 'Union[config.Object, str]', recursive_paths: List[str] = None, non_recursive_paths: List[str] = None,
@@ -491,7 +489,7 @@ class CertificateDiscovery(_ClientWorkBase):
             self._api.websdk.Config.ClearAttribute.post(
                 object_dn=work_dn,
                 attribute_name=attribute_name
-            ).assert_valid_response()
+            )
 
 
 @feature('Certificate Enrollment Via EST Protocol')
@@ -651,11 +649,10 @@ class CertificateInstallation(_ClientWorkBase):
             raise InvalidFormat(
                 "Error in Schedule: must supply at one of (daily,hourly,on_receipt,days_of_week,days_of_month,every_x_minutes)")
 
-        response = self._api.websdk.Config.Write.post(
+        self._api.websdk.Config.Write.post(
             object_dn=work_dn,
             attribute_data=self._name_value_list(attributes)
         )
-        response.assert_valid_response()
 
     def create(self, name: str, log_threshold: str = ClientWorkAttributeValues.CertificateInstallation.LogThreshold.info,
                attributes: dict = None, get_if_already_exists: bool = True):
@@ -699,7 +696,7 @@ class CertificateInstallation(_ClientWorkBase):
             self._api.websdk.Config.ClearAttribute.post(
                 object_dn=work_dn,
                 attribute_name=attribute_name
-            ).assert_valid_response()
+            )
 
 
 @feature('Device Certificate Creation')
@@ -960,11 +957,10 @@ class SSHDiscovery(_ClientWorkBase):
             raise InvalidFormat(
                 "Error in Schedule: must supply one of (daily,hourly,on_receipt,every_30_minutes,days_of_week,days_of_month)")
 
-        response = self._api.websdk.Config.Write.post(
+        self._api.websdk.Config.Write.post(
             object_dn=work_dn,
             attribute_data=self._name_value_list(attributes)
         )
-        response.assert_valid_response()
 
     def create(self, name: str, scan_default_paths: bool = True, host_key_paths: List[str] = None,
                user_key_paths: List[str] = None,
@@ -1043,7 +1039,7 @@ class SSHDiscovery(_ClientWorkBase):
             self._api.websdk.Config.ClearAttribute.post(
                 object_dn=work_dn,
                 attribute_name=attribute_name
-            ).assert_valid_response()
+            )
 
 
 @feature('SSH Key Usage')
@@ -1116,11 +1112,10 @@ class SSHKeyUsage(_ClientWorkBase):
             raise InvalidFormat(
                 "Error in Schedule: must supply one of (daily, hourly, on_receipt, every_x_minutes)")
 
-        response = self._api.websdk.Config.Write.post(
+        self._api.websdk.Config.Write.post(
             object_dn=work_dn,
             attribute_data=self._name_value_list(attributes)
         )
-        response.assert_valid_response()
 
     def create(self, name: str, limit_cache_size: int = 50000,
                log_threshold: str = ClientWorkAttributeValues.SSHKeyUsage.LogThreshold.info,
@@ -1167,7 +1162,7 @@ class SSHKeyUsage(_ClientWorkBase):
             self._api.websdk.Config.ClearAttribute.post(
                 object_dn=work_dn,
                 attribute_name=attribute_name
-            ).assert_valid_response()
+            )
 
 
 @feature('SSH Remediation')
@@ -1257,11 +1252,10 @@ class SSHRemediation(_ClientWorkBase):
             raise InvalidFormat(
                 "Error in Schedule: must supply one of (daily,hourly,on_receipt,days_of_week,days_of_month,every_x_minutes)")
 
-        response = self._api.websdk.Config.Write.post(
+        self._api.websdk.Config.Write.post(
             object_dn=work_dn,
             attribute_data=self._name_value_list(attributes)
         )
-        response.assert_valid_response()
 
     def create(self, name: str, log_threshold: str = ClientWorkAttributeValues.SSHRemediation.LogThreshold.info,
                attributes: dict = None, get_if_already_exists: bool = True):
@@ -1305,7 +1299,7 @@ class SSHRemediation(_ClientWorkBase):
             self._api.websdk.Config.ClearAttribute.post(
                 object_dn=work_dn,
                 attribute_name=attribute_name
-            ).assert_valid_response()
+            )
 
 
 @feature('User Certificate Creation')

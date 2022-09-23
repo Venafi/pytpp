@@ -39,13 +39,15 @@ class _IdentityBase(FeatureBase):
         Returns:
             bool: ``True`` if the identity exists, otherwise ``False``.
         """
-        response = self._api.websdk.Identity.Validate.post(
-            identity=self._identity_dict(prefixed_name=prefixed_name)
-        )
-        response.assert_valid_response()
-        if response.api_response.content:
-            return response.identity.prefixed_name == prefixed_name
-        return False
+        try:
+            response = self._api.websdk.Identity.Validate.post(
+                identity=self._identity_dict(prefixed_name=prefixed_name)
+            )
+            if response.api_response.content:
+                return response.identity.prefixed_name == prefixed_name
+            return False
+        except:
+            return False
 
     def get(self, prefixed_name: str = None, prefixed_universal: str = None, raise_error_if_not_exists: bool = True):
         """
@@ -130,11 +132,10 @@ class User(_IdentityBase):
         user = self.set_password(user=f'local:{user.name}', new_password=password)
 
         if add_to_everyone_group:
-            response = self._api.websdk.Identity.AddGroupMembers.put(
+            self._api.websdk.Identity.AddGroupMembers.put(
                 group=self._identity_dict(prefixed_name='local:Everyone'),
                 members=[self._identity_dict(prefixed_name=user.prefixed_name)]
             )
-            response.assert_valid_response()
         return user
 
     def delete(self, user: 'Union[ident.Identity, str]'):
@@ -148,11 +149,10 @@ class User(_IdentityBase):
             user = self._get_identity_object(user)
         groups = self.get_memberships(identity=user)
         for group in groups:
-            result = self._api.websdk.Identity.RemoveGroupMembers.put(
+            self._api.websdk.Identity.RemoveGroupMembers.put(
                 group=self._identity_dict(prefixed_name=group.prefixed_name),
                 members=[self._identity_dict(prefixed_name=user.prefixed_name)]
             )
-            result.assert_valid_response()
         self._config_delete(object_dn=f'{self._identity_dn}\\{user.name}')
 
     def find(self, name: str, limit: int = 100):
@@ -272,8 +272,7 @@ class Group(_IdentityBase):
         """
         if isinstance(group, str):
             group = self._get_identity_object(group)
-        result = self._api.websdk.Identity.Group.Prefix(group.prefix).Principal(group.universal).delete()
-        result.assert_valid_response()
+        self._api.websdk.Identity.Group.Prefix(group.prefix).Principal(group.universal).delete()
 
     def find(self, name: str, limit: int = 100, is_distribution_group: bool = False, is_security_group: bool = True):
         """

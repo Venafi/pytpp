@@ -1,3 +1,4 @@
+from pytpp.api.api_base import InvalidResponseError
 from pytpp.features.bases.feature_base import FeatureBase, feature
 from pytpp.features.definitions.exceptions import UnexpectedValue
 from pytpp.attributes.discovery import DiscoveryAttributes
@@ -107,8 +108,7 @@ class NetworkDiscovery(FeatureBase):
             job: :ref:`config_object` or :ref:`dn` of the discovery job.
         """
         job_guid = self._get_guid(job, parent_dn=self._discovery_dn)
-        response = self._api.websdk.Discovery.Guid(guid=job_guid).delete()
-        response.assert_valid_response()
+        self._api.websdk.Discovery.Guid(guid=job_guid).delete()
 
     def get(self, name: str, raise_error_if_not_exists: bool = True):
         """
@@ -133,16 +133,18 @@ class NetworkDiscovery(FeatureBase):
             bool: ``True`` if the job is in progress or ``False`` if it is not.
         """
         job_dn = self._get_dn(job, parent_dn=self._discovery_dn)
-        response = self._api.websdk.Config.Read.post(
-            object_dn=job_dn,
-            attribute_name=DiscoveryAttributes.status
-        )
-        in_progress_states = ['Pending Execution', 'Running']
-        if response.is_valid_response():
+        try:
+            response = self._api.websdk.Config.Read.post(
+                object_dn=job_dn,
+                attribute_name=DiscoveryAttributes.status
+            )
+            in_progress_states = ['Pending Execution', 'Running']
             if len(response.values) > 0:
                 status = response.values[0]
                 return status in in_progress_states
-        return False
+            return False
+        except InvalidResponseError:
+            return False
 
     def schedule(self, job: 'Union[config.Object, str]', hour: Union[str, int], days_of_week: List[Union[int, str]] = None,
                  days_of_month: List[Union[int, str]] = None, days_of_year: List[str] = None):
@@ -172,11 +174,10 @@ class NetworkDiscovery(FeatureBase):
         elif days_of_year:
             attributes[DiscoveryAttributes.days_of_year] = days_of_year
 
-        response = self._api.websdk.Config.Write.post(
+        self._api.websdk.Config.Write.post(
             object_dn=job_dn,
             attribute_data=self._name_value_list(attributes)
         )
-        response.assert_valid_response()
 
     def unschedule(self, job: 'Union[config.Object, str]'):
         """
@@ -196,7 +197,7 @@ class NetworkDiscovery(FeatureBase):
             self._api.websdk.Config.ClearAttribute.post(
                 object_dn=job_dn,
                 attribute_name=attribute_name
-            ).assert_valid_response()
+            )
 
     def blackout_schedule(self, job: 'Union[config.Object, str]', sunday: List[Union[str, int]] = None,
                           monday: List[Union[str, int]] = None, tuesday: List[Union[str, int]] = None,
@@ -224,11 +225,10 @@ class NetworkDiscovery(FeatureBase):
         attributes = {
             DiscoveryAttributes.blackout: blackout
         }
-        response = self._api.websdk.Config.Write.post(
+        self._api.websdk.Config.Write.post(
             object_dn=job_dn,
             attribute_data=self._name_value_list(attributes)
         )
-        response.assert_valid_response()
 
     def run_now(self, job: 'Union[config.Object, str]', timeout: int = 60):
         """
@@ -240,13 +240,12 @@ class NetworkDiscovery(FeatureBase):
             timeout: Timeout in seconds within which the job should start.
         """
         job_dn = self._get_dn(job, parent_dn=self._discovery_dn)
-        response = self._api.websdk.Config.Write.post(
+        self._api.websdk.Config.Write.post(
             object_dn=job_dn,
             attribute_data=self._name_value_list({
                 "Start Now": ['1']  # Secret config-bridge attribute name.
             })
         )
-        response.assert_valid_response()
 
         with self._Timeout(timeout=timeout) as to:
             while not to.is_expired(poll=0.5):
@@ -265,12 +264,11 @@ class NetworkDiscovery(FeatureBase):
             job: :ref:`config_object` or :ref:`dn` of the discovery job.
         """
         job_dn = self._get_dn(job, parent_dn=self._discovery_dn)
-        response = self._api.websdk.Config.WriteDn.post(
+        self._api.websdk.Config.WriteDn.post(
             object_dn=job_dn,
             attribute_name=DiscoveryAttributes.status,
             values=['Canceled']
         )
-        response.assert_valid_response()
 
     def pause(self, job: 'Union[config.Object, str]'):
         """
@@ -280,12 +278,11 @@ class NetworkDiscovery(FeatureBase):
             job: :ref:`config_object` or :ref:`dn` of the discovery job.
         """
         job_dn = self._get_dn(job, parent_dn=self._discovery_dn)
-        response = self._api.websdk.Config.WriteDn.post(
+        self._api.websdk.Config.WriteDn.post(
             object_dn=job_dn,
             attribute_name=DiscoveryAttributes.status,
             values=['Paused']
         )
-        response.assert_valid_response()
 
     def resume(self, job: 'Union[config.Object, str]'):
         """
@@ -295,12 +292,11 @@ class NetworkDiscovery(FeatureBase):
             job: :ref:`config_object` or :ref:`dn` of the discovery job.
         """
         job_dn = self._get_dn(job, parent_dn=self._discovery_dn)
-        response = self._api.websdk.Config.WriteDn.post(
+        self._api.websdk.Config.WriteDn.post(
             object_dn=job_dn,
             attribute_name=DiscoveryAttributes.status,
             values=['Pending']
         )
-        response.assert_valid_response()
 
     def place_results(self, job: 'Union[config.Object, str]'):
         """
@@ -315,12 +311,11 @@ class NetworkDiscovery(FeatureBase):
         """
         if self._is_version_compatible(maximum="20.4"):
             job_dn = self._get_dn(job, parent_dn=self._discovery_dn)
-            response = self._api.websdk.Config.WriteDn.post(
+            self._api.websdk.Config.WriteDn.post(
                 object_dn=job_dn,
                 attribute_name="Import Results Now",  # Secret config-bridge attribute name.
                 values=['1']
             )
-            response.assert_valid_response()
         else:
             self._log_warning_message('Cannot run place_results() because it has been deprecated since TPP 21.1. Results '
                                       'are placed along with discovery beginning in 21.1.')

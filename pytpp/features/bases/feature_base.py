@@ -91,17 +91,20 @@ class FeatureBase:
         if isinstance(prefixed_universal, ident.Identity):
             return prefixed_universal
 
-        result = self._api.websdk.Identity.Validate.post(
-            identity=self._identity_dict(prefixed_name=prefixed_name, prefixed_universal=prefixed_universal)
-        )
-        if result.is_valid_response() and result.api_response.content:
-            identity = result.identity
-        elif raise_error_if_not_exists:
-            target = prefixed_name or prefixed_universal
-            raise ObjectDoesNotExist(f'Could not find identity "{target}".')
+        try:
+            response = self._api.websdk.Identity.Validate.post(
+                identity=self._identity_dict(prefixed_name=prefixed_name, prefixed_universal=prefixed_universal)
+            )
+            identity = response.identity if response.api_response.content else None
+        except:
+            identity = None
+
+        if identity is not None:
+            return identity
+        elif not raise_error_if_not_exists:
+            return ident.Identity()
         else:
-            identity = ident.Identity()
-        return identity
+            raise ObjectDoesNotExist(f'Could not find identity "{prefixed_name or prefixed_universal}".')
 
     @staticmethod
     def _identity_dict(prefixed_name: str = None, prefixed_universal: str = None):
@@ -204,11 +207,10 @@ class FeatureBase:
         for n, v in attributes.items():
             if v is None:
                 continue
-            if not isinstance(v, list):
-                if isinstance(v, (tuple, set)):
-                    v = list(v)
-                else:
-                    v = [v]
+            if not isinstance(v, (list, tuple, set)):
+                v = [str(v)]
+            else:
+                v = list(map(str, v))
             nvl.append(config.NameAttribute(name=n, value=v))
         return nvl
 

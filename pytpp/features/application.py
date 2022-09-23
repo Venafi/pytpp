@@ -308,14 +308,14 @@ class Adaptable(_ApplicationBase):
                 attribute_name=AdaptableAppAttributes.script_hash_mismatch_error,
                 values=[retry_after_script_hash_mismatch],
                 locked=locked
-            ).assert_valid_response()
+            )
         self._api.websdk.Config.WritePolicy.post(
             object_dn=policy_folder_dn,
             class_name=Classes.adaptable_app,
             attribute_name=AdaptableAppAttributes.powershell_script,
             values=[powershell_script_name],
             locked=locked
-        ).assert_valid_response()
+        )
         vault_id = self._api.websdk.SecretStore.Add.post(
             base_64_data=self._calculate_hash(powershell_script_content),
             keyname=KeyNames.software_default,
@@ -330,7 +330,7 @@ class Adaptable(_ApplicationBase):
             attribute_name=AdaptableAppAttributes.powershell_script_hash_vault_id,
             values=[vault_id],
             locked=locked
-        ).assert_valid_response()
+        )
         # endregion Create The Policy Attributes
 
         app_attrs = {
@@ -653,19 +653,17 @@ class Basic(_ApplicationBase):
             :ref:`config_object` of the application.
         """
         basic_application_dn = self._get_dn(basic_application)
-        result = self._api.websdk.Config.MutateObject.post(
+        self._api.websdk.Config.MutateObject.post(
             object_dn=basic_application_dn,
             class_name=str(new_class_name)
         )
-        result.assert_valid_response()
 
         if attributes:
             attributes = {k: ([str(v)] if not isinstance(v, list) else v) for k, v in attributes.items()}
-            result = self._api.websdk.Config.Write.post(
+            self._api.websdk.Config.Write.post(
                 object_dn=basic_application_dn,
                 attribute_data=self._name_value_list(attributes)
             )
-            result.assert_valid_response()
 
         new_object = self._api.websdk.Config.IsValid.post(object_dn=basic_application_dn).object
         if new_object.type_name != new_class_name:

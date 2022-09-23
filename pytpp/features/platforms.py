@@ -31,11 +31,10 @@ class _PlatformComponentBase(FeatureBase):
         """
         engine_names = engine_names or [engine.engine_name for engine in self._api.websdk.ProcessingEngines.get().engines]
         for engine_name in engine_names:
-            response = self._api.websdk.Config.Write.post(
+            self._api.websdk.Config.Write.post(
                 object_dn=self._module_dn(engine_name=engine_name),
                 attribute_data=self._name_value_list(attributes)
             )
-            response.assert_valid_response()
 
 
 @feature('Auto Layout Manager')

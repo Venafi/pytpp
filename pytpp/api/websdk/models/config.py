@@ -31,6 +31,9 @@ class Object(ObjectModel):
     revision: Optional[int] = ApiField(alias='Revision')
     type_name: str = ApiField(alias='TypeName')
 
+    def __str__(self):
+        return self.dn
+
 
 class Policy(ObjectModel):
     attribute_name: str = ApiField(alias='AttributeName')

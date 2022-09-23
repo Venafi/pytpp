@@ -1,6 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from datetime import datetime
+from pytpp.api.api_base import InvalidResponseError
 from pytpp.attributes.x509_certificate import X509CertificateAttributes
 from pytpp.features.bases.feature_base import FeatureBase, feature
 from pytpp.features.definitions.exceptions import FeatureException, UnexpectedValue
@@ -32,17 +33,17 @@ class Certificate(FeatureBase):
         certificate_guid = self._get_guid(certificate)
 
         retries = 3
-        result = self._api.websdk.Certificates.Guid(certificate_guid).get()
-        for retry in range(retries):
-            if 'Rerun the transaction' not in result.api_response.reason:
-                result.assert_valid_response()
-                return result
-            features_logger.debug('Rerunning Certificates/Get transaction due to deadlock...')
-            result = self._api.websdk.Certificates.Guid(certificate_guid).get()
-        # It's likely at this point that we failed to get the certificate. Let the result.assert_valid_response()
-        # handle the errors. In some unknown case where the response is valid, return it just in case.
-        result.assert_valid_response()
-        return result
+        while retries > 0:
+            try:
+                result = self._api.websdk.Certificates.Guid(certificate_guid).get()
+                if 'Rerun the transaction' not in result.api_response.reason:
+                    return result
+            except InvalidResponseError as err:
+                if 'Rerun the transaction' in err.response.reason:
+                    # A deadlock issue may have caused this. Try getting the certificate again.
+                    features_logger.debug('Rerunning Certificates/Get transaction due to deadlock...')
+            retries -= 1
+        return self._api.websdk.Certificates.Guid(certificate_guid).get()
 
     def associate_application(self, certificate: 'Union[config.Object, str]', applications: 'List[Union[config.Object, str]]',
                               push_to_new: bool = False):
@@ -157,10 +158,10 @@ class Certificate(FeatureBase):
             certificate: :ref:`config_object` or :ref:`dn` of the certificate object.
         """
         certificate_guid = self._get_guid(certificate)
-        result = self._api.websdk.Certificates.Guid(certificate_guid).delete()
-        if not result.is_valid_response():
-            certificate_dn = self._get_dn(certificate)
-            raise FeatureException(f'Could not delete certificate {certificate_dn}.')
+        try:
+            self._api.websdk.Certificates.Guid(certificate_guid).delete()
+        except InvalidResponseError:
+            raise FeatureException(f'Could not delete certificate {str(certificate)}.')
 
     def details(self, certificate: 'Union[config.Object, str]'):
         """
@@ -185,12 +186,11 @@ class Certificate(FeatureBase):
                             device objects.
         """
         certificate_dn = self._get_dn(certificate)
-        result = self._api.websdk.Certificates.Dissociate.post(
+        self._api.websdk.Certificates.Dissociate.post(
             certificate_dn=certificate_dn,
             application_dn=[self._get_dn(a) for a in applications],
             delete_orphans=delete_orphans
         )
-        result.assert_valid_response()
 
     # noinspection ALL
     def download(self, format: str, certificate: 'Union[config.Object, str]' = None, friendly_name: str = None,
@@ -593,8 +593,7 @@ class Certificate(FeatureBase):
         """
         result = self._get(certificate)
         current_thumbprint = result.certificate_details.thumbprint
-        result = self._api.websdk.Certificates.Renew.post(certificate_dn=result.dn, pkcs10=csr, reenable=re_enable)
-        result.assert_valid_response()
+        self._api.websdk.Certificates.Renew.post(certificate_dn=result.dn, pkcs10=csr, reenable=re_enable)
         return current_thumbprint
 
     def reset(self, certificate: 'Union[config.Object, str]'):
@@ -606,7 +605,6 @@ class Certificate(FeatureBase):
         """
         certificate_dn = self._get_dn(certificate)
         result = self._api.websdk.Certificates.Reset.post(certificate_dn=certificate_dn, restart=False)
-        result.assert_valid_response()
         if not result.processing_reset_completed:
             raise UnexpectedValue(f'Processing reset was not completed for {certificate_dn}.')
 
@@ -618,8 +616,7 @@ class Certificate(FeatureBase):
             certificate: :ref:`config_object` or :ref:`dn` of the certificate object.
         """
         certificate_dn = self._get_dn(certificate)
-        result = self._api.websdk.Certificates.Retry.post(certificate_dn=certificate_dn)
-        result.assert_valid_response()
+        self._api.websdk.Certificates.Retry.post(certificate_dn=certificate_dn)
 
     def retry_from_stage_0(self, certificate: 'Union[config.Object, str]'):
         """
@@ -631,7 +628,6 @@ class Certificate(FeatureBase):
         """
         certificate_dn = self._get_dn(certificate)
         result = self._api.websdk.Certificates.Reset.post(certificate_dn=certificate_dn, restart=True)
-        result.assert_valid_response()
         if not result.restart_completed:
             raise UnexpectedValue(f'Restart renewal from stage 0 was not triggered on {certificate_dn}.')
 
@@ -656,7 +652,6 @@ class Certificate(FeatureBase):
             reason=reason,
             thumbprint=thumbprint
         )
-        result.assert_valid_response()
         if result.success is not True:
             raise UnexpectedValue(
                 f'Cannot revoke {certificate_dn} due to this error:\n{result.error}.'
@@ -697,7 +692,6 @@ class Certificate(FeatureBase):
             private_key_data=private_key_data,
             reconcile=reconcile
         )
-        result.assert_valid_response()
         return self._api.websdk.Config.IsValid.post(object_dn=result.certificate_dn).object
 
     def validate(self, certificates: 'List[Union[config.Object, str]]'):
@@ -739,7 +733,6 @@ class Certificate(FeatureBase):
         cert = self._get(certificate=certificate)
         with self._Timeout(timeout=timeout) as to:
             while not to.is_expired(poll=poll_interval):
-                cert.assert_valid_response()
                 thumbprint = cert.certificate_details.thumbprint
                 if thumbprint and thumbprint != current_thumbprint and cert.processing_details.stage in {None, 800}:
                     return cert.certificate_details
