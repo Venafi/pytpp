@@ -60,7 +60,7 @@ class _Client(WebSdkEndpoint):
                 sid: str = None, user_name: str = None, virtual_machine_id: int = None):
             params = {
                 'ClientVersion'    : client_version,
-                'client.ClientType': client_type,
+                'ClientType'       : client_type,
                 'HostName'         : host_name,
                 'IpAddress'        : ip_address,
                 'LastSeenOn'       : last_seen_on,
