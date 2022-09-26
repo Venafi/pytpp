@@ -71,6 +71,7 @@ class MSCA(_CertificateAuthorityBase):
         Returns:
             :ref:`config_object` of the certificate authority.
         """
+        bool_to_string = lambda x: {True: "1", False: "0"}.get(x)
         ca_attrs = {
             MicrosoftCAAttributes.driver_name                 : 'camicrosoft',
             MicrosoftCAAttributes.host                        : hostname,
@@ -79,22 +80,10 @@ class MSCA(_CertificateAuthorityBase):
             MicrosoftCAAttributes.template                    : template,
             MicrosoftCAAttributes.description                 : description,
             MicrosoftCAAttributes.contact                     : [self._get_prefixed_universal(c) for c in contacts] if contacts else None,
-            MicrosoftCAAttributes.manual_approval             : {
-                True : "1",
-                False: "0"
-            }.get(manual_approvals),
-            MicrosoftCAAttributes.san_enabled                 : {
-                True : "1",
-                False: "1"
-            }.get(subject_alt_name_enabled),
-            MicrosoftCAAttributes.include_cn_as_san           : {
-                True : "1",
-                False: "0"
-            }.get(automatically_include_cn_as_dns_san),
-            MicrosoftCAAttributes.specific_end_date_enabled   : {
-                True : "1",
-                False: "0"
-            }.get(allow_users_to_specify_end_date),
+            MicrosoftCAAttributes.manual_approval             : bool_to_string(manual_approvals),
+            MicrosoftCAAttributes.san_enabled                 : bool_to_string(subject_alt_name_enabled),
+            MicrosoftCAAttributes.include_cn_as_san           : bool_to_string(automatically_include_cn_as_dns_san),
+            MicrosoftCAAttributes.specific_end_date_enabled   : bool_to_string(allow_users_to_specify_end_date),
             MicrosoftCAAttributes.enrollment_agent_certificate: self._get_dn(enrollment_agent) if enrollment_agent else None
         }
         if attributes:

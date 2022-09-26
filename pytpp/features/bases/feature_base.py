@@ -208,7 +208,7 @@ class FeatureBase:
             if v is None:
                 continue
             if not isinstance(v, (list, tuple, set)):
-                v = [str(v)]
+                v = str(v)
             else:
                 v = list(map(str, v))
             nvl.append(config.NameAttribute(name=n, value=v))
