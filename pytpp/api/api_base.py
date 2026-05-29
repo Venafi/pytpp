@@ -9,6 +9,53 @@ from pydantic import BaseModel, root_validator, Field
 from pytpp.tools.logger import api_logger, json_pickler
 from typing import Any, Callable, Optional, Union, Protocol, TYPE_CHECKING, Type, TypeVar, get_origin
 
+
+def _sanitize_for_logging(data: Any) -> Any:
+    """
+    Sanitizes sensitive data before logging to prevent CWE-532.
+    Masks credential fields and removes PEM-encoded private keys.
+    """
+    if data is None:
+        return data
+
+    # Sensitive field names to mask
+    sensitive_fields = {
+        'password', 'Password', 'PASSWORD',
+        'api_key', 'apikey', 'ApiKey', 'API_KEY',
+        'token', 'Token', 'TOKEN',
+        'access_token', 'AccessToken', 'ACCESS_TOKEN',
+        'refresh_token', 'RefreshToken', 'REFRESH_TOKEN',
+        'client_secret', 'ClientSecret', 'CLIENT_SECRET',
+        'private_key', 'PrivateKey', 'PRIVATE_KEY',
+        'PrivateKeyData', 'privatekey', 'PRIVATEKEY',
+        'secret', 'Secret', 'SECRET',
+        'Authorization', 'authorization', 'AUTHORIZATION',
+        'X-Venafi-API-Key', 'x-venafi-api-key'
+    }
+
+    if isinstance(data, dict):
+        sanitized = {}
+        for k, v in data.items():
+            if k in sensitive_fields:
+                sanitized[k] = '***'
+            elif isinstance(v, str) and re.search(r'-----BEGIN.*PRIVATE KEY-----', v, re.IGNORECASE):
+                # Strip PEM-encoded private keys
+                sanitized[k] = '*** PEM PRIVATE KEY REDACTED ***'
+            elif isinstance(v, (dict, list)):
+                sanitized[k] = _sanitize_for_logging(v)
+            else:
+                sanitized[k] = v
+        return sanitized
+    elif isinstance(data, list):
+        return [_sanitize_for_logging(item) for item in data]
+    elif isinstance(data, str):
+        # Check if the entire string is a PEM private key
+        if re.search(r'-----BEGIN.*PRIVATE KEY-----', data, re.IGNORECASE):
+            return '*** PEM PRIVATE KEY REDACTED ***'
+        return data
+    else:
+        return data
+
 if TYPE_CHECKING:
     from pydantic.typing import AbstractSetIntStr, MappingIntStrAny, NoArgAnyCallable
     from pytpp.api.session import Session
@@ -232,7 +279,8 @@ class ApiEndpoint(object):
         Logs the URL and any additional data. This enforces consistency in logging across all API calls.
         """
         if data:
-            payload = json_pickler.dumps(data)
+            sanitized_data = _sanitize_for_logging(data)
+            payload = json_pickler.dumps(sanitized_data)
             api_logger.debug(
                 f'{method}\nURL: {self._url}\nBODY: {payload}',
                 stacklevel=2
@@ -249,9 +297,12 @@ class ApiEndpoint(object):
         This enforces consistency in logging across all API calls.
         """
         try:
-            pretty_json = json_pickler.dumps(response.json())
+            response_data = response.json()
+            sanitized_data = _sanitize_for_logging(response_data)
+            pretty_json = json_pickler.dumps(sanitized_data)
         except json.JSONDecodeError:
-            pretty_json = response.text or response.reason or 'No Content'
+            sanitized_text = _sanitize_for_logging(response.text or response.reason or 'No Content')
+            pretty_json = sanitized_text
         except:
             pretty_json = 'No Content'
 
