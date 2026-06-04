@@ -10,6 +10,55 @@ from pathlib import Path
 from typing import Any, List, Tuple, Set
 
 
+def _sanitize_for_logging(data: Any) -> Any:
+    """
+    Sanitizes sensitive data before logging to prevent CWE-532.
+    Masks credential fields and removes PEM-encoded private keys.
+    """
+    if data is None:
+        return data
+
+    # Sensitive field names to mask
+    sensitive_fields = {
+        'password', 'Password', 'PASSWORD',
+        'api_key', 'apikey', 'ApiKey', 'API_KEY',
+        'token', 'Token', 'TOKEN',
+        'access_token', 'AccessToken', 'ACCESS_TOKEN',
+        'refresh_token', 'RefreshToken', 'REFRESH_TOKEN',
+        'client_secret', 'ClientSecret', 'CLIENT_SECRET',
+        'private_key', 'PrivateKey', 'PRIVATE_KEY',
+        'PrivateKeyData', 'privatekey', 'PRIVATEKEY',
+        'secret', 'Secret', 'SECRET',
+        'Authorization', 'authorization', 'AUTHORIZATION',
+        'X-Venafi-API-Key', 'x-venafi-api-key'
+    }
+
+    if isinstance(data, dict):
+        sanitized = {}
+        for k, v in data.items():
+            if k in sensitive_fields:
+                sanitized[k] = '***'
+            elif isinstance(v, str) and re.search(r'-----BEGIN.*PRIVATE KEY-----', v, re.IGNORECASE):
+                # Strip PEM-encoded private keys
+                sanitized[k] = '*** PEM PRIVATE KEY REDACTED ***'
+            elif isinstance(v, (dict, list)):
+                sanitized[k] = _sanitize_for_logging(v)
+            else:
+                sanitized[k] = v
+        return sanitized
+    elif isinstance(data, list):
+        return [_sanitize_for_logging(item) for item in data]
+    elif isinstance(data, tuple):
+        return tuple(_sanitize_for_logging(item) for item in data)
+    elif isinstance(data, str):
+        # Check if the entire string is a PEM private key
+        if re.search(r'-----BEGIN.*PRIVATE KEY-----', data, re.IGNORECASE):
+            return '*** PEM PRIVATE KEY REDACTED ***'
+        return data
+    else:
+        return data
+
+
 class Logger(logging.getLoggerClass()):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -151,9 +200,9 @@ class Logger(logging.getLoggerClass()):
                 if _class and (is_classmethod or is_staticmethod):
                     args = [a for e, a in enumerate(args) if e > 0]
                 if args:
-                    in_msg_dict['ARGS'] = args
+                    in_msg_dict['ARGS'] = _sanitize_for_logging(args)
                 if kwargs:
-                    in_msg_dict['KWARGS'] = kwargs
+                    in_msg_dict['KWARGS'] = _sanitize_for_logging(kwargs)
                 self.log(
                     level=level, msg=self._json_pickle_dumps(in_msg_dict), extra=extra,
                     *logging_args, **logging_kwargs
@@ -164,7 +213,7 @@ class Logger(logging.getLoggerClass()):
                         'RETURNED': func.__qualname__
                     }
                     if result:
-                        out_msg_dict['OUTPUT'] = result
+                        out_msg_dict['OUTPUT'] = _sanitize_for_logging(result)
                     self.log(
                         level=level, msg=self._json_pickle_dumps(out_msg_dict), extra=extra,
                         *logging_args, **logging_kwargs
